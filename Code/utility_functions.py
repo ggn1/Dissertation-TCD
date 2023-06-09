@@ -64,4 +64,5 @@ def desc_df(df:pd.core.frame.DataFrame):
         print(f"\n{vc}")
         print(f'No. of distinct values = {len(vc)}')
         print(f'No. of missing values = {df[feature].isna().sum()}')
+    print(f"Column Names = {list(df.columns)}")
     display(df.head())
