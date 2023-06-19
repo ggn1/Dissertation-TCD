@@ -1,44 +1,48 @@
 // P5.js Canvas.
 'use client';
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Sketch } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
  
 const WorldCanvas = () => {
 
     // States.
-    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth-100);
-    const [canvasHeight, setCanvasHeight] = useState(window.innerHeight-200);
+    const [gridSize, setGridSize] = useState(20);
+    const [gridUnit, setGridUnit] = useState(1);
 
     // Functions.
     const sketch: Sketch = (p5) => {
         /** Creates and updates canvas which is the World of Krimi. */
-        
+        const canvasDimension = gridSize*gridUnit;
+
         p5.setup = () => {
-            p5.createCanvas(canvasWidth, canvasHeight, p5.WEBGL);
+            const c = p5.createCanvas(canvasDimension, canvasDimension);
         }
 
         p5.draw = () => {
-            p5.background(150);
-            p5.normalMaterial();
-            p5.push();
-            p5.rotateZ(p5.frameCount * 0.01);
-            p5.rotateX(p5.frameCount * 0.01);
-            p5.rotateY(p5.frameCount * 0.01);
-            p5.plane(100);
-            p5.pop();
+            p5.fill(230);
+            for (let i=0; i<gridSize; i++) {
+                for (let j=0; j<gridSize; j++) {
+                    p5.rect(gridUnit*i, gridUnit*j, gridUnit, gridUnit);
+                }
+            }
         };
     }
 
-    const updateCanvasDimensions = () => {
+    const updateGridUnit = () => {
         /** Updates canvas dimension states as per latest window dimensions. */
-        
-        setCanvasWidth(window.innerWidth-100);
-        setCanvasHeight(window.innerHeight-200);
+        const ch = window.innerHeight-100;
+        const cw = window.innerHeight-100;
+        const smaller = ch < cw ? ch : cw;
+        setGridUnit(Math.floor(smaller/gridSize));
     }
 
-    // Event listeners.
-    window.addEventListener('resize', updateCanvasDimensions);
+    // Use Effect.
+    useEffect(() => {
+        updateGridUnit();
+        window.addEventListener('resize', updateGridUnit);
+    }, []);
 
     // Component to return.
     return (

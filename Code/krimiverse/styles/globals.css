@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 canvas {
-    @apply rounded-md;
+    @apply border-2 border-black;
 }
