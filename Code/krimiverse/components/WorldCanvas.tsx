@@ -4,25 +4,41 @@
 import { useState, useEffect } from "react";
 import { Sketch } from "@p5-wrapper/react";
 import { NextReactP5Wrapper } from "@p5-wrapper/next";
+import WorldContent from "@/models/WorldContent";
  
-const WorldCanvas = () => {
+const WorldCanvas = ({W}:{W:Array<Array<WorldContent>>}) => {
+
+    // Constants.
+    const gridSize = W.length;
 
     // States.
-    const [gridSize, setGridSize] = useState(20);
     const [gridUnit, setGridUnit] = useState(1);
 
     // Functions.
     const sketch: Sketch = (p5) => {
         /** Creates and updates canvas which is the World of Krimi. */
+        
         p5.setup = () => {
             p5.createCanvas(gridUnit*gridSize, gridUnit*gridSize);
         }
 
         p5.draw = () => {
-            p5.fill(230);
+            let v = new WorldContent();
             for (let i=0; i<gridSize; i++) {
                 for (let j=0; j<gridSize; j++) {
+                    v = W[i][j];
+                    p5.fill(230);
                     p5.rect(gridUnit*i, gridUnit*j, gridUnit, gridUnit);
+                    if (v.krimi) {
+                        p5.fill(0,255,0);
+                        p5.ellipseMode(p5.CORNER);
+                        p5.circle(gridUnit*i, gridUnit*j, gridUnit);
+                    } 
+                    if (v.food) {
+                        p5.fill(255,140,0);
+                        p5.ellipseMode(p5.CORNER);
+                        p5.circle(gridUnit*i, gridUnit*j, gridUnit);
+                    }
                 }
             }
         };
@@ -34,7 +50,6 @@ const WorldCanvas = () => {
         let cw = window.innerWidth-50;
         let smaller = ch < cw ? ch : cw;
         setGridUnit(Math.floor(smaller/gridSize));
-        console.log(gridUnit);
     }
 
     // Use Effect.
