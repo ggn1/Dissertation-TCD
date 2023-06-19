@@ -14,10 +14,8 @@ const WorldCanvas = () => {
     // Functions.
     const sketch: Sketch = (p5) => {
         /** Creates and updates canvas which is the World of Krimi. */
-        const canvasDimension = gridSize*gridUnit;
-
         p5.setup = () => {
-            const c = p5.createCanvas(canvasDimension, canvasDimension);
+            p5.createCanvas(gridUnit*gridSize, gridUnit*gridSize);
         }
 
         p5.draw = () => {
@@ -32,10 +30,11 @@ const WorldCanvas = () => {
 
     const updateGridUnit = () => {
         /** Updates canvas dimension states as per latest window dimensions. */
-        const ch = window.innerHeight-100;
-        const cw = window.innerHeight-100;
-        const smaller = ch < cw ? ch : cw;
+        let ch = window.innerHeight-100;
+        let cw = window.innerWidth-50;
+        let smaller = ch < cw ? ch : cw;
         setGridUnit(Math.floor(smaller/gridSize));
+        console.log(gridUnit);
     }
 
     // Use Effect.
