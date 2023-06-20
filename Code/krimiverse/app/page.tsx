@@ -12,8 +12,8 @@ import { makeNew2DArray } from "@/utils/Creation";
 const gridSize = 20;
 const chaosEnergy = 1.0;
 const foodEnergy = 0.05*chaosEnergy;
-const foodPercent = 1.0;
-const krimiPercent = 0.01;
+const foodPercent = 0.9;
+const krimiPercent = 0.05;
 
 // Private functions.
 const getNextId = (ids:Array<number>) => {
