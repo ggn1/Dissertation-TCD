@@ -26,16 +26,21 @@ const WorldCanvas = ({W}:{W:Array<Array<WorldContent>>}) => {
             let v = new WorldContent();
             for (let i=0; i<gridSize; i++) {
                 for (let j=0; j<gridSize; j++) {
+                    
+                    // Get WorldContent at world position.
                     v = W[i][j];
+                    
+                    // Draw a rectangle for every world position.
                     p5.fill(230);
                     p5.rect(gridUnit*i, gridUnit*j, gridUnit, gridUnit);
-                    if (v.krimi) {
-                        p5.fill(0,255,0);
-                        p5.ellipseMode(p5.CORNER);
-                        p5.circle(gridUnit*i, gridUnit*j, gridUnit);
-                    } 
-                    if (v.food) {
+                        
+                    if (v && v.food) {
                         p5.fill(255,140,0);
+                        p5.rect(gridUnit*i, gridUnit*j, gridUnit, gridUnit);
+                    }
+
+                    if (v && v.krimi) {
+                        p5.fill(0,255,0);
                         p5.ellipseMode(p5.CORNER);
                         p5.circle(gridUnit*i, gridUnit*j, gridUnit);
                     }

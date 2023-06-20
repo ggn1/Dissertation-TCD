@@ -60,7 +60,7 @@ A Krimi can only move into a position in $W_k$ `if` it is empty `or` contains fo
 
 `Genome`: Genome of the Krimi shall be a Multi Layer Perceptron (MLP) with 1 input layer, 1 output layer, and 2 hidden layers.
 
-`Input`: Each time the Krimi is to make a decision, it shall receive data regarding its external and internal state ($W_k$, $K_{ck}$, $K_{sk}$, $K_t$) as an array, [$W_k$ (0), $W_k$ (1), $W_k$ (2), $W_k$ (3), $W_k$ (4), $W_k$ (5), $W_k$ (6), $W_k$ (7), $K_{ck}$, $K_{sk}$, $K_t$] where $W_k$ position (x) shall be
+`Input`: Each time the Krimi is to make a decision, it shall receive data regarding its external and internal state ($W_k$, $K_{ck}$, $K_{sk}$, $K_t$) as an array, [$W_k$ (0), $W_k$ (1), $W_k$ (2), $W_k$ (3), $W_k$ (4), $W_k$ (5), $W_k$ (6), $W_k$ (7), $W_k$ (8), $(K_{ck}-K_{sk})/K_{ck}$, $K_t$] where $W_k$ position (x) shall be
 
 * 0 if empty or
 * -1 if dead end or
@@ -69,7 +69,7 @@ A Krimi can only move into a position in $W_k$ `if` it is empty `or` contains fo
 
 `Output`: Output of the genome represents the action that the Krimi shall take based on its internal and external state. This shall be an array [Eat?, x+, y+] where
 
-1. Eat? => 1 if the Krimi is to perform the eat action and 0 if it shall move instead.
+1. Eat? => >=0 if the Krimi is to perform the eat action and <0 if it shall move instead.
 2. x+ => value to add to the Krimi's current x position in the world $W$. This may be -1, 0, or 1.
 3. y+ => value to add to the Krimi's current y position in the world $W$. This may be -1, 0, or 1.
 

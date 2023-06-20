@@ -1,15 +1,20 @@
+import NeuralNetwork from "@/models/NeuralNetwork";
+import { roundArray } from "@/utils/Math";
+
 class Krimi {
-    private chaosEnergy:number;
-    private age:number;
+    private chaosEnergy: number;
+    private age: number;
 
-    stabilizationEnergy:number;
-    genome:any;
+    id: number;
+    stabilizationEnergy: number;
+    genome: NeuralNetwork;
 
-    constructor(chaosEnergy:number) {
+    constructor(id:number, chaosEnergy:number) {
+        this.id = id;
         this.chaosEnergy = chaosEnergy;
         this.stabilizationEnergy = chaosEnergy + (0.2*chaosEnergy);
-        this.age=0;
-        // this.genome= Neural Network.
+        this.age = 0;
+        this.genome = new NeuralNetwork();
     }
 
     private performAction = () => {
@@ -28,10 +33,17 @@ class Krimi {
         return this.stabilizationEnergy > this.chaosEnergy;
     }
 
-    makeDecision = () => {
+    makeDecision = (immediateSurroundings:Array<number>) => {
         /** Based on awareness about it's immediate surroundings, 
          *  and itself, Krimi chooses an action to perform. */
-        // TO DO ...
+        let awareness: Array<number> =  immediateSurroundings;
+        let decision: Array<number>;
+        awareness.push((this.chaosEnergy-this.stabilizationEnergy)/this.chaosEnergy);
+        awareness.push(this.age);
+        decision = roundArray(this.genome.forward(awareness), 0);
+        const isEat = decision[0] <= 0 ? 0 : 1; // -1/0 => Eat => 0, 1 => Move => 1 
+        decision = [isEat, isEat*decision[1], isEat*decision[2]];
+        return decision;
     }
 }
 

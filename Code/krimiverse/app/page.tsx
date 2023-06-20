@@ -3,46 +3,70 @@
 import { useState, useEffect } from "react";
 import WorldCanvas from "@/components/WorldCanvas"
 import Food from "@/models/Food";
+import Krimi from "@/models/Krimi";
 import WorldContent from "@/models/WorldContent";
+import { getRandom2dIndices } from "@/utils/Random";
+import { makeNew2DArray } from "@/utils/Creation";
 
 // Constants.
 const gridSize = 20;
 const chaosEnergy = 1.0;
 const foodEnergy = 0.05*chaosEnergy;
- 
-// Functions.
-const getRandomFromRange = (min:number, max:number) => {
-  /** Returns a random number in given range.
-   *  @param min: Inclusive minimum value of range.
-   *  @param max: Exclusive maximum value of range.
-   *  @return: A random integer from within given range. */
-	return Math.floor(Math.random() * (max - min)) + min;
-}
+const foodPercent = 1.0;
+const krimiPercent = 0.01;
 
-const getRandomWorldPositions = (pc:number) => {
-  /** Get random indices from world array. 
-   *  @param pc: Percent of world array in range [0.0, 1.0] to get indices for.
-   *  @return: List of n pairs corresponding to random position in the world array. */
-  const n = pc*gridSize*gridSize; // No. of indices to retrieve.
-  let indices = [];
-  for (let i = 0; i < n; i++) indices.push([getRandomFromRange(0, gridSize), getRandomFromRange(0, gridSize)]);
-  return indices;
+// Private functions.
+const getNextId = (ids:Array<number>) => {
+  /** Returns next free id in given list. 
+   *  @param ids: Array to search in.
+   *  @return Next free id in ascending order. */
+  ids.sort((a,b)=>a-b); //3, 6, 8
+  if (ids.length == 0) return 0;
+  let nextId = 0;
+  ids.forEach((id) => {
+    if (nextId < id) return nextId;
+    nextId += 1;
+  });
+  return nextId;
 }
 
 const Home = () => {
   
   // States.
-  const [world, setWorld] = useState(Array(gridSize).fill(Array(gridSize).fill(new WorldContent())));
+  const [world, setWorld] = useState(makeNew2DArray(gridSize, gridSize, null));
+  const [food, setFood] = useState({});
+  const [krimi, setKrimi] = useState({});
 
-  // Functions.
+  // Public functions.
   const initializeWorld = () => {
     /** Initializes world with some food and Krimi. */
-    let world = Array(gridSize).fill(Array(gridSize).fill(new WorldContent()));
-    const foodPositions = getRandomWorldPositions(1.0);
+    let W = world;
+    let F:{[id:string]:Array<number>} = food;
+    let K:{[id:string]:Array<number>} = krimi;
+    
+    const foodPositions = getRandom2dIndices(gridSize, gridSize, foodPercent);
     foodPositions.forEach((xy) => {
-      world[xy[0]][xy[1]].food = new Food(foodEnergy);
+      const v = W[xy[0]][xy[1]];
+      const foodId = getNextId(Object.keys(food).map(parseInt));
+      const foodParticle = new Food(foodId, foodEnergy);
+      if (!v) W[xy[0]][xy[1]] = new WorldContent(foodParticle, null);
+      else W[xy[0]][xy[1]].food = foodParticle;
+      F[String(foodId)] = xy;
     });
-    setWorld(world);
+    
+    const krimiPositions = getRandom2dIndices(gridSize, gridSize, krimiPercent);
+    krimiPositions.forEach((xy) => {
+      const v = W[xy[0]][xy[1]];
+      const krimiId = getNextId(Object.keys(krimi).map(parseInt));
+      const krimiParticle = new Krimi(krimiId, chaosEnergy);
+      if (!v) W[xy[0]][xy[1]] = new WorldContent(null, krimiParticle);
+      else W[xy[0]][xy[1]].krimi = krimiParticle;
+      K[String(krimiId)] = xy;
+    });
+
+    setWorld(W);
+    setFood(F)
+    setKrimi(K);
   }
 
   // Use Effect.
