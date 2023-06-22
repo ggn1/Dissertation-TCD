@@ -1,6 +1,10 @@
 import * as tf from '@tensorflow/tfjs';
 import { getRandomArray, getRandomInRange, getRandom2dIndices } from "@/utils/Random";
 
+const inputLength = 11;
+const outputLength: number = 3;
+const activation = tf.tanh;
+
 class NeuralNetwork {
     // y = f(xW + b)
 
@@ -9,24 +13,19 @@ class NeuralNetwork {
     // Biases = b = 1x3
     // Output = y = 1x3
 
-    private inputLength: number = 11;
-    private outputLength: number = 3;
-    private activation = tf.tanh;
     weights: tf.Tensor2D;
     biases: tf.Tensor2D;
 
     constructor(weights:tf.Tensor2D|null=null, biases:tf.Tensor2D|null=null) {
-        if (weights) {
-            this.weights = weights;
-        } else {
+        if (weights) this.weights = weights;
+        else {
             let W = []
-            for (let i=0; i<this.inputLength; i++) W.push(getRandomArray(this.outputLength));
+            for (let i=0; i<inputLength; i++) W.push(getRandomArray(outputLength));
             this.weights = tf.tensor2d(W, [11,3]);
         }
-        if (biases) {
-            this.biases = biases;
-        } else {
-            const b = [getRandomArray(this.outputLength)];
+        if (biases) this.biases = biases;
+        else {
+            const b = [getRandomArray(outputLength)];
             this.biases = tf.tensor2d(b, [1,3]);
         }
     }
@@ -35,9 +34,9 @@ class NeuralNetwork {
         /** Computes y = f(xW + b). 
          *  @param x: Array of shape (1x11).
          *  @return y: Array of shape (1x3). */
-        if (x.length !== 11) throw Error(`Input must have length ${this.inputLength}.`);
+        if (x.length !== 11) throw Error(`Input must have length ${inputLength}.`);
         const input:tf.Tensor2D = tf.tensor2d([x])
-        const output:tf.Tensor = this.activation(input.matMul(this.weights).add(this.biases));
+        const output:tf.Tensor = activation(input.matMul(this.weights).add(this.biases));
         const y:any = output.arraySync(); // 1x3
         return y[0];
     }

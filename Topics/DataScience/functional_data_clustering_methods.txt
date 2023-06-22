@@ -1,7 +1,9 @@
 Functional Data Clustering Methods
 ==================================
 
-A functional datum is not a single observation but rather a set of measurements along a continuum that, taken together, are to be regarded as a single entity. Functional data come in many forms, but their deﬁning quality is that they consist of functions – often, but not always, curves. For example, in a study of children with attention deﬁcit hyperactivity disorder, many observations were taken for each child, and a functional datum is the distributional rule (i.e., density function) estimated from the observations from one child. By estimating these density functions, we have constructed a set of functional data, one functional datum for one child. Other types of functional data include sets, images, and curves traced out on a surface or in space.
+A functional datum is not a single observation but rather a set of measurements along a continuum that, taken together, are to be regarded as a single entity. Functional data come in many forms, but their deﬁning quality is that they consist of functions – often, but not always, curves. 
+
+For example, in a study of children with attention deﬁcit hyperactivity disorder, many observations were taken for each child, and a functional datum is the distributional rule (i.e., density function) estimated from the observations from one child. By estimating these density functions, we have constructed a set of functional data, one functional datum for one child. Other types of functional data include sets, images, and curves traced out on a surface or in space.
 
 Clustering is a machine-learning technique that involves automatically discovering natural groupings in data. For functional data, clustering aims at finding representative curves corresponding to different forms of variation. For example, height measurements of children through childhood are functional data, and by partitioning the growth curves into different groups, we discern different growth patterns.
 

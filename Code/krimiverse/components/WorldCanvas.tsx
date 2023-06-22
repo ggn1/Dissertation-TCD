@@ -17,12 +17,8 @@ const WorldCanvas = ({W}:{W:Array<Array<WorldContent>>}) => {
     // Functions.
     const sketch: Sketch = (p5) => {
         /** Creates and updates canvas which is the World of Krimi. */
-        
         p5.setup = () => {
             p5.createCanvas(gridUnit*gridSize, gridUnit*gridSize);
-        }
-
-        p5.draw = () => {
             let v = new WorldContent();
             for (let i=0; i<gridSize; i++) {
                 for (let j=0; j<gridSize; j++) {
@@ -46,7 +42,7 @@ const WorldCanvas = ({W}:{W:Array<Array<WorldContent>>}) => {
                     }
                 }
             }
-        };
+        }
     }
 
     const updateGridUnit = () => {

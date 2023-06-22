@@ -1,5 +1,5 @@
 class Food {
-    private energy:number;
+    energy:number;
     id:number;
     constructor (id:number, energy:number) {
         this.energy = energy;
