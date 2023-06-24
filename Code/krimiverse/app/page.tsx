@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import WorldCanvas from "@/components/WorldCanvas"
 import Food from "@/models/Food";
 import Krimi from "@/models/Krimi";
@@ -39,18 +39,22 @@ const createEmptyWorld = () => {
         for (let j=0; j<gridSize; j++) row.push(new WorldContent(null, null));
         w.push(row);
     }
-    const f:{[id:string]:Array<number>} = {}; // Object mapping food ids to xy positions.
-    const k:{[id:string]:Array<number>} = {}; // Object mapping Krimi ids to xy positions.
-    return {world:w, food:f, krimi:k};
+    return w;
 }
+
+let food:{[id:string]:Array<number>} = {};
+let krimi:{[id:string]:Array<number>} = {};
 
 const Home = () => {
     
     // States.
     
     const [world, setWorld]:[world:Array<Array<WorldContent>>, setWorld:Function] = useState([[]]);
-    const [food, setFood]:[food:{[id:string]:Array<number>}, setFood:Function] = useState({});
-    const [krimi, setKrimi]:[krimi:{[id:string]:Array<number>}, setKrimi:Function] = useState({});
+    const [worldKey, setWorldKey]:[worldKey:number, setWorldKey:Function] = useState(0);
+    const [worldStarted, setWorldStarted]:[worldStarted:boolean, setWorldStarted:Function] = useState(false);
+
+    // References.
+    // const worldCanvasRef = useRef(null);
 
     // Public functions.
     
@@ -81,26 +85,27 @@ const Home = () => {
         return imSur;
     }
 
-    const reflectActionConsequence = (curWorld:{world:Array<Array<WorldContent>>, food:{[id:string]:Array<number>}, krimi:{[id:string]:Array<number>}}, id:string, action:{name:string, params:Array<any>}) => {
+    const reflectActionConsequence = (curWorld:Array<Array<WorldContent>>, id:string, action:{name:string, params:Array<any>}) => {
         /** Update world to reflect consequences of actions of a given Krimi. 
-         *  @param curWorld: Current world positions, food, and Krimi.
+         *  @param curWorld: Current world contents.
          *  @param id: Id of Krimi that initializes the action.
          *  @param action: Action carried out by the Krimi.
         */
-        // console.log("Krimi", id, " =", action.name);
-        const krimiPos:Array<number> = curWorld.food[id];
+        const krimiPos:Array<number> = krimi[id];
+        console.log(`Krimi id = ${id}, xy = ${krimiPos} => ${action.name}`);
         if (action.name === "eat") {
-            const worldContent:WorldContent = curWorld.world[krimiPos[0]][krimiPos[1]];
-            if (worldContent && worldContent.food) {
-                delete curWorld.food[String(worldContent.food.id)];
-                curWorld.world[krimiPos[0]][krimiPos[1]].food = null;
+            const content:WorldContent = curWorld[krimiPos[0]][krimiPos[1]];
+            if (content.food) {
+                console.log(`EATING ... Food id = ${content.food.id}, Food xy = ${food[content.food.id]}`);
+                curWorld[krimiPos[0]][krimiPos[1]].food = null;
             }
         } else if (action.name === "move") {
-            const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
-            if (curWorld.world[newKrimiPos[0]] !== undefined && curWorld.world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !curWorld.world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
-                curWorld.world[newKrimiPos[0]][newKrimiPos[1]].krimi = curWorld.world[krimiPos[0]][krimiPos[1]].krimi;
-                curWorld.world[krimiPos[0]][krimiPos[1]].krimi = null;
-            }
+            // const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
+            // if (curWorld[newKrimiPos[0]] !== undefined && curWorld[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !curWorld[newKrimiPos[0]][newKrimiPos[1]].krimi) {
+            //     curWorld[newKrimiPos[0]][newKrimiPos[1]].krimi = curWorld[krimiPos[0]][krimiPos[1]].krimi;
+            //     curWorld[krimiPos[0]][krimiPos[1]].krimi = null;
+            //     krimi[id] = newKrimiPos;
+            // }
         } 
         else if (action.name === "reproduce") {
           // TO DO ...
@@ -115,36 +120,35 @@ const Home = () => {
         
         const foodPositions = getRandom2dIndices(gridSize, gridSize, foodPercent);
         let foodId:string;
+        let foodIdList:Array<string> = [];
         foodPositions.forEach((xy:Array<number>) => {
-            foodId = getNextId(Object.keys(newWorld.food).map(parseInt)).toString(); 
-            newWorld.world[xy[0]][xy[1]].food = new Food(foodId, foodEnergy);;
-            newWorld.food[foodId] = xy;
+            foodId = getNextId(foodIdList.map(parseInt)).toString(); 
+            newWorld[xy[0]][xy[1]].food = new Food(foodId, foodEnergy);
+            foodIdList.push(foodId);
         });
         
         const krimiPositions = getRandom2dIndices(gridSize, gridSize, krimiPercent);
         let krimiId:string;
+        let krimiIdList:Array<string> = [];
         krimiPositions.forEach((xy:Array<number>) => {
-            krimiId = getNextId(Object.keys(krimi).map(parseInt)).toString();
-            newWorld.world[xy[0]][xy[1]].krimi = new Krimi(krimiId, chaosEnergy, getImSur);;
-            newWorld.krimi[krimiId] = xy;
+            krimiId = getNextId(krimiIdList.map(parseInt)).toString();
+            newWorld[xy[0]][xy[1]].krimi = new Krimi(krimiId, chaosEnergy, getImSur);
+            krimiIdList.push(krimiId);
         });
 
-        setFood(newWorld.food);
-        setKrimi(newWorld.krimi);
-        setWorld(newWorld.world);
+        setWorld(newWorld);
     }
 
     const worldTimeStep = () => {
         /** Events that happen during a time step. */
         let k:Krimi|null;
-        let curWorld = {world:JSON.parse(JSON.stringify(world)), food:JSON.parse(JSON.stringify(food)), krimi:JSON.parse(JSON.stringify(krimi))};
-        for(const xy of Object.values(krimi)) {
-            k = world[xy[0]][xy[1]].krimi;
+        let curWorld = world;
+        console.log(krimi);
+        for(const xy of Object.values(krimi)) { // Get action of each Krimi and reflect its consequences in the world.
+            k = curWorld[xy[0]][xy[1]].krimi;
             if (k) curWorld = reflectActionConsequence(curWorld, k.id, k.takeAction());
         }
-        setFood(curWorld.food);
-        setKrimi(curWorld.krimi);
-        setWorld(curWorld.world);
+        setWorld(curWorld);
     }
 
     const startWorld = () => {
@@ -153,15 +157,37 @@ const Home = () => {
         worldTimeStep();
     }
 
+    const updatePositionMappings = () => {
+        /** Updates food and Krimi position mappings. */
+        let content:WorldContent;
+        food = {};
+        krimi = {};
+        for (let i=0; i<world.length; i++) {
+            for (let j=0; j<world[0].length; j++) {
+                content = world[i][j];
+                if (content.food) food[content.food.id] = [i,j];
+                if (content.krimi) krimi[content.krimi.id] = [i,j];
+            }
+        }
+    }
+
     // Use Effect.
     useEffect(() => {
         initializeWorld();
-        // startWorld();
     }, []);
+
+    useEffect(() => {
+        updatePositionMappings();
+        if (!worldStarted && world.length !== 1) {
+            startWorld();
+            setWorldStarted(true);
+        }
+        setWorldKey((prevVal:number) => 1-prevVal);
+    }, [world]);
 
     return (
         <div className="grid justify-items-center w-full">
-            <WorldCanvas key={`${world.length}x${world[0].length}`} world={world} />
+            <WorldCanvas key={worldKey} world={world} />
         </div>
     )
 }

@@ -77,8 +77,6 @@ class Krimi {
 
         // Still alive?
         // TO DO ...
-
-        let otherKrimi: Array<Function> = [];
         let emptyNearby: boolean = false;
         let action: {name:string, params:Array<any>} = {name:"", params:[]};
 

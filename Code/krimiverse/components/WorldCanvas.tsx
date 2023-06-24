@@ -2,7 +2,7 @@
 import WorldContent from "@/models/WorldContent";
 import { useState, useEffect, useRef } from "react";
 
-const Dummy = ({world}:{world:Array<Array<WorldContent>>}) => {
+const WorldCanvas = ({world}:{world:Array<Array<WorldContent>>}) => {
 
     const [numGridUnits, setNumGridUnits]:[gridUnitSize:number, setGridUnitSize:Function] = useState(world.length);
     const [gridUnitSize, setGridUnitSize]:[gridUnitSize:number, setGridUnitSize:Function] = useState(1);
@@ -52,22 +52,22 @@ const Dummy = ({world}:{world:Array<Array<WorldContent>>}) => {
         contextRef.current.closePath();
     }
 
-    const setUpGrid = () => {
+    const drawGrid = () => {
         /** Set up grid on the canvas. */
         // console.log("world =", world);
         // console.log("gridUnitSize =", gridUnitSize, "& numGridUnits =", numGridUnits);
-
+        contextRef.current = canvasRef.current.getContext('2d');
+        // Clear canvas.
+        contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         let content:WorldContent;
         for (let i=0; i<world.length; i++) {
             for (let j=0; j<world[0].length; j++) {
                 // Get WorldContent at world position.
                 content = world[i][j]; 
-                
                 // Draw a gray rectangle for a world position without food,
                 // or an orange one for a world position with food.
                 if (content.food) drawRect(gridUnitSize*i, gridUnitSize*j, gridUnitSize, gridUnitSize, "#fcb160");
-                else drawRect(gridUnitSize*i, gridUnitSize*j, gridUnitSize, gridUnitSize, "#d6d6d6");
-
+                else drawRect(gridUnitSize*i, gridUnitSize*j, gridUnitSize, gridUnitSize, "#d8d8d8");
                 // Draw a green circle to indicate Krimi in the world.
                 if (content.krimi) drawCircle(gridUnitSize*i+(gridUnitSize/2), gridUnitSize*j+(gridUnitSize/2), (gridUnitSize/2), "#00ff00");
             }
@@ -76,13 +76,12 @@ const Dummy = ({world}:{world:Array<Array<WorldContent>>}) => {
 
     // Use Effect.
     useEffect(() => {
-        contextRef.current = canvasRef.current.getContext('2d');
         updateGridUnitSize();
         window.addEventListener('resize', updateGridUnitSize);
     }, []);
 
     useEffect(() => {
-        setUpGrid();
+        drawGrid();
     }, [gridUnitSize])
 
     return (
@@ -90,4 +89,4 @@ const Dummy = ({world}:{world:Array<Array<WorldContent>>}) => {
     )
 }
 
-export default Dummy
+export default WorldCanvas
