@@ -8,7 +8,8 @@ const makeNew2DArray = (nRows:number, nCols:number, fill:any=null) => {
     for(let i=0; i<nRows; i++) {
         let row = []
         for(let j=0; j<nCols; j++) {
-            row.push(fill);
+            if (fill instanceof Object) row.push(new fill());
+            else row.push(fill);
         }
         arr.push(row);
     }

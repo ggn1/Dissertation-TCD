@@ -1,9 +1,9 @@
 class Food {
+    id:string;
     energy:number;
-    id:number;
-    constructor (id:number, energy:number) {
-        this.energy = energy;
+    constructor (id:string, energy:number) {
         this.id = id;
+        this.energy = energy;
     }
 }
 

@@ -1,6 +1,7 @@
 import NeuralNetwork from "@/models/NeuralNetwork";
 import { roundArray } from "@/utils/Math";
 import Food from "./Food";
+import { avg2dArray } from "@/utils/Math";
 
 class Krimi {
     private age: number;
@@ -58,13 +59,16 @@ class Krimi {
         /** Exchanges genes with given Krimi. *
          *  @param id: Id of the Krimi requesting gene transfer.
          *  @param genome: Genome of the Krimi requesting gene transfer.
-         *  @param genomeUpdated: Updated genome successful gene transfer. 
-         * Note: Here gene transfer => averaging weights and biases of genomes of
-         *       both Krimi involved. */
-        this.genome.weights = this.genome.weights.add(genome.weights).div(2); // Average weights.
-        this.genome.biases = this.genome.biases.add(genome.biases).div(2); // Average biases.
+         *  @param genomeUpdated: Updated weights and biases upon successful gene transfer. 
+         *  Note: Here gene transfer => averaging weights and biases of genomes of
+         *        both Krimi involved. */
+        this.genome.weights = avg2dArray(this.genome.weights, genome.weights); // Average weights.
+        this.genome.biases = avg2dArray(this.genome.biases, genome.biases); // Average biases.
         this.recentMates[id] = 3;
-        return structuredClone(this.genome);
+        return {
+            'weights': JSON.parse(JSON.stringify(this.genome.weights)),
+            'biases': JSON.parse(JSON.stringify(this.genome.biases))
+        }
     }
 
     takeAction = () => {
@@ -92,22 +96,25 @@ class Krimi {
                 awareness.push(stimulus.getEnergyBalance());
                 // ACTION: GENE TRANSFER
                 if (!Object.keys(this.recentMates).includes(String(stimulus.id))) {
-                    this.genome = stimulus.geneTransfer(this.id, this.genome);
+                    let genomeUpdated = stimulus.geneTransfer(this.id, this.genome);
+                    this.genome.weights = genomeUpdated.weights;
+                    this.genome.biases = genomeUpdated.biases;
                     this.recentMates[stimulus.id] = 3;
                 }
                 action.name = 'gene-transfer';
             } else awareness.push(0.0); // stimulus = self.
         });
-        awareness.push(this.getEnergyBalance());
-        awareness.push(this.age);
-
+    
+        
         // ACTION: REPRODUCE
         // TO DO ...
 
         // Take actions out of free will (eat / move) based on awareness gained
         // if automatic actions (gene-transfer / reproduce) have not yet been performed.
-        let decision: Array<number>;
-        if (action.name != "") { // Automatic action has already been performed.
+        if (action.name == "") { // Automatic action has not already been performed.
+            let decision: Array<number>;
+            awareness.push(this.getEnergyBalance());
+            awareness.push(this.age);
             decision = roundArray(this.genome.forward(awareness), 0);
             // ACTION: EAT
             if (decision[0] <= 0) {

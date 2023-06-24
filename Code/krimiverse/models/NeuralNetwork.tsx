@@ -13,20 +13,20 @@ class NeuralNetwork {
     // Biases = b = 1x3
     // Output = y = 1x3
 
-    weights: tf.Tensor2D;
-    biases: tf.Tensor2D;
+    weights: Array<Array<number>>;
+    biases: Array<Array<number>>;
 
-    constructor(weights:tf.Tensor2D|null=null, biases:tf.Tensor2D|null=null) {
+    constructor(weights:Array<Array<number>>|null=null, biases:Array<Array<number>>|null=null) {
         if (weights) this.weights = weights;
         else {
             let W = []
             for (let i=0; i<inputLength; i++) W.push(getRandomArray(outputLength));
-            this.weights = tf.tensor2d(W, [11,3]);
+            this.weights = W;
         }
         if (biases) this.biases = biases;
         else {
             const b = [getRandomArray(outputLength)];
-            this.biases = tf.tensor2d(b, [1,3]);
+            this.biases = b;
         }
     }
 
@@ -35,8 +35,10 @@ class NeuralNetwork {
          *  @param x: Array of shape (1x11).
          *  @return y: Array of shape (1x3). */
         if (x.length !== 11) throw Error(`Input must have length ${inputLength}.`);
+        const w = tf.tensor2d(this.weights);
+        const b = tf.tensor2d(this.biases);
         const input:tf.Tensor2D = tf.tensor2d([x])
-        const output:tf.Tensor = activation(input.matMul(this.weights).add(this.biases));
+        const output:tf.Tensor = activation(input.matMul(w).add(b));
         const y:any = output.arraySync(); // 1x3
         return y[0];
     }
@@ -46,16 +48,16 @@ class NeuralNetwork {
          *  @param pc: Percent of indices to update. */
 
         // Update biases.
-        let b = this.biases.arraySync();
+        let b = this.biases;
         let biasIndices = getRandom2dIndices(b.length, b[0].length, pc);
         biasIndices.forEach((xy) => b[xy[0]][xy[1]] = getRandomInRange(0.0, 1.1, 1));
-        this.biases = tf.tensor2d(b);
+        this.biases = b;
 
         // Update weights.
-        let w = this.weights.arraySync();
+        let w = this.weights;
         let weightIndices = getRandom2dIndices(w.length, w[0].length, pc);
         weightIndices.forEach((xy) => w[xy[0]][xy[1]] = getRandomInRange(0.0, 1.1, 1));
-        this.weights = tf.tensor2d(w);
+        this.weights = w;
     }
 }
 
