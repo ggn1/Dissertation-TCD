@@ -45,7 +45,7 @@ class Krimi {
 
     private reproduce = () => {
         /** Reproduce to give rise to 1 new Krimi. */
-        // TO DO ...
+        this.stabilizationEnergy = this.chaosEnergy + (0.2*this.chaosEnergy);
     }
 
     getEnergyBalance = () => {
@@ -74,10 +74,8 @@ class Krimi {
     takeAction = () => {
         /** Based on awareness about it's immediate surroundings, 
          *  and itself, Krimi chooses an action to perform. */
-
-        // Still alive?
-        // TO DO ...
-        let emptyNearby: boolean = false;
+        
+        let emptyNearby:Array<number> = [];
         let action: {name:string, params:Array<any>} = {name:"", params:[]};
 
         // Perceive immediate surroundings and gain awareness.
@@ -85,9 +83,9 @@ class Krimi {
         let awareness: Array<number> = [];
         imSur.forEach((stimulus:any) => {
             if (stimulus === undefined) awareness.push(-0.01); // stimulus = dead end.
-            else if (stimulus === null) { // stimulus = empty space.
+            else if (Array.isArray(stimulus)) { // stimulus = empty space.
                 awareness.push(0.01); 
-                emptyNearby = true;
+                emptyNearby = stimulus;
             } else if (stimulus instanceof Food) { // stimulus = food.
                 awareness.push(stimulus.energy);
             } else if (stimulus instanceof Krimi) { // stimulus = another Krimi.
@@ -103,9 +101,12 @@ class Krimi {
             } else awareness.push(0.0); // stimulus = self.
         });
     
-        
         // ACTION: REPRODUCE
-        // TO DO ...
+        if(((this.stabilizationEnergy - this.chaosEnergy)/this.stabilizationEnergy >= 0.5) && emptyNearby.length === 2) {
+            this.reproduce();
+            action.name = 'reproduce';
+            action.params = emptyNearby;
+        }
 
         // Take actions out of free will (eat / move) based on awareness gained
         // if automatic actions (gene-transfer / reproduce) have not yet been performed.
@@ -123,14 +124,22 @@ class Krimi {
             // ACTION: MOVE
             else {
                 this.move();
-                action.name = 'move'
+                action.name = 'move';
                 action.params = [decision[1], decision[2]];
             }
         }
 
-        // Aging.
-        this.incrementAge();
+        // STILL ALIVE? TO DO ...
+        if (this.chaosEnergy > this.stabilizationEnergy) {
+            action.name = "die";
+        } else {
+            // Aging.
+            this.incrementAge();
+        }
 
+        // AGING ...
+        this.incrementAge();
+        
         return action;
     }
 }

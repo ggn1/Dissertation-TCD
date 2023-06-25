@@ -68,41 +68,11 @@ const Home = () => {
                     if (v.food) imSur.push(v.food); // World position = food.
                     else if (v.krimi && x!==xy[0] && y !==xy[1]) imSur.push(v.krimi); // World position = another krimi.
                     else if (v.krimi) imSur.push("self"); // World position = self.
-                    else imSur.push(null); // World position = empty = null.
+                    else imSur.push([x,y]); // World position = empty = [x and y coordinates of the empty spot].
                 }
             }
         }
         return imSur;
-    }
-
-    const reflectActionConsequence = (id:string, action:{name:string, params:Array<any>}) => {
-        /** Update world to reflect consequences of actions of a given Krimi. 
-         *  @param curWorld: Current world contents.
-         *  @param id: Id of Krimi that initializes the action.
-         *  @param action: Action carried out by the Krimi.
-        */
-        const krimiPos:Array<number> = krimi[id];
-        console.log(`Krimi id = ${id}, xy = ${krimiPos} => ${action.name}`);
-        if (action.name === "eat") {
-            const content:WorldContent = world[krimiPos[0]][krimiPos[1]];
-            if (content.food) {
-                console.log(`\tEATING ... Food id = ${content.food.id}, Food xy = ${food[content.food.id]}`);
-                delete food[content.food.id];
-                world[krimiPos[0]][krimiPos[1]].food = null;
-            }
-        } else if (action.name === "move") {
-            const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
-            if (world[newKrimiPos[0]] !== undefined && world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
-                console.log(`\tMOVING ... Krimi id = ${id}, from ${krimiPos} to ${newKrimiPos}`);
-                world[newKrimiPos[0]][newKrimiPos[1]].krimi = world[krimiPos[0]][krimiPos[1]].krimi;
-                world[krimiPos[0]][krimiPos[1]].krimi = null;
-                krimi[id] = newKrimiPos;
-            }
-        } 
-        else if (action.name === "reproduce") {
-          // TO DO ...
-        } else { // action.name === "gene_transfer"
-        }
     }
 
     const initializeWorld = () => {
@@ -124,7 +94,52 @@ const Home = () => {
             world[xy[0]][xy[1]].krimi = new Krimi(krimiId, chaosEnergy, getImSur);
             krimi[krimiId] = xy;
         });
-        setWorldKey((prevVal:number) => 1-prevVal);
+    }
+
+    const reflectActionConsequence = (id:string, action:{name:string, params:Array<any>}) => {
+        /** Update world to reflect consequences of actions of a given Krimi. 
+         *  @param curWorld: Current world contents.
+         *  @param id: Id of Krimi that initializes the action.
+         *  @param action: Action carried out by the Krimi.
+        */
+        const krimiPos:Array<number> = krimi[id];
+        console.log(`Krimi ${id} at ${krimiPos} => ${action.name}`);
+        if (action.name === "eat") {
+            const content:WorldContent = world[krimiPos[0]][krimiPos[1]];
+            if (content.food) {
+                console.log(`\tEATING ... Food id ${content.food.id} at ${food[content.food.id]}.`);
+                delete food[content.food.id];
+                world[krimiPos[0]][krimiPos[1]].food = null;
+            }
+        } else if (action.name === "move") {
+            const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
+            if (world[newKrimiPos[0]] !== undefined && world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
+                console.log(`\tMOVING ... Krimi ${id} from ${krimiPos} to ${newKrimiPos}.`);
+                world[newKrimiPos[0]][newKrimiPos[1]].krimi = world[krimiPos[0]][krimiPos[1]].krimi;
+                world[krimiPos[0]][krimiPos[1]].krimi = null;
+                krimi[id] = newKrimiPos;
+            }
+        } 
+        else if (action.name === "reproduce") {
+            const childKrimiId:string = getNextId(Object.keys(krimi));
+            world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
+            krimi[childKrimiId] = action.params;
+            console.log(`\tREPRODUCING ... Parent Krimi ${id} at ${krimiPos} spawned child Krimi ${childKrimiId} at ${action.params}.`);
+        } else if (action.name === "gene_transfer"){
+            return;
+        } else { // action.name === "die"
+            console.log(`\tDYING ... Krimi ${id} at ${krimiPos}.`);
+            world[krimiPos[0]][krimiPos[1]].krimi = null;
+            delete krimi[id];
+            if (world[krimiPos[0]][krimiPos[1]].food) {
+                world[krimiPos[0]][krimiPos[1]].food!.energy += foodEnergy;
+            }
+            else {
+                const newFoodId:string = getNextId(Object.keys(food));
+                world[krimiPos[0]][krimiPos[1]].food = new Food(newFoodId, foodEnergy);
+                food[newFoodId] = krimiPos;
+            }
+        }
     }
 
     const worldTimeStep = () => {
@@ -146,6 +161,7 @@ const Home = () => {
     // Use Effect.
     useEffect(() => {
         initializeWorld();
+        setWorldKey((prevVal:number) => 1-prevVal);
     }, []);
 
     useEffect(() => {

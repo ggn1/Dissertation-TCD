@@ -29,7 +29,7 @@ Following are aspects of a Krimi that define it, and possible actions it can per
    * After each time step $t$, $K_{sk}$ reduces by 1% of $K_{ck}$ to keep the Krimi alive.
    * Any action performed at time $t$ costs an additional 1% of $K_{ck}$ worth of $K_{sk}$ energy.
    * Each food particle eaten adds the equivalent of 5% of $K_{ck}$ to $K_{sk}$.
-   * If $K_{sk} > K_{ck}$ by 50%, then the Krimi multiplies to create 1 child Krimi. Both parent and child are left with $K_{sk} > K_{ck}$ by 20%. The parent however has a greater biological clock value than the child who's biological clock shall be set to 0 at birth.
+   * If $K_{sk} > K_{ck}$ by 50%, then the Krimi reproduces to create 1 child Krimi. Both parent and child are left with $K_{sk} > K_{ck}$ by 20%. The parent however has a greater biological clock value than the child who's biological clock shall be set to 0 at birth.
    * With each time step that the Krimi lives for, value of $K_t$ increases by 1.
    * Energy gained from food is reduced by 1% of what a Krimi would normally get for every 10 time units in $K_t$. This models reduction in efficiency over time of the life sustaining system due to aging.
    * After 3 time units from the death of a Krimi (when $K_{sk} < K_{ck}$), it gets converted into ($K_{ck}$ at time of death / 5% of $K_{ck}$ at time of birth) no. of food particles that get created at it's last resting position and surrounding areas.
