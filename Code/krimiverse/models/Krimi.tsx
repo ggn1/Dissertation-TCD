@@ -59,7 +59,7 @@ class Krimi {
         /** Exchanges genes with given Krimi. *
          *  @param id: Id of the Krimi requesting gene transfer.
          *  @param genome: Genome of the Krimi requesting gene transfer.
-         *  @param genomeUpdated: Updated weights and biases upon successful gene transfer. 
+         *  @return: Updated weights and biases upon successful gene transfer. 
          *  Note: Here gene transfer => averaging weights and biases of genomes of
          *        both Krimi involved. */
         this.genome.weights = avg2dArray(this.genome.weights, genome.weights); // Average weights.
@@ -129,16 +129,13 @@ class Krimi {
             }
         }
 
-        // STILL ALIVE? TO DO ...
+        // STILL ALIVE?
         if (this.chaosEnergy > this.stabilizationEnergy) {
             action.name = "die";
         } else {
             // Aging.
             this.incrementAge();
         }
-
-        // AGING ...
-        this.incrementAge();
         
         return action;
     }

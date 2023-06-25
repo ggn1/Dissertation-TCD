@@ -12,7 +12,7 @@ const gridSize = 20;
 const chaosEnergy = 1.0;
 const foodEnergy = 0.05*chaosEnergy;
 const foodPercent = 0.9;
-const krimiPercent = 0.01;
+const krimiPercent = 0.05;
 
 // Private functions.
 
@@ -107,14 +107,14 @@ const Home = () => {
         if (action.name === "eat") {
             const content:WorldContent = world[krimiPos[0]][krimiPos[1]];
             if (content.food) {
-                console.log(`\tEATING ... Food id ${content.food.id} at ${food[content.food.id]}.`);
+                console.log(`\tATE ... food ${content.food.id} at ${food[content.food.id]}.`);
                 delete food[content.food.id];
                 world[krimiPos[0]][krimiPos[1]].food = null;
             }
         } else if (action.name === "move") {
             const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
             if (world[newKrimiPos[0]] !== undefined && world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
-                console.log(`\tMOVING ... Krimi ${id} from ${krimiPos} to ${newKrimiPos}.`);
+                console.log(`\tMOVED ... from ${krimiPos} to ${newKrimiPos}.`);
                 world[newKrimiPos[0]][newKrimiPos[1]].krimi = world[krimiPos[0]][krimiPos[1]].krimi;
                 world[krimiPos[0]][krimiPos[1]].krimi = null;
                 krimi[id] = newKrimiPos;
@@ -124,11 +124,11 @@ const Home = () => {
             const childKrimiId:string = getNextId(Object.keys(krimi));
             world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
             krimi[childKrimiId] = action.params;
-            console.log(`\tREPRODUCING ... Parent Krimi ${id} at ${krimiPos} spawned child Krimi ${childKrimiId} at ${action.params}.`);
+            console.log(`\tREPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
         } else if (action.name === "gene_transfer"){
-            return;
+            console.log(`\tTRANSFERRED GENES ...`);
         } else { // action.name === "die"
-            console.log(`\tDYING ... Krimi ${id} at ${krimiPos}.`);
+            console.log(`\tDIED ...`);
             world[krimiPos[0]][krimiPos[1]].krimi = null;
             delete krimi[id];
             if (world[krimiPos[0]][krimiPos[1]].food) {
@@ -154,8 +154,8 @@ const Home = () => {
 
     const startWorld = () => {
         /** Function that starts the world loop. */
-        // setInterval(worldTimeStep, 1000);
-        setTimeout(worldTimeStep, 1000);
+        setInterval(worldTimeStep, 1000);
+        // setTimeout(worldTimeStep, 1000);
     }
 
     // Use Effect.
