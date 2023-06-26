@@ -1,7 +1,6 @@
 import NeuralNetwork from "@/models/NeuralNetwork";
 import { roundArray } from "@/utils/Math";
 import Food from "./Food";
-import { avg2dArray } from "@/utils/Math";
 
 class Krimi {
     private age: number;
@@ -62,12 +61,37 @@ class Krimi {
          *  @return: Updated weights and biases upon successful gene transfer. 
          *  Note: Here gene transfer => averaging weights and biases of genomes of
          *        both Krimi involved. */
-        this.genome.weights = avg2dArray(this.genome.weights, genome.weights); // Average weights.
-        this.genome.biases = avg2dArray(this.genome.biases, genome.biases); // Average biases.
+        console.log(`Gene transfer between Krimi ${this.id} and Krimi ${id}.`);
+        
+        // Average weights.
+        let weightsAvg = [];
+        let weightsAvgRow = [];
+        for (let i=0; i<genome.weights.length; i++) {
+            weightsAvgRow = [];
+            for (let j=0; j<genome.weights[0].length; j++) {
+                weightsAvgRow.push((this.genome.weights[i][j]+genome.weights[i][j])/2.0);
+            }
+            weightsAvg.push(weightsAvgRow);
+        }
+        
+        // Average biases.
+        let biasesAvg = [];
+        let biasesAvgRow = [];
+        for (let i=0; i<genome.biases.length; i++) {
+            biasesAvgRow = [];
+            for (let j=0; j<genome.biases[0].length; j++) {
+                biasesAvgRow.push((this.genome.biases[i][j]+genome.biases[i][j])/2.0);
+            }
+            biasesAvg.push(biasesAvgRow);
+        }
+        
+        this.genome.weights = weightsAvg; // Average weights.
+        this.genome.biases = biasesAvg; // Average biases.
         this.recentMates[id] = 3;
+        
         return {
-            'weights': JSON.parse(JSON.stringify(this.genome.weights)),
-            'biases': JSON.parse(JSON.stringify(this.genome.biases))
+            'weights': JSON.parse(JSON.stringify(weightsAvg)),
+            'biases': JSON.parse(JSON.stringify(biasesAvg))
         }
     }
 
@@ -93,6 +117,7 @@ class Krimi {
                 // ACTION: GENE TRANSFER
                 if (!Object.keys(this.recentMates).includes(String(stimulus.id))) {
                     let genomeUpdated = stimulus.geneTransfer(this.id, this.genome);
+                    console.log("genomeUpdated =", JSON.stringify(genomeUpdated));
                     this.genome.weights = genomeUpdated.weights;
                     this.genome.biases = genomeUpdated.biases;
                     this.recentMates[stimulus.id] = 3;

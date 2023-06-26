@@ -12,7 +12,7 @@ const gridSize = 16;
 const chaosEnergy = 1.0;
 const foodEnergy = 0.05*chaosEnergy;
 const foodPercent = 0.9;
-const krimiPercent = 0.01;
+const krimiPercent = 0.05;
 
 // Private functions.
 
@@ -46,14 +46,9 @@ const Home = () => {
     
     // States.
     const [worldKey, setWorldKey]:[worldKey:number, setWorldKey:Function] = useState(0);
-    const [worldStarted, setWorldStarted]:[worldStarted:boolean, setWorldStarted:Function] = useState(false);
     const [playPause, setPlayPause]:[playPause:string, setPlayPause:Function] = useState("Play");
 
     // Public functions.
-    const togglePlayPause = () => {
-        /** Toggles between play and pause. */
-        setPlayPause((prevState:string) => (prevState == "Play") ? "Pause" : "Play");
-    }
 
     const getImSur = (id:string) => {
         /** Get information of the immediate surroundings 
@@ -120,7 +115,7 @@ const Home = () => {
         } else if (action.name === "move") {
             const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
             if (world[newKrimiPos[0]] !== undefined && world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
-                console.log(`\tKrimi ${id} at ${krimiPos} MOVED ... from ${krimiPos} to ${newKrimiPos}.`);
+                console.log(`Krimi ${id} at ${krimiPos} MOVED ... from ${krimiPos} to ${newKrimiPos}.`);
                 world[newKrimiPos[0]][newKrimiPos[1]].krimi = world[krimiPos[0]][krimiPos[1]].krimi;
                 world[krimiPos[0]][krimiPos[1]].krimi = null;
                 krimi[id] = newKrimiPos;
@@ -130,7 +125,7 @@ const Home = () => {
             const childKrimiId:string = getNextId(Object.keys(krimi));
             world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
             krimi[childKrimiId] = action.params;
-            console.log(`\tKrimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
+            console.log(`Krimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
         } else if (action.name === "gene_transfer"){
             console.log(`Krimi ${id} at ${krimiPos} TRANSFERRED GENES ...`);
         } else { // action.name === "die"
@@ -177,7 +172,7 @@ const Home = () => {
     return (
         <div className="grid justify-items-center w-full">
             <WorldCanvas key={worldKey} world={world} />
-            <button className="my-2 text-xl text-black hover:text-violet-500 font-extrabold" onClick={togglePlayPause}>{playPause}</button>
+            <button className="my-2 text-xl text-black hover:text-violet-500 font-extrabold" onClick={() => setPlayPause((prevState:string) => (prevState == "Play") ? "Pause" : "Play")}>{playPause}</button>
         </div>
     )
 }
