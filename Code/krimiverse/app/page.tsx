@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import WorldCanvas from "@/components/WorldCanvas"
 import Food from "@/models/Food";
 import Krimi from "@/models/Krimi";
@@ -126,8 +126,8 @@ const Home = () => {
             world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
             krimi[childKrimiId] = action.params;
             console.log(`Krimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
-        } else if (action.name === "gene_transfer"){
-            console.log(`Krimi ${id} at ${krimiPos} TRANSFERRED GENES ...`);
+        } else if (action.name === "gene-transfer"){
+            console.log(`Krimi ${id} at ${krimiPos} TRANSFERRED GENES with Krimi ${action.params[0]} at ${krimi[action.params[0]]}...`);
         } else { // action.name === "die"
             console.log(`Krimi ${id} at ${krimiPos} DIED ...`);
             world[krimiPos[0]][krimiPos[1]].krimi = null;

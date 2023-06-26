@@ -27,7 +27,7 @@ class Krimi {
         this.stabilizationEnergy -= (0.01*this.chaosEnergy);
         Object.keys(this.recentMates).forEach((id:any) => {
             this.recentMates[id] -= 1;
-            if (this.recentMates[id] == 0) delete this.recentMates[id];
+            if (this.recentMates[id] <= 0) delete this.recentMates[id];
         });
     }
 
@@ -61,8 +61,6 @@ class Krimi {
          *  @return: Updated weights and biases upon successful gene transfer. 
          *  Note: Here gene transfer => averaging weights and biases of genomes of
          *        both Krimi involved. */
-        console.log(`Gene transfer between Krimi ${this.id} and Krimi ${id}.`);
-        
         // Average weights.
         let weightsAvg = [];
         let weightsAvgRow = [];
@@ -73,7 +71,6 @@ class Krimi {
             }
             weightsAvg.push(weightsAvgRow);
         }
-        
         // Average biases.
         let biasesAvg = [];
         let biasesAvgRow = [];
@@ -84,11 +81,9 @@ class Krimi {
             }
             biasesAvg.push(biasesAvgRow);
         }
-        
-        this.genome.weights = weightsAvg; // Average weights.
-        this.genome.biases = biasesAvg; // Average biases.
+        this.genome.weights = weightsAvg; // Set average weights.
+        this.genome.biases = biasesAvg; // Set average biases.
         this.recentMates[id] = 3;
-        
         return {
             'weights': JSON.parse(JSON.stringify(weightsAvg)),
             'biases': JSON.parse(JSON.stringify(biasesAvg))
@@ -117,12 +112,12 @@ class Krimi {
                 // ACTION: GENE TRANSFER
                 if (!Object.keys(this.recentMates).includes(String(stimulus.id))) {
                     let genomeUpdated = stimulus.geneTransfer(this.id, this.genome);
-                    console.log("genomeUpdated =", JSON.stringify(genomeUpdated));
                     this.genome.weights = genomeUpdated.weights;
                     this.genome.biases = genomeUpdated.biases;
                     this.recentMates[stimulus.id] = 3;
+                    action.name = 'gene-transfer';
+                    action.params = [stimulus.id];
                 }
-                action.name = 'gene-transfer';
             } else awareness.push(0.0); // stimulus = self.
         });
     
