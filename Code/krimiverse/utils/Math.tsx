@@ -24,15 +24,16 @@ const avg2dArray = (arr1:Array<Array<number>>, arr2:Array<Array<number>>) => {
      *  @return arrAvg: Array = average of arr1 and arr2. */
     let arrAvg:Array<Array<number>> = [];
     let row:Array<number>;
+    let avg:number;
     for (let i=0; i<arr1.length; i++) {
         row = [];
         for (let j=1; j<arr1.length; j++) {
-            row.push((arr1[i][j]+arr2[i][j])/2);
+            avg = (arr1[i][j]+arr2[i][j])/2;
+            row.push(avg);
         }
         arrAvg.push(row);
     }
     return arrAvg;
-
 }
 
 export {roundNumber, roundArray, avg2dArray}

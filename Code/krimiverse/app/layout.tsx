@@ -12,7 +12,7 @@ const RootLayout = ({children}:{children:any}) => {
   return (
     <html lang="en">
         <body>
-            <main className='app font-mono'>
+            <main className='app'>
               <Nav/>
               {children}
             </main>

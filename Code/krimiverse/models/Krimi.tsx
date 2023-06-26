@@ -55,7 +55,7 @@ class Krimi {
         return (this.stabilizationEnergy-this.chaosEnergy)/this.chaosEnergy;
      }
 
-    geneTransfer = (id:string, genome:NeuralNetwork) => {
+    geneTransfer = (id:string, genome:NeuralNetwork) => { // BUG!
         /** Exchanges genes with given Krimi. *
          *  @param id: Id of the Krimi requesting gene transfer.
          *  @param genome: Genome of the Krimi requesting gene transfer.

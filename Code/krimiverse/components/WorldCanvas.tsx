@@ -12,8 +12,8 @@ const WorldCanvas = ({world}:{world:Array<Array<WorldContent>>}) => {
 
     const updateGridUnitSize = () => {
         /** Updates canvas dimension states as per latest window dimensions. */
-        let ch = window.innerHeight-120;
-        let cw = window.innerWidth-80;
+        let ch = window.innerHeight-150;
+        let cw = window.innerWidth-100;
         let smaller = ch < cw ? ch : cw;
         setGridUnitSize(Math.floor(smaller/numGridUnits));
     }

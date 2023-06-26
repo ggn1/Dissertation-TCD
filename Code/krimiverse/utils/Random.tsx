@@ -4,7 +4,7 @@ const getRandomInRange = (min:number, max:number, decimals:number|null=null) => 
      *  @param max: Exclusive maximum value of range.
      *  @param decimals: No. of decimals to round to.
      *  @return: A random integer from within given range. */
-    const num = Math.random() * (max - min) + min;
+    const num = (Math.random() * (max-min)) + min;
     return decimals ? parseFloat(num.toFixed(decimals)) : num;
 }
 

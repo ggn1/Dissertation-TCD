@@ -8,11 +8,11 @@ import WorldContent from "@/models/WorldContent";
 import { getRandom2dIndices } from "@/utils/Random";
 
 // Constants.
-const gridSize = 20;
+const gridSize = 16;
 const chaosEnergy = 1.0;
 const foodEnergy = 0.05*chaosEnergy;
 const foodPercent = 0.9;
-const krimiPercent = 0.05;
+const krimiPercent = 0.01;
 
 // Private functions.
 
@@ -40,14 +40,21 @@ const createEmptyWorld = () => {
 let food:{[id:string]:Array<number>} = {};
 let krimi:{[id:string]:Array<number>} = {};
 let world:Array<Array<WorldContent>> = [[]];
+let worldTimestepInterval:any;
 
 const Home = () => {
     
     // States.
     const [worldKey, setWorldKey]:[worldKey:number, setWorldKey:Function] = useState(0);
     const [worldStarted, setWorldStarted]:[worldStarted:boolean, setWorldStarted:Function] = useState(false);
+    const [playPause, setPlayPause]:[playPause:string, setPlayPause:Function] = useState("Play");
 
     // Public functions.
+    const togglePlayPause = () => {
+        /** Toggles between play and pause. */
+        setPlayPause((prevState:string) => (prevState == "Play") ? "Pause" : "Play");
+    }
+
     const getImSur = (id:string) => {
         /** Get information of the immediate surroundings 
          *  of a Krimi of given id.
@@ -103,18 +110,17 @@ const Home = () => {
          *  @param action: Action carried out by the Krimi.
         */
         const krimiPos:Array<number> = krimi[id];
-        console.log(`Krimi ${id} at ${krimiPos} => ${action.name}`);
         if (action.name === "eat") {
             const content:WorldContent = world[krimiPos[0]][krimiPos[1]];
             if (content.food) {
-                console.log(`\tATE ... food ${content.food.id} at ${food[content.food.id]}.`);
+                console.log(`Krimi ${id} at ${krimiPos} ATE ... food ${content.food.id} at ${food[content.food.id]}.`);
                 delete food[content.food.id];
                 world[krimiPos[0]][krimiPos[1]].food = null;
             }
         } else if (action.name === "move") {
             const newKrimiPos = [krimiPos[0]+action.params[0], krimiPos[1]+action.params[1]];
             if (world[newKrimiPos[0]] !== undefined && world[newKrimiPos[0]][newKrimiPos[1]] !== undefined && !world[newKrimiPos[0]][newKrimiPos[1]].krimi) {
-                console.log(`\tMOVED ... from ${krimiPos} to ${newKrimiPos}.`);
+                console.log(`\tKrimi ${id} at ${krimiPos} MOVED ... from ${krimiPos} to ${newKrimiPos}.`);
                 world[newKrimiPos[0]][newKrimiPos[1]].krimi = world[krimiPos[0]][krimiPos[1]].krimi;
                 world[krimiPos[0]][krimiPos[1]].krimi = null;
                 krimi[id] = newKrimiPos;
@@ -124,11 +130,11 @@ const Home = () => {
             const childKrimiId:string = getNextId(Object.keys(krimi));
             world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
             krimi[childKrimiId] = action.params;
-            console.log(`\tREPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
+            console.log(`\tKrimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
         } else if (action.name === "gene_transfer"){
-            console.log(`\tTRANSFERRED GENES ...`);
+            console.log(`Krimi ${id} at ${krimiPos} TRANSFERRED GENES ...`);
         } else { // action.name === "die"
-            console.log(`\tDIED ...`);
+            console.log(`Krimi ${id} at ${krimiPos} DIED ...`);
             world[krimiPos[0]][krimiPos[1]].krimi = null;
             delete krimi[id];
             if (world[krimiPos[0]][krimiPos[1]].food) {
@@ -142,20 +148,20 @@ const Home = () => {
         }
     }
 
-    const worldTimeStep = () => {
-        /** Events that happen during a time step. */
-        let k:Krimi|null;
-        for(const xy of Object.values(krimi)) { // Get action of each Krimi and reflect its consequences in the world.
-            k = world[xy[0]][xy[1]].krimi;
-            if (k) reflectActionConsequence(k.id, k.takeAction());
-        }
-        setWorldKey((prevVal:number) => 1-prevVal);
-    }
-
-    const startWorld = () => {
+    const runWorld = () => {
         /** Function that starts the world loop. */
-        setInterval(worldTimeStep, 1000);
-        // setTimeout(worldTimeStep, 1000);
+        if (playPause == "Pause") {
+            worldTimestepInterval = setInterval(() => { // World time step.
+                let k:Krimi|null;
+                for(const xy of Object.values(krimi)) {
+                    k = world[xy[0]][xy[1]].krimi;
+                    if (k) reflectActionConsequence(k.id, k.takeAction());
+                }
+                setWorldKey((prevVal:number) => 1-prevVal);
+            }, 1000);
+        } else {
+            if (worldTimestepInterval) clearInterval(worldTimestepInterval);
+        }
     }
 
     // Use Effect.
@@ -165,15 +171,13 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        if (!worldStarted && world.length !== 1) {
-            startWorld();
-            setWorldStarted(true);
-        }
-    }, [worldKey]);
+        runWorld();
+    }, [playPause])
 
     return (
         <div className="grid justify-items-center w-full">
             <WorldCanvas key={worldKey} world={world} />
+            <button className="my-2 text-xl text-black hover:text-violet-500 font-extrabold" onClick={togglePlayPause}>{playPause}</button>
         </div>
     )
 }
