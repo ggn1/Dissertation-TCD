@@ -1,4 +1,5 @@
 import pandas as pd
+import inspect
 from colorama import Fore
 from colorama import Back
 from colorama import Style
@@ -66,3 +67,10 @@ def desc_df(df:pd.core.frame.DataFrame):
         print(f'No. of missing values = {df[feature].isna().sum()}')
     print(f"Column Names = {list(df.columns)}")
     display(df.head())
+
+def inspect_function(func):
+    ''' Inspects a function and prints it's name and argument list. '''
+    sig = inspect.signature(func)
+    print(f"\nFUNCTION {func.__name__}(...):")
+    params = list(sig.parameters.keys())
+    for i in range(len(params)): print(f"{i+1}. {sig.parameters[params[i]]}")

@@ -10,9 +10,10 @@ import { getRandom2dIndices } from "@/utils/Random";
 // Constants.
 const gridSize = 16;
 const chaosEnergy = 1.0;
-const foodEnergy = 0.05*chaosEnergy;
+const foodEnergy = 0.8*chaosEnergy;
 const foodPercent = 0.9;
-const krimiPercent = 0.05;
+const krimiPercent = 0.1;
+let timesteps:number = 0;
 
 // Private functions.
 
@@ -49,7 +50,6 @@ const Home = () => {
     const [playPause, setPlayPause]:[playPause:string, setPlayPause:Function] = useState("Play");
 
     // Public functions.
-
     const getImSur = (id:string) => {
         /** Get information of the immediate surroundings 
          *  of a Krimi of given id.
@@ -67,10 +67,14 @@ const Home = () => {
                 if (world[x]===undefined || world[x][y]===undefined) imSur.push(undefined); // World position = dead end.
                 else {
                     v = world[x][y];
-                    if (v.food) imSur.push(v.food); // World position = food.
-                    else if (v.krimi && x!==xy[0] && y !==xy[1]) imSur.push(v.krimi); // World position = another krimi.
-                    else if (v.krimi) imSur.push("self"); // World position = self.
-                    else imSur.push([x,y]); // World position = empty = [x and y coordinates of the empty spot].
+                    if (v.krimi) {
+                        if (v.krimi.id == id) imSur.push("self"); // World position = self.
+                        else imSur.push(v.krimi); // World position = another krimi.
+                    } else if (v.food) {
+                        imSur.push(v.food); // World position = food.
+                    } else {
+                        imSur.push([x,y]); // World position = empty = [x and y coordinates of the empty spot].
+                    }
                 }
             }
         }
@@ -123,9 +127,9 @@ const Home = () => {
         } 
         else if (action.name === "reproduce") {
             const childKrimiId:string = getNextId(Object.keys(krimi));
-            world[action.params[0]][action.params[1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur);
+            world[action.params[0][0]][action.params[0][1]].krimi = new Krimi(childKrimiId, chaosEnergy, getImSur, action.params[1]);
             krimi[childKrimiId] = action.params;
-            console.log(`Krimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params}.`);
+            console.log(`Krimi ${id} at ${krimiPos} REPRODUCED ... and spawned a child Krimi ${childKrimiId} at ${action.params[0]}.`);
         } else if (action.name === "gene-transfer"){
             console.log(`Krimi ${id} at ${krimiPos} TRANSFERRED GENES with Krimi ${action.params[0]} at ${krimi[action.params[0]]}...`);
         } else { // action.name === "die"
@@ -147,15 +151,21 @@ const Home = () => {
         /** Function that starts the world loop. */
         if (playPause == "Pause") {
             worldTimestepInterval = setInterval(() => { // World time step.
+                console.log("TIME STEP =", timesteps);
                 let k:Krimi|null;
                 for(const xy of Object.values(krimi)) {
                     k = world[xy[0]][xy[1]].krimi;
                     if (k) reflectActionConsequence(k.id, k.takeAction());
                 }
                 setWorldKey((prevVal:number) => 1-prevVal);
+                timesteps += 1;
             }, 1000);
-        } else {
+        } else { // (playPause == "Play")
             if (worldTimestepInterval) clearInterval(worldTimestepInterval);
+            // Object.values(krimi).forEach((xy:Array<number>) => {
+            //     const k = world[xy[0]][xy[1]].krimi;
+            //     if (k) console.log(`Krimi ${k.id}: Weights = ${JSON.stringify(k.genome.weights)}, Biases = ${JSON.stringify(k.genome.biases)}.`)
+            // })
         }
     }
 

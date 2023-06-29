@@ -1,24 +1,26 @@
 import NeuralNetwork from "@/models/NeuralNetwork";
 import { roundArray } from "@/utils/Math";
 import Food from "./Food";
+import { getRandom2dIndices, getRandomInRange } from "@/utils/Random";
 
 class Krimi {
     private age: number;
     private chaosEnergy: number;
     private stabilizationEnergy: number;
-    private genome: NeuralNetwork;
+    genome: NeuralNetwork;
     private getImSur: Function;
     private recentMates: {[id:string]:number};
     id:string;
 
-    constructor(id:string, chaosEnergy:number, getImSur:Function) {
+    constructor(id:string, chaosEnergy:number, getImSur:Function, genome:NeuralNetwork|null=null) {
         this.id = id;
         this.chaosEnergy = chaosEnergy;
-        this.stabilizationEnergy = chaosEnergy + (0.2*chaosEnergy);
+        this.stabilizationEnergy = chaosEnergy + (0.1*chaosEnergy);
         this.age = 0;
-        this.genome = new NeuralNetwork();
         this.getImSur = getImSur
         this.recentMates = {};
+        if (genome === null) this.genome = new NeuralNetwork();
+        else this.genome = genome;
     }
 
     private incrementAge = () => {
@@ -43,8 +45,17 @@ class Krimi {
     }
 
     private reproduce = () => {
-        /** Reproduce to give rise to 1 new Krimi. */
+        /** Reproduce to give rise to 1 new Krimi. 
+         *  @return: Genome of child Krimi.
+        */
         this.stabilizationEnergy = this.chaosEnergy + (0.2*this.chaosEnergy);
+        const mutationIndicesWeights = getRandom2dIndices(this.genome.weights.length, this.genome.weights[0].length, 0.2);
+        let weights = JSON.parse(JSON.stringify(this.genome.weights));
+        mutationIndicesWeights.forEach((xy:Array<number>) => weights[xy[0],xy[1]] = getRandomInRange(0,1,0));
+        let biases = JSON.parse(JSON.stringify(this.genome.biases));
+        const mutationIndicesBiases = getRandom2dIndices(this.genome.biases.length, this.genome.biases[0].length, 0.2);
+        mutationIndicesBiases.forEach((xy:Array<number>) => biases[xy[0],xy[1]] = getRandomInRange(0,1,0));
+        return new NeuralNetwork(weights, biases);
     }
 
     getEnergyBalance = () => {
@@ -59,35 +70,23 @@ class Krimi {
          *  @param id: Id of the Krimi requesting gene transfer.
          *  @param genome: Genome of the Krimi requesting gene transfer.
          *  @return: Updated weights and biases upon successful gene transfer. 
-         *  Note: Here gene transfer => averaging weights and biases of genomes of
-         *        both Krimi involved. */
-        // Average weights.
-        let weightsAvg = [];
-        let weightsAvgRow = [];
-        for (let i=0; i<genome.weights.length; i++) {
-            weightsAvgRow = [];
-            for (let j=0; j<genome.weights[0].length; j++) {
-                weightsAvgRow.push((this.genome.weights[i][j]+genome.weights[i][j])/2.0);
-            }
-            weightsAvg.push(weightsAvgRow);
-        }
-        // Average biases.
-        let biasesAvg = [];
-        let biasesAvgRow = [];
-        for (let i=0; i<genome.biases.length; i++) {
-            biasesAvgRow = [];
-            for (let j=0; j<genome.biases[0].length; j++) {
-                biasesAvgRow.push((this.genome.biases[i][j]+genome.biases[i][j])/2.0);
-            }
-            biasesAvg.push(biasesAvgRow);
-        }
-        this.genome.weights = weightsAvg; // Set average weights.
-        this.genome.biases = biasesAvg; // Set average biases.
+         *  Note: Here gene transfer => Exchanging weights and biases at 
+         *        50% of indices in both genomes. */
+        let temp:number;
+        const weightsTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.weights.length, genome.weights[0].length, 0.5);
+        weightsTransferIndices.forEach((xy:Array<number>) => {
+            temp = this.genome.weights[xy[0]][xy[1]];
+            this.genome.weights[xy[0]][xy[1]] = genome.weights[xy[0]][xy[1]];
+            genome.weights[xy[0]][xy[1]] = temp;
+        });
+        const biasesTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.biases.length, genome.biases[0].length, 0.5);
+        biasesTransferIndices.forEach((xy:Array<number>) => {
+            temp = this.genome.biases[xy[0]][xy[1]];
+            this.genome.biases[xy[0]][xy[1]] = genome.biases[xy[0]][xy[1]];
+            genome.biases[xy[0]][xy[1]] = temp;
+        });
         this.recentMates[id] = 3;
-        return {
-            'weights': JSON.parse(JSON.stringify(weightsAvg)),
-            'biases': JSON.parse(JSON.stringify(biasesAvg))
-        }
+        return genome;
     }
 
     takeAction = () => {
@@ -101,31 +100,34 @@ class Krimi {
         const imSur: Array<any> = this.getImSur(this.id); 
         let awareness: Array<number> = [];
         imSur.forEach((stimulus:any) => {
-            if (stimulus === undefined) awareness.push(-0.01); // stimulus = dead end.
-            else if (Array.isArray(stimulus)) { // stimulus = empty space.
-                awareness.push(0.01); 
-                emptyNearby = stimulus;
-            } else if (stimulus instanceof Food) { // stimulus = food.
-                awareness.push(stimulus.energy);
-            } else if (stimulus instanceof Krimi) { // stimulus = another Krimi.
-                awareness.push(stimulus.getEnergyBalance());
+            if (stimulus === undefined) {
+                awareness.push(-0.01); // stimulus = dead end.
+            }
+            else if (stimulus instanceof Krimi) { // stimulus = another Krimi.
+                awareness.push(1 + stimulus.getEnergyBalance());
                 // ACTION: GENE TRANSFER
                 if (!Object.keys(this.recentMates).includes(String(stimulus.id))) {
                     let genomeUpdated = stimulus.geneTransfer(this.id, this.genome);
-                    this.genome.weights = genomeUpdated.weights;
-                    this.genome.biases = genomeUpdated.biases;
+                    this.genome = genomeUpdated;
                     this.recentMates[stimulus.id] = 3;
                     action.name = 'gene-transfer';
                     action.params = [stimulus.id];
                 }
-            } else awareness.push(0.0); // stimulus = self.
+            } else if (Array.isArray(stimulus)) { // stimulus = empty space.
+                awareness.push(0.01); 
+                emptyNearby = stimulus;
+            } else if (stimulus instanceof Food) { // stimulus = food.
+                awareness.push(stimulus.energy);
+            } else  { // stimulus = self.
+                awareness.push(0.0);
+            }
         });
     
         // ACTION: REPRODUCE
-        if(((this.stabilizationEnergy - this.chaosEnergy)/this.stabilizationEnergy >= 0.5) && emptyNearby.length === 2) {
-            this.reproduce();
+        if(((this.stabilizationEnergy - this.chaosEnergy)/this.stabilizationEnergy >= 0.3) && emptyNearby.length === 2) {
+            const childGenome = this.reproduce();
             action.name = 'reproduce';
-            action.params = emptyNearby;
+            action.params = [emptyNearby, childGenome];
         }
 
         // Take actions out of free will (eat / move) based on awareness gained
