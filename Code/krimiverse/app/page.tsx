@@ -85,7 +85,7 @@ const Home = () => {
         /** Initializes world with some food and Krimi. */
         world = createEmptyWorld();
         
-        const foodPositions = getRandom2dIndices(gridSize, gridSize, foodPercent);
+        const foodPositions = getRandom2dIndices(gridSize-1, gridSize-1, foodPercent);
         let foodId:string;
         foodPositions.forEach((xy:Array<number>) => {
             foodId = getNextId(Object.keys(food)); 
@@ -93,7 +93,7 @@ const Home = () => {
             food[foodId] = xy;
         });
         
-        const krimiPositions = getRandom2dIndices(gridSize, gridSize, krimiPercent);
+        const krimiPositions = getRandom2dIndices(gridSize-1, gridSize-1, krimiPercent);
         let krimiId:string;
         krimiPositions.forEach((xy:Array<number>) => {
             krimiId = getNextId(Object.keys(krimi));
@@ -162,6 +162,7 @@ const Home = () => {
             }, 1000);
         } else { // (playPause == "Play")
             if (worldTimestepInterval) clearInterval(worldTimestepInterval);
+            // // Print weight & biases.
             // Object.values(krimi).forEach((xy:Array<number>) => {
             //     const k = world[xy[0]][xy[1]].krimi;
             //     if (k) console.log(`Krimi ${k.id}: Weights = ${JSON.stringify(k.genome.weights)}, Biases = ${JSON.stringify(k.genome.biases)}.`)

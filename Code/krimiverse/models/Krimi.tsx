@@ -1,5 +1,4 @@
 import NeuralNetwork from "@/models/NeuralNetwork";
-import { roundArray } from "@/utils/Math";
 import Food from "./Food";
 import { getRandom2dIndices, getRandomInRange } from "@/utils/Random";
 
@@ -44,17 +43,21 @@ class Krimi {
         this.stabilizationEnergy -= 0.01*this.chaosEnergy;
     }
 
-    private reproduce = () => {
-        /** Reproduce to give rise to 1 new Krimi. 
+    private reproduce = (mutationPc:number=0.3) => {
+        /** Reproduce to give rise to 1 new Krimi.
+         *  @param mutationPc: Percent of child genome to gain mutation.
          *  @return: Genome of child Krimi.
         */
-        this.stabilizationEnergy = this.chaosEnergy + (0.2*this.chaosEnergy);
-        const mutationIndicesWeights = getRandom2dIndices(this.genome.weights.length, this.genome.weights[0].length, 0.2);
+        this.stabilizationEnergy = this.chaosEnergy + (0.1*this.chaosEnergy);
+        
+        const mutationIndicesWeights = getRandom2dIndices(this.genome.weights.length-1, this.genome.weights[0].length-1, mutationPc);
         let weights = JSON.parse(JSON.stringify(this.genome.weights));
         mutationIndicesWeights.forEach((xy:Array<number>) => weights[xy[0],xy[1]] = getRandomInRange(0,1,0));
+        
         let biases = JSON.parse(JSON.stringify(this.genome.biases));
-        const mutationIndicesBiases = getRandom2dIndices(this.genome.biases.length, this.genome.biases[0].length, 0.2);
-        mutationIndicesBiases.forEach((xy:Array<number>) => biases[xy[0],xy[1]] = getRandomInRange(0,1,0));
+        const mutationIndicesBiases = getRandom2dIndices(this.genome.biases.length-1, this.genome.biases[0].length-1, mutationPc);
+        mutationIndicesBiases.forEach((xy:Array<number>) => biases[xy[0],xy[1]] = getRandomInRange(-1,1,0));
+        
         return new NeuralNetwork(weights, biases);
     }
 
@@ -65,21 +68,22 @@ class Krimi {
         return (this.stabilizationEnergy-this.chaosEnergy)/this.chaosEnergy;
      }
 
-    geneTransfer = (id:string, genome:NeuralNetwork) => { // BUG!
+    geneTransfer = (id:string, genome:NeuralNetwork, transferPc:number=0.5) => { // BUG!
         /** Exchanges genes with given Krimi. *
          *  @param id: Id of the Krimi requesting gene transfer.
          *  @param genome: Genome of the Krimi requesting gene transfer.
+         *  @param transferPc: Percent of genome to swap.
          *  @return: Updated weights and biases upon successful gene transfer. 
          *  Note: Here gene transfer => Exchanging weights and biases at 
          *        50% of indices in both genomes. */
         let temp:number;
-        const weightsTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.weights.length, genome.weights[0].length, 0.5);
+        const weightsTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.weights.length-1, genome.weights[0].length-1, transferPc);
         weightsTransferIndices.forEach((xy:Array<number>) => {
             temp = this.genome.weights[xy[0]][xy[1]];
             this.genome.weights[xy[0]][xy[1]] = genome.weights[xy[0]][xy[1]];
             genome.weights[xy[0]][xy[1]] = temp;
         });
-        const biasesTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.biases.length, genome.biases[0].length, 0.5);
+        const biasesTransferIndices:Array<Array<number>> = getRandom2dIndices(genome.biases.length-1, genome.biases[0].length-1, transferPc);
         biasesTransferIndices.forEach((xy:Array<number>) => {
             temp = this.genome.biases[xy[0]][xy[1]];
             this.genome.biases[xy[0]][xy[1]] = genome.biases[xy[0]][xy[1]];
@@ -124,7 +128,7 @@ class Krimi {
         });
     
         // ACTION: REPRODUCE
-        if(((this.stabilizationEnergy - this.chaosEnergy)/this.stabilizationEnergy >= 0.3) && emptyNearby.length === 2) {
+        if(((this.stabilizationEnergy - this.chaosEnergy)/this.stabilizationEnergy >= 0.3) && emptyNearby.length == 2) {
             const childGenome = this.reproduce();
             action.name = 'reproduce';
             action.params = [emptyNearby, childGenome];
@@ -136,7 +140,9 @@ class Krimi {
             let decision: Array<number>;
             awareness.push(this.getEnergyBalance());
             awareness.push(this.age);
-            decision = roundArray(this.genome.forward(awareness), 0);
+            decision = this.genome.forward(awareness);
+            decision = decision.map(Math.round);
+            console.log(decision);
             // ACTION: EAT
             if (decision[0] <= 0) {
                 // awareness[4] => position of self => position of food.

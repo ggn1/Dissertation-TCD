@@ -1,11 +1,11 @@
-const getRandomInRange = (min:number, max:number, decimals:number|null=null) => {
+const getRandomInRange = (min:number=0, max:number=1, decimals:number=1) => {
     /** Returns a random number in given range.
      *  @param min: Inclusive minimum value of range.
-     *  @param max: Exclusive maximum value of range.
+     *  @param max: Inclusive maximum value of range.
      *  @param decimals: No. of decimals to round to.
      *  @return: A random integer from within given range. */
-    const num = (Math.random() * (max-min)) + min;
-    return decimals ? parseFloat(num.toFixed(decimals)) : num;
+    const num = (Math.random() * (max - min)) + min;
+    return parseFloat(num.toFixed(decimals));
 }
 
 const getRandomArray = (len:number, min:number=0.0, max:number=1.0, decimals:number=1) => {
@@ -23,7 +23,7 @@ const getRandom1dIndices = (nItems:number, pc:number) => {
      *  @return: List of n pairs corresponding to random position in the world array. */
     const n = pc*nItems; // No. of indices to retrieve.
     let indices = [];
-    for (let i = 0; i < n; i++) indices.push(Math.floor(getRandomInRange(0, nItems)));
+    for (let i = 0; i < n; i++) indices.push(getRandomInRange(0, nItems, 0));
     return indices;
 }
 
@@ -39,7 +39,7 @@ const getRandom2dIndices = (nRows:number, nCols:number, pc:number) => {
     let indicesStr:Array<string> = [];
     let idx = [0,0];
     for (let i = 0; i < n; i++) {
-        idx = [Math.floor(getRandomInRange(0, nRows)), Math.floor(getRandomInRange(0, nCols))];
+        idx = [getRandomInRange(0, nRows, 0), getRandomInRange(0, nCols, 0)];
         while (indicesStr.includes(String(idx))) idx = [
             Math.floor(getRandomInRange(0, nRows)), 
             Math.floor(getRandomInRange(0, nCols))

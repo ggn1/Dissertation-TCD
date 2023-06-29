@@ -16,16 +16,16 @@ class NeuralNetwork {
     weights: Array<Array<number>>;
     biases: Array<Array<number>>;
 
-    constructor(weights:Array<Array<number>>|null=null, biases:Array<Array<number>>|null=null) {
-        if (weights) this.weights = weights;
+    constructor(weights:Array<Array<number>>=[], biases:Array<Array<number>>=[]) {
+        if (weights.length > 0) this.weights = weights;
         else {
             let W = []
-            for (let i=0; i<inputLength; i++) W.push(getRandomArray(outputLength));
+            for (let i=0; i<inputLength; i++) W.push(getRandomArray(outputLength, -1, 1, 1));
             this.weights = W;
         }
-        if (biases) this.biases = biases;
+        if (biases.length > 0) this.biases = biases;
         else {
-            const b = [getRandomArray(outputLength)];
+            const b = [getRandomArray(outputLength, -1, 1)];
             this.biases = b;
         }
     }
