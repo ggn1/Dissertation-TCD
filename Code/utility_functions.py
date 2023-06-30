@@ -1,5 +1,6 @@
-import pandas as pd
 import inspect
+import datetime
+import pandas as pd
 from colorama import Fore
 from colorama import Back
 from colorama import Style
@@ -74,3 +75,13 @@ def inspect_function(func):
     print(f"\nFUNCTION {func.__name__}(...):")
     params = list(sig.parameters.keys())
     for i in range(len(params)): print(f"{i+1}. {sig.parameters[params[i]]}")
+
+def get_now():
+    ''' Get's latest dat time. 
+        @return day, month, year, hour, minutes, seconds.
+    '''
+    now = datetime.datetime.now()
+    return {
+        'day': now.day, 'month': now.month, 'year': now.year,
+        'hour': now.hour, 'minute': now.minute, 'second': now.second,
+    }
