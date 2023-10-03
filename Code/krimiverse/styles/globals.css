@@ -1,7 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-canvas {
-    @apply border-2 border-black;
-}
