@@ -1,0 +1,20 @@
+Thesis Outline
+==============
+
+Title:  Exploring the use of microworlds to teach about forest management and climate change.
+
+Abstract:
+
+Climate change and sustainability are VIP.
+
+Education has a key role to play.
+
+Within the field of education technology is obviously very important but educational tools need to be engaging.  An approach which has proved successful in other areas is microworlds (Hoyles and Noss).  To date microworlds are under utilised in Climate change and sustainability education.
+
+An area of concern is forestry.  This research focuses on the design, implementation and evaluation of a microworld to teach adolescents about forest management and climate change. 
+
+Get across concepts not do full simulation.
+
+An ABM approach will be used because…..
+
+The research question: Does using an ABM microworld engage learners and does it change their attitudes to the topic?

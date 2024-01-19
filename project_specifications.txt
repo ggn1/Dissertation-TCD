@@ -1,0 +1,10 @@
+A Microworld to Teach About Climate Change and the Future of Forests
+====================================================================
+
+Microworlds are a type of computer simulation which have proven to be very powerful tools with which to create effective learning experiences. For example, previous final year projects have developed Microworlds for teaching about the spread of Corona Virus and how different Electoral Voting systems work. In the last academic year projects developed Microworlds for teaching about Coastal Erosion, Transport Emissions, Soil and Water Quality and the National Carbon Budget. Some of these projects were jointly supervised by academics from other schools in the faculty.
+
+The target age group for most of these tools has been Transition Year (TY) students (~16) and part of the project involved evaluating the efficacy of the tools with learners taking part in TY workshops on campus. The Soil and Water Quality tool was aimed at Botany undergraduates.
+
+Trees are essential for a sustainable planet. This project will create a microworld which will help learners engage with the issues around climate change and forests. The target audience is Transition Year students and/or Botany undergraduates.
+
+The project is co-supervised by Dr. Silvia Caldararu in Botany.
