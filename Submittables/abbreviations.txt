@@ -1,0 +1,4 @@
+AI = Artificial Intelligence
+ANN = Artificial Neural Networks
+G&Y = Growth And Yield
+ML = Machine Learning
