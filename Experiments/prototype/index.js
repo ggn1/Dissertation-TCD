@@ -1,6 +1,12 @@
-// Global constants.
-const FUNDS_START = 10000;
-const RENDER_STEP_INTERVAL = 1; // In seconds.
+// Global constants. 
+const RANGE_YEARS = [0, 100];
+const RANGE_WATER = [0.0, 310.0];
+const RANGE_TEMPERATURE = [-60.0, 100.0];
+const START_FUNDS = 10000.0;
+const START_WATER = 120.0;
+const START_CO2 = 1000.0;
+const START_TEMPERATURE = 15.0;
+const RENDER_DELAY = 1; // In seconds.
 const TREE_UTILITY = ["energy", "lumber"];
 const LAND_DIM = 20; // No. of rows = no. of columns.
 const MONTH_DAYS = {
@@ -177,7 +183,71 @@ class Land {
 }
 
 class Environment {
-    // TO DO ...
+    #water;
+    #temperature;
+    #co2;
+
+    constructor() {
+        this.#water = Array.from({ length: RANGE_YEARS[1] }, () => {
+            let month_vals = {};
+            for (let k in Object.keys(MONTH_DAYS)) {
+                month_vals[k] = START_WATER;
+            }
+            return month_vals;
+        });
+        this.#temperature = Array.from({ length: RANGE_YEARS[1] }, () => {
+            let month_vals = {};
+            for (let k in Object.keys(MONTH_DAYS)) {
+                month_vals[k] = START_TEMPERATURE;
+            }
+            return month_vals;
+        });
+        this.#co2 = START_CO2;
+    }
+
+    getWater = (t = null) => {
+        /** Returns monthly water settings if t is null 
+         *  or water setting at given time if it is not null. */
+        if (t == null) return this.#water;
+        else return this.#water[time.year][time.month];
+    }
+
+    getTemperature = (t = null) => {
+        /** Returns monthly temperature settings if t is null 
+         *  or temperature setting at given time if it is not null. */
+        if (t == null) return this.#temperature;
+        else return this.#temperature[time.year][time.month];
+    }
+
+    getCo2 = () => {
+        /** Returns monthly CO2 settings if t is null 
+         *  or CO2 setting at given time if it is not null. */
+        return this.#co2;
+    }
+
+    setWater = (settings) => {
+        /** Sets water settings for any one/multiple 
+         *  month(s) of each year. 
+         *  settings = [{'year':x, 'month':y, 'val':z}, ...] */
+        settings.forEach(s => {
+            this.#water[s.year][s.month] = s.val;
+        });
+    }
+
+    setTemperature = (settings) => {
+        /** Sets temperature settings for any one/multiple 
+         *  month(s) of each year. 
+         *  settings = [{'year':x, 'month':y, 'val':z}, ...] */
+        settings.forEach(s => {
+            this.#temperature[s.year][s.month] = s.val;
+        });   
+    }
+
+    setCo2 = (settings) => {
+        /** Sets current CO2 value. 
+         *  settings = co2 val */
+        this.#co2 = settings;
+    }
 }
 
 class Plan {
@@ -186,11 +256,10 @@ class Plan {
 
 // Global world properties.
 let time = new Time(0, 0, 0); 
-let funds = FUNDS_START;
+let funds = START_FUNDS;
 let land = new Land(LAND_DIM, LAND_DIM);
 let environment = new Environment();
 let plan = new Plan();
-let planDelaySec = 1;
 
 const computeAtmosphericCo2 = () => {
     /** Computes current CO2 levels in the air. */

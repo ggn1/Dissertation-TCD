@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.0.0">
-  <zoom_level>10</zoom_level>
+  <zoom_level>6</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>930</x>
-      <y>60</y>
-      <w>230</w>
-      <h>140</h>
+      <x>558</x>
+      <y>12</y>
+      <w>138</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_Coniferous_
 --
@@ -25,10 +25,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>360</x>
-      <y>0</y>
-      <w>280</w>
-      <h>330</h>
+      <x>216</x>
+      <y>12</y>
+      <w>168</w>
+      <h>198</h>
     </coordinates>
     <panel_attributes>_TimberDemand_
 --
@@ -58,9 +58,9 @@
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>0</y>
-      <w>340</w>
-      <h>330</h>
+      <y>12</y>
+      <w>204</w>
+      <h>198</h>
     </coordinates>
     <panel_attributes>_Land_
 --
@@ -88,10 +88,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1340</x>
-      <y>0</y>
-      <w>140</w>
-      <h>60</h>
+      <x>840</x>
+      <y>12</y>
+      <w>84</w>
+      <h>36</h>
     </coordinates>
     <panel_attributes>_Requirement_
 --
@@ -103,10 +103,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1340</x>
-      <y>110</y>
-      <w>140</w>
-      <h>140</h>
+      <x>840</x>
+      <y>78</y>
+      <w>84</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_ReqWater_
 --
@@ -123,10 +123,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1500</x>
-      <y>110</y>
-      <w>140</w>
-      <h>140</h>
+      <x>936</x>
+      <y>78</y>
+      <w>84</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_ReqTemperature_
 --
@@ -143,10 +143,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1180</x>
-      <y>110</y>
-      <w>140</w>
-      <h>140</h>
+      <x>744</x>
+      <y>78</y>
+      <w>84</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_ReqCO2_
 --
@@ -163,10 +163,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1400</x>
-      <y>50</y>
-      <w>30</w>
-      <h>80</h>
+      <x>876</x>
+      <y>42</y>
+      <w>18</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -175,10 +175,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1240</x>
-      <y>50</y>
-      <w>190</w>
-      <h>80</h>
+      <x>780</x>
+      <y>42</y>
+      <w>114</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -187,10 +187,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1400</x>
-      <y>50</y>
-      <w>190</w>
-      <h>80</h>
+      <x>876</x>
+      <y>42</y>
+      <w>114</w>
+      <h>48</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -199,10 +199,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>660</x>
-      <y>0</y>
-      <w>210</w>
-      <h>440</h>
+      <x>396</x>
+      <y>12</y>
+      <w>126</w>
+      <h>264</h>
     </coordinates>
     <panel_attributes>_Tree_
 --
@@ -238,10 +238,10 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>930</x>
-      <y>250</y>
-      <w>230</w>
-      <h>140</h>
+      <x>558</x>
+      <y>162</y>
+      <w>138</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_Deciduous_
 --
@@ -257,36 +257,51 @@ _+ age()_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>860</x>
-      <y>100</y>
-      <w>90</w>
-      <h>120</h>
+      <x>516</x>
+      <y>48</y>
+      <w>54</w>
+      <h>96</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>10.0;100.0;40.0;100.0;40.0;10.0;70.0;10.0</additional_attributes>
+    <additional_attributes>10.0;140.0;40.0;140.0;40.0;10.0;70.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>860</x>
-      <y>190</y>
-      <w>90</w>
-      <h>140</h>
+      <x>516</x>
+      <y>126</y>
+      <w>54</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
-    <additional_attributes>10.0;10.0;40.0;10.0;40.0;120.0;70.0;120.0</additional_attributes>
+    <additional_attributes>10.0;10.0;40.0;10.0;40.0;130.0;70.0;130.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1360</x>
-      <y>400</y>
-      <w>220</w>
-      <h>360</h>
+      <x>756</x>
+      <y>174</y>
+      <w>186</w>
+      <h>282</h>
     </coordinates>
     <panel_attributes>**_World_**
 &lt;&lt;global&gt;&gt;
 --
++ RANGE_YEARS:List[2]&lt;&lt;int&gt;&gt;
++ RANGE_WATER:List[2]&lt;&lt;float&gt;&gt;
++ RANGE_TEMPERATURE:List[2]&lt;&lt;float&gt;&gt;
++ START_CO2:float
++ START_WATER:float
++ START_TEMPERATURE:float
++ START_FUNDS:float
++ RENDER_DELAY: int
++ TREE_UTILITY: List[2]&lt;&lt;str&gt;&gt;
++ LAND_DIM:int
++ CO2_START:float
++ YEARS_MIN:int
++ YEARS_MAX:int
++ MONTH_DAYS:Map&lt;&lt;str, int&gt;&gt;
++ SEASON_MONTHS:Map[4]&lt;&lt;str, List[3]&lt;&lt;str&gt;&gt;&gt;&gt;
 + time:Time
 + funds:float
 + land:Land
@@ -297,9 +312,9 @@ _+ age()_
 --
 - computeAtmosphericCo2():float
 - takeTimeStep()
-+ getSeason(time:
 + play()
 + stop(t:Time)
++ init()
 
 
 
@@ -310,30 +325,30 @@ _+ age()_
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>350</y>
-      <w>480</w>
-      <h>310</h>
+      <y>222</y>
+      <w>228</w>
+      <h>186</h>
     </coordinates>
     <panel_attributes>_Environment_
 --
-- water:Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-- temperature:Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-- co2:Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-- base_co2:float
+- water:List[RANGE_YEARS[1]]&lt;&lt;Map[12]&lt;&lt;str, float&gt;&gt;&gt;&gt;
+- temperature:List[RANGE_YEARS[1]]&lt;&lt;Map[12]&lt;&lt;str, float&gt;&gt;&gt;&gt;
+- co2:float
 --
-+ get_water():Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-+ get_water_now(time:float):float
-+ get_temperature():Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-+ get_temperature_now(time:float):float
-+ get_co2():Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;]
-+ get_co2_now(year:int, month:int):float
-+ get_base_co2():float
-+ set_water_annual(settings:Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;])
-+ set_water(year:int, month:int, water:float)
-+ set_temperature_annual(settings:Map[&lt;&lt;str, Map[12]&lt;&lt;int,int&gt;&gt;&gt;&gt;, &lt;&lt;str, int&gt;&gt;])
-+ set_temperature(year:int, month:int, temp:float)
-+ set_base_co2(co2:float)
-+ set_co2(year:int, month:int, co2:float)
++ getWater(now:bool = False):List[YEARS_MAX]&lt;&lt;
+    Map[12]&lt;&lt;str, float&gt;&gt;&gt;&gt; || &lt;&lt;float&gt;&gt;
+&gt;&gt;
++ getTemperature(now:bool = False):List[YEARS_MAX]&lt;&lt;
+    Map[12]&lt;&lt;str, float&gt;&gt;&gt;&gt; || &lt;&lt;float&gt;&gt;
+&gt;&gt;
++ getCo2():&lt;&lt;float&gt;&gt;
++ setWater(settings:List&lt;&lt;Obj{
+    year:int, month:str, val:float
+}&gt;&gt;)
++ setTemperature(settings:List&lt;&lt;Obj{
+    year:int, month:str, val:float
+}&gt;&gt;)
++ setCo2(settings:&lt;&lt;float&gt;&gt;)
 
 </panel_attributes>
     <additional_attributes/>
@@ -341,10 +356,10 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>510</x>
-      <y>480</y>
-      <w>290</w>
-      <h>180</h>
+      <x>240</x>
+      <y>300</y>
+      <w>174</w>
+      <h>108</h>
     </coordinates>
     <panel_attributes>_Plan_
 --
@@ -365,10 +380,10 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>940</x>
-      <y>420</y>
-      <w>170</w>
-      <h>90</h>
+      <x>564</x>
+      <y>264</y>
+      <w>102</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>_Action_
 --
@@ -382,10 +397,10 @@ group=group-0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>820</x>
-      <y>570</y>
-      <w>170</w>
-      <h>90</h>
+      <x>492</x>
+      <y>354</y>
+      <w>102</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>_FellTree_
 --
@@ -399,10 +414,10 @@ group=group-0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1070</x>
-      <y>570</y>
-      <w>170</w>
-      <h>70</h>
+      <x>642</x>
+      <y>354</y>
+      <w>102</w>
+      <h>42</h>
     </coordinates>
     <panel_attributes>_PlantTree_
 --
@@ -417,10 +432,10 @@ group=group-0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>890</x>
-      <y>500</y>
-      <w>150</w>
-      <h>90</h>
+      <x>534</x>
+      <y>312</y>
+      <w>90</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-0</panel_attributes>
@@ -429,10 +444,10 @@ group=group-0</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1010</x>
-      <y>500</y>
-      <w>160</w>
-      <h>90</h>
+      <x>606</x>
+      <y>312</y>
+      <w>96</w>
+      <h>54</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-0</panel_attributes>
@@ -441,10 +456,10 @@ group=group-0</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1600</x>
-      <y>400</y>
-      <w>200</w>
-      <h>220</h>
+      <x>954</x>
+      <y>258</y>
+      <w>120</w>
+      <h>132</h>
     </coordinates>
     <panel_attributes>_Time_
 --
