@@ -65,6 +65,21 @@ class Time {
          *  each step is stepSize. */
         console.log('timeDelta() => TO DO ...');
     }
+
+    getYear() {
+        /** Returns year. */
+        return this.#year;
+    }
+
+    getMonth() {
+        /** Returns month. */
+        return this.#month;
+    }
+
+    getDay() {
+        /** Returns day. */
+        return this.#day;
+    }
 }
 
 class Land {
@@ -251,11 +266,161 @@ class Environment {
 }
 
 class Plan {
+    #timeline
+
+    constructor() {
+        // Initialize timeline to have an empty array for every
+        // day in the set time period.
+        this.#timeline = {};
+        let tl = [];
+        for(let y = RANGE_YEARS[0]; y <= RANGE_YEARS[1]; y++) {
+            Object.keys(MONTH_DAYS).forEach(m => {
+                const days = MONTH_DAYS[m];
+                for(let d=1; d<=days; d++){
+                    this.#timeline[[y, m, d]] = [];
+                    tl.push([y, m, d]);
+                }
+            })
+        }
+    }
+
+    getTimeline() {
+        /** Returns current timeline. */
+        return this.#timeline;
+    }
+
+    getAction(year, month, day, actionId=null) {
+        /** Returns given action if exists. If no
+         *  action ID is provided, then all actions
+         *  are returned. */
+        if (this.#timeline.hasOwnProperty([year, month, day])) {
+            const actions = this.#timeline[[year, month, day]];
+            if (actionId == null) return actions;
+            actions.forEach(a => {
+                if (a.getId() == actionId) return a
+            });
+        }
+    }
+
+    addAction(year, month, day, action, repeat) {
+        /** Adds given action at given time in timeline.
+         *  If repeat is set to true, then the same action 
+         *  will be repeated annually for all years hence. */
+        if (this.#timeline.hasOwnProperty([year, month, day])) {
+            for (let y = year; y <= RANGE_YEARS[1]; y++) {
+                this.#timeline[[y, month, day]].push(action);            
+                if (repeat != true) break;
+            }
+        }
+    }
+
+    removeAction(year, month, day, actionId = null) {
+        /** Removes action at given time. If no actionId is
+         *  given, then all actions at given time point are removed. */
+        if (this.#timeline.hasOwnProperty([year, month, day])) {
+            const actions = this.#timeline[[year, month, day]];
+            if (actionId == null) {
+                this.#timeline[[year, month, day]] = [];
+                actions.forEach(a => {
+                    if (!actionIdAvailable.includes(a)) actionIdAvailable.push(a.getId());
+                })
+            } else {
+                this.#timeline[[year, month, day]] = actions.filter(a => a.getId() !== actionId);
+                if (!actionIdAvailable.includes(actionId)) actionIdAvailable.push(actionId);
+            }
+        }
+    }
+}
+
+class Action {
+    #id
+    #target
+
+    constructor(target) {
+        // Set target only if it is a valid xy position on the land.
+        const landRowCol = land.getLandSize();
+        checkIndexOutOfRange(target[0], 0, landRowCol[0], target[1], 0, landRowCol[1]);
+        this.#target = target;
+        // Give the action a unique id.
+        if (actionIdAvailable.length > 0) {
+            this.#id = actionIdAvailable.pop();
+        } else {
+            this.#id = actionIdNext;
+            actionIdNext = actionIdNext + 1;
+        }
+    }
+
+    getTarget() {
+        /** Returns target land unit. */
+        return this.#target;
+    }
+
+    getId() {
+        /** Returns ID of this action. */
+        return this.#id;
+    }
+}
+
+class FellTree extends Action {
+    #lifeStageFilters;
+    #timberUsageFilter;
+
+    constructor(target, lifeStageFilters, timberUsageFilter) {
+        super(target)
+        this.#lifeStageFilters = lifeStageFilters;
+        // Only lumber and energy are valid timber uses.
+        if (!['lumber', 'energy'].includes(timberUsageFilter)) {
+            throw new Error(`Invalid timber usage filter ${use}.`)
+        }
+        this.#timberUsageFilter = timberUsageFilter;
+    }
+
+    getLifeStageFilters() {
+        /** Returns set life stage filters. */
+        return this.#lifeStageFilters;
+    }
+
+    getTimberUsageFilter() {
+        /** Returns set timber usage filter. */
+        return this.#timberUsageFilter;
+    }
+}
+
+class PlantTree extends Action {
+    #lifeStageFilters;
+
+    constructor(target, lifeStageFilters) {
+        super(target)
+        lifeStageFilters.forEach(stage => { // Only seedlings and saplings can be planted.
+            if (!['seedling', 'sapling'].includes(stage)) {
+                throw new Error(`Invalid life stage filter ${stage}.`)
+            }
+        })
+        this.#lifeStageFilters = lifeStageFilters;
+    }
+
+    getLifeStageFilters() {
+        /** Returns set life stage filters. */
+        return this.#lifeStageFilters;
+    }
+}
+
+class TreeRequirement {
+    // TO DO ...
+}
+
+class Tree {
+    // TO DO ...
+}
+
+class TimberDemand {
     // TO DO ...
 }
 
 // Global world properties.
 let time = new Time(0, 0, 0); 
+let actionIdNext = 0;
+let actionIdAvailable = [];
 let funds = START_FUNDS;
 let land = new Land(LAND_DIM, LAND_DIM);
 let environment = new Environment();

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.0.0">
-  <zoom_level>6</zoom_level>
+  <zoom_level>7</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>558</x>
-      <y>12</y>
-      <w>138</w>
-      <h>84</h>
+      <x>651</x>
+      <y>77</y>
+      <w>161</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>_Coniferous_
 --
@@ -25,10 +25,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>216</x>
-      <y>12</y>
-      <w>168</w>
-      <h>198</h>
+      <x>252</x>
+      <y>77</y>
+      <w>196</w>
+      <h>231</h>
     </coordinates>
     <panel_attributes>_TimberDemand_
 --
@@ -58,9 +58,9 @@
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>12</y>
-      <w>204</w>
-      <h>198</h>
+      <y>77</y>
+      <w>238</w>
+      <h>231</h>
     </coordinates>
     <panel_attributes>_Land_
 --
@@ -88,12 +88,12 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>840</x>
-      <y>12</y>
-      <w>84</w>
-      <h>36</h>
+      <x>980</x>
+      <y>77</y>
+      <w>98</w>
+      <h>42</h>
     </coordinates>
-    <panel_attributes>_Requirement_
+    <panel_attributes>_TreeRequirement_
 --
 - treeType:str
 --
@@ -103,10 +103,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>840</x>
-      <y>78</y>
-      <w>84</w>
-      <h>84</h>
+      <x>980</x>
+      <y>154</y>
+      <w>98</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>_ReqWater_
 --
@@ -123,10 +123,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>936</x>
-      <y>78</y>
-      <w>84</w>
-      <h>84</h>
+      <x>1092</x>
+      <y>154</y>
+      <w>98</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>_ReqTemperature_
 --
@@ -143,10 +143,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>744</x>
-      <y>78</y>
-      <w>84</w>
-      <h>84</h>
+      <x>868</x>
+      <y>154</y>
+      <w>98</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>_ReqCO2_
 --
@@ -163,10 +163,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>876</x>
-      <y>42</y>
-      <w>18</w>
-      <h>48</h>
+      <x>1022</x>
+      <y>112</y>
+      <w>21</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -175,10 +175,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
-      <y>42</y>
-      <w>114</w>
-      <h>48</h>
+      <x>910</x>
+      <y>112</y>
+      <w>133</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -187,10 +187,10 @@ group=group-3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>876</x>
-      <y>42</y>
-      <w>114</w>
-      <h>48</h>
+      <x>1022</x>
+      <y>112</y>
+      <w>133</w>
+      <h>56</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
 group=group-3</panel_attributes>
@@ -199,10 +199,10 @@ group=group-3</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>396</x>
-      <y>12</y>
-      <w>126</w>
-      <h>264</h>
+      <x>462</x>
+      <y>77</y>
+      <w>147</w>
+      <h>308</h>
     </coordinates>
     <panel_attributes>_Tree_
 --
@@ -238,10 +238,10 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>558</x>
-      <y>162</y>
-      <w>138</w>
-      <h>84</h>
+      <x>651</x>
+      <y>252</y>
+      <w>161</w>
+      <h>98</h>
     </coordinates>
     <panel_attributes>_Deciduous_
 --
@@ -257,10 +257,10 @@ _+ age()_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>516</x>
-      <y>48</y>
-      <w>54</w>
-      <h>96</h>
+      <x>602</x>
+      <y>119</y>
+      <w>63</w>
+      <h>112</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
     <additional_attributes>10.0;140.0;40.0;140.0;40.0;10.0;70.0;10.0</additional_attributes>
@@ -268,10 +268,10 @@ _+ age()_
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>516</x>
-      <y>126</y>
-      <w>54</w>
-      <h>90</h>
+      <x>602</x>
+      <y>210</y>
+      <w>63</w>
+      <h>105</h>
     </coordinates>
     <panel_attributes>lt=&lt;.</panel_attributes>
     <additional_attributes>10.0;10.0;40.0;10.0;40.0;130.0;70.0;130.0</additional_attributes>
@@ -279,10 +279,10 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>756</x>
-      <y>174</y>
-      <w>186</w>
-      <h>282</h>
+      <x>882</x>
+      <y>266</y>
+      <w>217</w>
+      <h>329</h>
     </coordinates>
     <panel_attributes>**_World_**
 &lt;&lt;global&gt;&gt;
@@ -314,7 +314,6 @@ _+ age()_
 - takeTimeStep()
 + play()
 + stop(t:Time)
-+ init()
 
 
 
@@ -325,9 +324,9 @@ _+ age()_
     <id>UMLClass</id>
     <coordinates>
       <x>0</x>
-      <y>222</y>
-      <w>228</w>
-      <h>186</h>
+      <y>322</y>
+      <w>266</w>
+      <h>217</h>
     </coordinates>
     <panel_attributes>_Environment_
 --
@@ -356,23 +355,34 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>240</x>
-      <y>300</y>
-      <w>174</w>
-      <h>108</h>
+      <x>280</x>
+      <y>329</y>
+      <w>168</w>
+      <h>252</h>
     </coordinates>
     <panel_attributes>_Plan_
 --
-- lastYear:int
-- timeline:Map&lt;&lt;List[2]&lt;&lt;int&gt;&gt;, List[0:*]&lt;&lt;Action&gt;&gt;&gt;&gt;
+- timeline:Map&lt;&lt;
+    List[3]&lt;&lt;int&gt;&gt;, // year, month, day
+    List[0:*]&lt;&lt;Action&gt;&gt;
+&gt;&gt;
 --
-+ getLastYear():int
-+ getAction(year:int, month:int):Action
++ getTimeline()::Map&lt;&lt;
+    List[3]&lt;&lt;int&gt;&gt;, // year, month, day
+    List[0:*]&lt;&lt;Action&gt;&gt;
+&gt;&gt;
++ getAction(
+    year:int, month:int, day:int,
+    actionId:int = null
+):List[0:*]&lt;&lt;Action&gt;&gt; || Action
 + addAction(
-    year:int, month:int, 
+    year:int, month:int, day:int,
     action:Action, repeat:bool
 )
-+ removeAction(year:int, month:int, all:bool)
++ removeAction(
+    year:int, month:int, day:int,
+    actionId:int = Null
+)
 
 </panel_attributes>
     <additional_attributes/>
@@ -380,86 +390,90 @@ _+ age()_
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>564</x>
-      <y>264</y>
-      <w>102</w>
-      <h>54</h>
+      <x>651</x>
+      <y>364</y>
+      <w>119</w>
+      <h>70</h>
     </coordinates>
     <panel_attributes>_Action_
 --
+- id:int
 - target:List[2]&lt;int&gt;
 --
 + getTarget():List[2]&lt;int&gt;
-
-group=group-0</panel_attributes>
++ getId():int
+group=group-2</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>492</x>
-      <y>354</y>
-      <w>102</w>
-      <h>54</h>
+      <x>546</x>
+      <y>476</y>
+      <w>147</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>_FellTree_
 --
 - lifeStageFilters:List&lt;str&gt;
-- usageFilter:List&lt;str&gt;
+- timberUsageFilter:str
 --
++ getLifeStageFilters():List&lt;str&gt;
++ getTimberUsageFilter():str
 + execute()
-group=group-0</panel_attributes>
+group=group-2</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>642</x>
-      <y>354</y>
-      <w>102</w>
-      <h>42</h>
+      <x>707</x>
+      <y>497</y>
+      <w>147</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>_PlantTree_
 --
 - lifeStageFilters:List&lt;str&gt;
 --
++ getLifeStageFilters():List&lt;str&gt;
 + execute()
 
 
-group=group-0</panel_attributes>
+group=group-2</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>534</x>
-      <y>312</y>
-      <w>90</w>
-      <h>54</h>
+      <x>609</x>
+      <y>427</y>
+      <w>112</w>
+      <h>63</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
-group=group-0</panel_attributes>
-    <additional_attributes>130.0;10.0;130.0;40.0;10.0;40.0;10.0;70.0</additional_attributes>
+group=group-2</panel_attributes>
+    <additional_attributes>140.0;10.0;140.0;40.0;10.0;40.0;10.0;70.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>606</x>
-      <y>312</y>
-      <w>96</w>
-      <h>54</h>
+      <x>700</x>
+      <y>427</y>
+      <w>98</w>
+      <h>84</h>
     </coordinates>
     <panel_attributes>lt=&lt;.
-group=group-0</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;40.0;140.0;40.0;140.0;70.0</additional_attributes>
+group=group-2</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;120.0;40.0;120.0;100.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>954</x>
-      <y>258</y>
-      <w>120</w>
-      <h>132</h>
+      <x>1113</x>
+      <y>364</y>
+      <w>126</w>
+      <h>154</h>
     </coordinates>
     <panel_attributes>_Time_
 --
@@ -467,10 +481,10 @@ group=group-0</panel_attributes>
 - month:int
 - day:int
 --
-- getYear():int
-- getMonth():int
-- getDay():int
-+ getSeason(month:int):string
++ getYear():int
++ getMonth():str
++ getDay():int
++ getSeason(month:int):str
 + timeDelta(
     numSteps:int, 
     stepSize:Time
