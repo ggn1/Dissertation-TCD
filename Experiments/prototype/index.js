@@ -22,6 +22,8 @@ const SEASON_MONTHS = {
     'summer': ['jun', 'jul', 'aug'],
     'autumn': ['sep', 'oct', 'nov']
 }
+const REPRODUCTION_INTERVAL_CONIFEROUS = 50;
+const REPRODUCTION_INTERVAL_DECIDUOUS = 20;
 
 // Utility Functions
 const checkIndexOutOfRange = (
@@ -36,6 +38,19 @@ const checkIndexOutOfRange = (
     if (idxY < rangeMinY || idxY > rangeMaxY) {
         throw new Error(`Y index out of range [${rangeMinY}, ${rangeMaxY}]`);
     }
+}
+
+const getNewId = (next, available) => {
+    /** Gets a new ID. */
+    let id;
+    if (available.length > 0) id = available.pop();
+    else id =+ next;
+    return id, next, available;
+}
+
+const getRandomInt = (min, max) => {
+    /** Returns a random integer within given inclusive range. */
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // Components.
@@ -343,12 +358,7 @@ class Action {
         checkIndexOutOfRange(target[0], 0, landRowCol[0], target[1], 0, landRowCol[1]);
         this.#target = target;
         // Give the action a unique id.
-        if (actionIdAvailable.length > 0) {
-            this.#id = actionIdAvailable.pop();
-        } else {
-            this.#id = actionIdNext;
-            actionIdNext = actionIdNext + 1;
-        }
+        this.#id, actionIdNext, actionIdAvailable = getNewId(actionIdNext, actionIdAvailable);
     }
 
     getTarget() {
@@ -439,17 +449,28 @@ class ReqTemperature extends TreeRequirement {
 class Tree {
     #id;
     #ttlSenescent;
-    #age;
-    #stress;
-    #position;
+    #age = 0;
+    #stress = 0.0;
+    #position = 0;
     _requirements;
-    _reproductionInterval;
-    _height;
-    _diameter;
+    _height = 0;
+    _diameter = 0;
     _yearLastReproduced = 0;
 
-    constructor(id, ttlSenescent, age, stress, height, diameter, position) {
+    constructor(position) {
+        // Set position.
+        if (typeof position != typeof [] || position.length != 2) {
+            throw new Error(`Invalid position = ${position}.`);
+        }
+        const landSize = land.getLandSize();
+        checkIndexOutOfRange(position[0], 0, landSize[0], position[1], 0, landSize[1]);
+        this.#position = position; // [x, y]
 
+        // Set ID.
+        this.#id, treeIdNext, treeIdAvailable = getNewId(treeIdNext, treeIdAvailable);
+
+        // Set senescent time to live.
+        this.#ttlSenescent = getRandomInt(5, 10);
     }
 
     #computeStress() {
@@ -528,7 +549,9 @@ class Tree {
 class Coniferous extends Tree {
     #reproductionInterval;
     
-    constructor() {
+    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
+        super(position);
+        this.#reproductionInterval = reproductionInterval;
         this._requirements = {
             'water': new ReqWater('coniferous'),
             'co2': new ReqCo2('coniferous'),
@@ -554,13 +577,18 @@ class Coniferous extends Tree {
         else return "dead";
     }
 
-    // TO DO ...
+    getReproductionInterval() {
+        /** Returns this tree's reproduction interval. */
+        return this.#reproductionInterval;
+    }
 }
 
 class Deciduous extends Tree {
     #reproductionInterval;
 
-    constructor() {
+    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
+        super(position);
+        this.#reproductionInterval = reproductionInterval;
         this._requirements = {
             'water': new ReqWater('deciduous'),
             'co2': new ReqCo2('deciduous'),
@@ -586,7 +614,10 @@ class Deciduous extends Tree {
         else return "dead";
     }
 
-    // TO DO ...
+    getReproductionInterval() {
+        /** Returns this tree's reproduction interval. */
+        return this.#reproductionInterval;
+    }
 }
 
 class Timber {
@@ -657,7 +688,8 @@ class Timber {
          *  which is as follows.
          *  futureValue = presentValue * (1 + percentChange)^(+-timeUnit) */
         if (t == null) t = time;
-        const pricePerUnit = this.#basePrice * ((1 + this.#annualChangePercent)^(
+        const basePriceDemandAdjusted = this.#basePrice + (this.#basePrice * (this.#demand * 0.03))
+        const pricePerUnit = basePriceDemandAdjusted * ((1 + this.#annualChangePercent)^(
             this.#annualChangePercent < 0 ? 
             (-1 * this.#annualChangePercent) : 
             this.#annualChangePercent
@@ -670,6 +702,8 @@ class Timber {
 let time = new Time(0, 0, 0); 
 let actionIdNext = 0;
 let actionIdAvailable = [];
+let treeIdNext = 0;
+let treeIdAvailable = [];
 let funds = START_FUNDS;
 let land = new Land(LAND_DIM, LAND_DIM);
 let environment = new Environment();
