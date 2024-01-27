@@ -4,7 +4,7 @@ const RANGE_WATER = [0.0, 310.0];
 const RANGE_TEMPERATURE = [-60.0, 100.0];
 const START_FUNDS = 10000.0;
 const START_WATER = 120.0;
-const START_CO2 = 1000.0;
+const START_CO2 = 320.0;
 const START_PRICE_TIMBER = 100.0;
 const START_TEMPERATURE = 15.0;
 const RENDER_DELAY = 1; // In seconds.
@@ -53,48 +53,76 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+const days2time = (days) => {
+    /** Convert given no. of days into time comprising year, month and day. */
+
+    if (days < 0) {
+      throw new Error("Invalid input. Please provide a non-negative number of days.");
+    }
+  
+    const daysInYear = 365;
+    const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  
+    let years = Math.floor(days / daysInYear);
+    let remainingDays = days % daysInYear;
+  
+    let months = 0;
+    for (let i = 0; i < 12; i++) {
+      if (remainingDays >= daysInMonth[i]) {
+        months++;
+        remainingDays -= daysInMonth[i];
+      } else {
+        break;
+      }
+    }
+  
+    return new Time(years, Object.keys(MONTH_DAYS)[months], remainingDays);
+}
+
+const time2days = (time) => {
+    /** Convert given time comprising year month and day into no. of days until then. */
+    const months = Object.keys(MONTH_DAYS);
+    let days = time.year * 365;
+    for (let i=0; i<months.indexOf(time.month); i++) {
+        days += MONTH_DAYS[months[i]];
+    }
+    days += time.day;
+    return days;
+}
+
+
 // Components.
 class Time {
-    #year;
-    #month;
-    #day;
     
     constructor(year, month, day) {
-        this.#year = year;
-        this.#month = month;
-        this.#day = day;
+        this.year = year;
+        this.month = month;
+        this.day = day;
     }
 
     getSeason(month=null) {
         /** Given a month returns the corresponding season. */
-        if (month == null) month = this.#month;
+        if (month == null) month = this.month;
         for (const [k, v] in Object.entries(SEASON_MONTHS)) {
             if (v.includes(month)) return k;
         }
         throw new Error(`Invalid month ${month}`);
     }
 
-    timeDelta(numSteps, stepSize) {
-        /** Returns time that is numSteps (may be positive or negative
-         *  to indicate direction of change) no. of steps
-         *  away from this time object wherein size of
-         *  each step is stepSize. */
-        console.log('timeDelta() => TO DO ...');
-    }
-
-    getYear() {
-        /** Returns year. */
-        return this.#year;
-    }
-
-    getMonth() {
-        /** Returns month. */
-        return this.#month;
-    }
-
-    getDay() {
-        /** Returns day. */
-        return this.#day;
+    timeDelta(days, direction) {
+        /** Returns time that is numSteps no. of steps
+         *  away from given startTime object in the given direction
+         *  wherein size of each step is stepSize. */
+        
+        const newTimeDays = time2days({
+            year: this.year, month: this.month, day: this.day
+        }) + (direction * days);
+        if (newTimeDays < 0 || newTimeDays > time2days({
+            year: RANGE_YEARS[1], month:'dec', day:31
+        })) {
+            throw new Error(`Days ${days} out of range.`);
+        }
+        return days2time(newTimeDays);
     }
 }
 
