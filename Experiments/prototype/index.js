@@ -5,6 +5,7 @@ const RANGE_TEMPERATURE = [-60.0, 100.0];
 const START_FUNDS = 10000.0;
 const START_WATER = 120.0;
 const START_CO2 = 1000.0;
+const START_PRICE_TIMBER = 100.0;
 const START_TEMPERATURE = 15.0;
 const RENDER_DELAY = 1; // In seconds.
 const TREE_UTILITY = ["energy", "lumber"];
@@ -406,15 +407,263 @@ class PlantTree extends Action {
 }
 
 class TreeRequirement {
-    // TO DO ...
+    #treeType;
+
+    constructor(treeType) {
+        if (!['coniferous', 'deciduous'].includes(treeType)) {
+            throw new Error(`Invalid tree type ${treeType}.`);
+        } else {
+            this.#treeType = treeType;
+        }
+    }
+}
+
+class ReqCo2 extends TreeRequirement {
+    computeStress(treeAge, treeVolume, reqAvailability) {
+        console.log('computeStress() => TO DO ...');
+    }
+}
+
+class ReqWater extends TreeRequirement {
+    computeStress(treeAge, treeVolume, reqAvailability) {
+        console.log('computeStress() => TO DO ...');
+    }
+}
+
+class ReqTemperature extends TreeRequirement {
+    computeStress(treeAge, treeVolume, reqAvailability) {
+        console.log('computeStress() => TO DO ...');
+    }
 }
 
 class Tree {
+    #id;
+    #ttlSenescent;
+    #age;
+    #stress;
+    #position;
+    _requirements;
+    _reproductionInterval;
+    _height;
+    _diameter;
+    _yearLastReproduced = 0;
+
+    constructor(id, ttlSenescent, age, stress, height, diameter, position) {
+
+    }
+
+    #computeStress() {
+        /** Computes stress that this tree is under. */
+        console.log('computeStress() => TO DO ...');
+    }
+
+    getId() {
+        /** Returns unique identifier of this tree. */
+        return this.#id;
+    }
+
+    getAge() {
+        /** Returns this tree's age. */
+        return this.#age;
+    }
+
+    getStress() {
+        /** Returns the % of stress that this tree is under. */
+        return this.#stress;
+    }
+
+    setStress(stressPercent) {
+        /** Set the % of stress that this tree is under. */
+        this.#stress = stressPercent;
+    }
+
+    getPosition() {
+        /** Returns current position of this tree. */
+        return this.#position;
+    }
+
+    getTtlSenescent() {
+        /** Returns how many years this tree will live for upon reaching the
+         *  senescent life stage. */
+        return this.#ttlSenescent;
+    }
+
+    age() {
+        /** Tree ages by one time unit. */
+        console.log('age() => TO DO ...');
+    }
+
+    getReproductionInterval() {
+        /** Returns the set reproduction interval in years. */
+        return this._reproductionInterval;
+    }
+
+    getRequirements() {
+        /** Returns current requirements of this tree. */
+        return this._requirements;
+    }
+
+    computeGrowthRate() {
+        /** Computes and returns growth rate. */
+        console.log('computeGrowthRate() => TO DO ...');
+    }
+
+    captureCarbon() {
+        /** Removes CO2 from the atmosphere. */
+        console.log('captureCarbon() => TO DO ...');
+    }
+
+    decay() {
+        /** Mechanism that models decaying of the tree over time. */
+        console.log('decay() => TO DO ...');
+    }
+
+    live() {
+        /** Mechanism that models all changes to take place when
+         *  the tree lives for another time unit's worth of time. */
+        console.log('live() => TO DO ...');
+    }
+}
+
+class Coniferous extends Tree {
+    #reproductionInterval;
+    
+    constructor() {
+        this._requirements = {
+            'water': new ReqWater('coniferous'),
+            'co2': new ReqCo2('coniferous'),
+            'temperature': new ReqTemperature('coniferous')
+        }
+    }
+    
+    #reproduce() {
+        /** A tree can reproduce if there is free space adjacent to the tree 
+         *  and the tree is mature and Stress ≤ 0.5. A tree may reproduce only every 20 years. */
+        console.log('reproduce() => TO DO ...');
+    }
+
+    getLifeStage() {
+        /** Returns the life stage that this tress is in. */
+        let age = this.getAge();
+        if (stress >= 1.0) return "dead";
+        else if (age < 4) return "seedling";
+        else if (age < 26) return "sapling";
+        else if (age < 60) return "mature";
+        else if (age < 90) return "old-growth";
+        else if (age < 100) return "senescent";
+        else return "dead";
+    }
+
     // TO DO ...
 }
 
-class TimberDemand {
+class Deciduous extends Tree {
+    #reproductionInterval;
+
+    constructor() {
+        this._requirements = {
+            'water': new ReqWater('deciduous'),
+            'co2': new ReqCo2('deciduous'),
+            'temperature': new ReqTemperature('deciduous')
+        }
+    }
+
+    #reproduce() {
+        /** A tree can reproduce if there is free space adjacent to the tree 
+         *  and the tree is mature and Stress ≤ 0.5. A tree may reproduce only every 20 years. */
+        
+    }
+
+    getLifeStage() {
+        /** Returns the life stage that this tress is in. */
+        let age = this.getAge();
+        if (stress >= 1.0) return "dead";
+        else if (age < 3) return "seedling";
+        else if (age < 21) return "sapling";
+        else if (age < 47) return "mature";
+        else if (age < 70) return "old-growth";
+        else if (age < 80) return "senescent";
+        else return "dead";
+    }
+
     // TO DO ...
+}
+
+class Timber {
+    #basePrice; // per kg
+    #demand;
+    #annualChangePercent;
+    #timberUsage;
+    #Co2Emission;
+
+    constructor(
+        basePrice, annualChangePercent, energyPercent, 
+        lumberPercent, energyEmissionPercent, lumberEmissionPercent
+    ) {
+        this.#basePrice = basePrice;
+        this.setAnnualChangePercent(annualChangePercent);
+        this.setTimberUsage(energyPercent, lumberPercent);
+        this.#Co2Emission = {
+            'energy': energyEmissionPercent,
+            'lumber': lumberEmissionPercent
+        }
+    }
+
+    getDemand() {
+        /** Returns current demand. */
+        return this.#demand;
+    }
+
+    setDemand(demand) {
+        /** Sets current demand. */
+        this.#demand = demand;
+    }
+
+    getAnnualChangePercent() {
+        /** Returns current annual change percent. */
+        return this.#annualChangePercent;
+    }
+
+    setAnnualChangePercent(changePercent) {
+        /** Sets current annual change percent. */
+        this.#annualChangePercent = changePercent;
+    }
+
+    getTimberUsage() {
+        /** Returns how much percent of the demand comes from need for
+         *  timber for each kind of usage (here, energy and lumber). */
+        return this.#timberUsage;
+    }
+
+    setTimberUsage(energyPercent, lumberPercent) {
+        /** Sets current annual change percent. */
+        this.#timberUsage = {
+            'energy': energyPercent,
+            'lumber': lumberPercent
+        };
+    }
+
+    getCo2Emission() {
+        /** Returns how much percent of the timber's carbon is released into 
+         *  the atmosphere as emissions for each type of usage. */
+        return this.#Co2Emission;
+    }
+
+    fetchPrice(timberAmount, t = null) {
+        /** Computes price for given given amount of timber upon
+         *  considering base timber price, current/given time and 
+         *  annual change percent. 
+         *  This can be calculated using the formula for compound interest
+         *  which is as follows.
+         *  futureValue = presentValue * (1 + percentChange)^(+-timeUnit) */
+        if (t == null) t = time;
+        const pricePerUnit = this.#basePrice * ((1 + this.#annualChangePercent)^(
+            this.#annualChangePercent < 0 ? 
+            (-1 * this.#annualChangePercent) : 
+            this.#annualChangePercent
+        ));
+        return pricePerUnit * timberAmount;
+    }
 }
 
 // Global world properties.
