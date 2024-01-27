@@ -9,7 +9,7 @@ const START_PRICE_TIMBER = 100.0;
 const START_TEMPERATURE = 15.0;
 const RENDER_DELAY = 1; // In seconds.
 const TREE_UTILITY = ["energy", "lumber"];
-const LAND_DIM = 20; // No. of rows = no. of columns.
+const LAND_DIM = 8; // No. of rows = no. of columns.
 const MONTH_DAYS = {
     'jan': 31, 'feb': 28, 'mar': 31,
     'apr': 30, 'may': 31, 'jun': 30,
@@ -45,7 +45,7 @@ const getNewId = (next, available) => {
     let id;
     if (available.length > 0) id = available.pop();
     else id =+ next;
-    return id, next, available;
+    return {id: id, next: next, available: available};
 }
 
 const getRandomInt = (min, max) => {
@@ -90,10 +90,35 @@ const time2days = (time) => {
     return days;
 }
 
+const validateQuadrantEncoding = (enc) => {
+    /** Check if given one hot encoding if land quadrants is
+     *  in the right format. */
+    let num_zeros = 0;
+    let invalid_quadrant = (enc.length != 4);
+    
+    if (!invalid_quadrant) {
+        for (let i = 0; i < enc.length; i++) {
+            if (enc[i] < 0) {
+                invalid_quadrant = true;
+                break;
+            } else if (enc[i] == 0) {
+                num_zeros += 1;
+            }
+        }
+        if (num_zeros == 4) {
+            invalid_quadrant = true;
+        }
+    }
+    
+    if (invalid_quadrant) {
+        throw new Error(`Invalid quadrant encoding ${enc}.`);
+    }
+}
+
 
 // Components.
 class Time {
-    
+
     constructor(year, month, day) {
         this.year = year;
         this.month = month;
@@ -132,7 +157,8 @@ class Land {
     #numColumns;
     #positions = [];
     #quadrants = [[],[],[],[]];
-    #biodiversity = [0,0,0,0];
+    #biodiversity = [0, 0, 0, 0];
+    #quadrantRangeBiodiversity;
     
     constructor(rows, columns) {
         if (!(rows > 1 && columns > 1)) {
@@ -148,12 +174,14 @@ class Land {
         
         this.#numRows = rows;
         this.#numColumns = columns;
+        this.#quadrantRangeBiodiversity = [0, 2 * (this.#numRows/2) * (this.#numColumns/2) * 3]
+
         // Initialize positions with all 0s.
         // Each position can have either 0 or a tree ID.
         for (let x=0; x<this.#numRows; x++) { 
             let row = [];
             for (let y=0; y<this.#numColumns; y++) {
-                row.push(0);
+                row.push(null);
             }
             this.#positions.push(row);
         }
@@ -167,18 +195,39 @@ class Land {
     }
     
     // BEHAVIORS
-    #updateQuadrantBiodiversity = () => {
+    #updateQuadrantBiodiversity() {
         /** Calculates and updates land state with 
          *  latest biodiversity of each quadrant. */
         console.log('updateQuadrantBiodiversity() => TO DO ...');
     }
 
-    getLandSize = () => {
+    getLandSize() {
         /** Gets set no. of rows and columns. */
         return [this.#numRows, this.#numColumns];
     }
 
-    getQuadrant = (rowIdx, columnIdx) => {
+    #getQuadrantRange(q) {
+        /** Given a quadrant number, returns range of position of that quadrant. */
+        let rangeQuadrant = [[],[]];
+        if (q == 1) {
+            rangeQuadrant[0] = [0, numRowsHalf-1];
+            rangeQuadrant[1] = [0, numColumnsHalf-1];
+        } else if (q == 2) {
+            rangeQuadrant[0] = [0, numRowsHalf-1];
+            rangeQuadrant[1] = [numColumnsHalf, this.#numColumns-1];
+        } else if (q == 3) {
+            rangeQuadrant[0] = [numRowsHalf, this.#numRows-1];
+            rangeQuadrant[1] = [numColumnsHalf, this.#numColumns-1];
+        } else if (q == 4) {
+            rangeQuadrant[0] = [numRowsHalf, this.#numRows-1];
+            rangeQuadrant[1] = [0, numColumnsHalf-1];
+        } else {
+            throw new Error(`Invalid quadrant number ${q}.`);
+        }
+        return rangeQuadrant;
+    }
+
+    getQuadrant(rowIdx, columnIdx) {
         /** Returns quadrant number of given x, y position position on land
          *  where x is the row index and y is the column index. */
         checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
@@ -190,46 +239,142 @@ class Land {
         else return 4; // (rowIdx > numRowsHalf && columnIdx < numColumnsHalf)
     }
 
-    getLandUnit = (rowIdx, columnIdx) => {
+    getLandContent(rowIdx, columnIdx) {
         /** Returns land position content at given xy coordinates. */
         return this.#positions[rowIdx][columnIdx];
     }
 
-    getBiodiversity = (q = [0, 0, 0, 0]) => {
+    #countTrees(q) {
+        /** Counts all trees in a given quadrant. */
+        // Input sanity check.       
+        const numRowsHalf = Math.round(this.#numRows / 2);
+        const numColumnsHalf = Math.round(this.#numColumns / 2);
+        const rangeQuadrant = this.#getQuadrantRange(q);
+
+        let counts = {
+            deciduous: 0, coniferous: 0,
+            seedling: 0, sapling: 0, mature: 0, old_growth: 0, senescent: 0, dead: 0
+        }
+
+        for (let x = rangeQuadrant[0][0]; x <= rangeQuadrant[0][1]; x++) {
+            for (let y = rangeQuadrant[1][0]; y <= rangeQuadrant[1][1]; y++) {
+                let tree = this.getLandContent(x, y);
+                if (tree != null) {
+                    counts[tree.getTreeType()] += 1;
+                    counts[tree.getLifeStage()] += 1;
+                }
+            }
+        }
+
+        return counts;
+    }
+
+    #computeQuadrantBiodiversity(q) {
+        /** Computes and returns biodiversity of given quadrant. */
+        let biodiversity = 0;
+        const treeCounts = this.#countTrees(q);
+
+        // Rule 1 = Mixed forests with more trees => more biodiversity.
+        // MIN = 0
+        // MAX = (num_rows/2) * (num_columns/2) * 3
+        if (treeCounts.coniferous == treeCounts.deciduous) {
+            biodiversity += 3*(treeCounts.coniferous + treeCounts.deciduous);
+        } else {
+            const more = Math.max(treeCounts.coniferous, treeCounts.deciduous);
+            const less = Math.min(treeCounts.coniferous, treeCounts.deciduous);
+            const diff = more - less;
+            const sim = more - diff;
+            biodiversity += 3 * (sim * 2);
+            if (diff == 1) biodiversity += 1;
+            else {
+                if (diff/2 > 0) biodiversity += 2 * diff;
+                else biodiversity += (2 * (diff - 1)) + 1;
+            }
+        }
+
+        // Rule 2 = Mixed forests with more trees => more biodiversity.
+        // MIN = 0
+        // MAX = (num_rows/2) * (num_columns/2) * 3
+        biodiversity += 0.5 * treeCounts.seedling;
+        biodiversity += 0.8 * treeCounts.sapling;
+        biodiversity += 2 * treeCounts.mature;
+        biodiversity += 3 * treeCounts.old_growth;
+        biodiversity += 1 * treeCounts.dead;
+
+        return biodiversity;
+    }
+
+    getBiodiversity(q = [1, 1, 1, 1]) {
         /** Returns sum of biodiversity in given quadrants
          *  expressed using a one hot encoded array which is
-         *  [0, 0, 0, 0] by default to return aggregated
+         *  [1, 1, 1, 1] by default to return aggregated
          *  biodiversity of all of the land. */
-        // q.forEach(qNum => {
-        //     quadrants[qNum-1].forEach(xy => {
-
-        //     })
-        // })
-        console.log("getBiodiversity() => TO DO ...");
+        validateQuadrantEncoding(q);
+        let biodiversity = 0;
+        for (let i=0; i<q.length; i++) {
+            if (q[i] > 0) biodiversity += this.#biodiversity[i];
+        }
+        return biodiversity;
     }
 
-    getBiodiversityCategory = (q = [0, 0, 0, 0]) => {
+    getBiodiversityCategory(q = [1, 1, 1, 1]) {
         /** Returns biodiversity class of given quadrants
          *  expressed using a one hot encoded array which is
-         *  [0, 0, 0, 0] by default to return aggregated
+         *  [1, 1, 1, 1] by default to return aggregated
          *  biodiversity of all of the land. Possible category
          *  values are: unforested, plantation, forest, ecosystem. */
-        // q.forEach(qNum => {
-        //     quadrants[qNum-1].forEach(xy => {
+        validateQuadrantEncoding(q);
+        let num_quadrants = 0;
+        let biodiversity = 0;
+        q.forEach(qNum => {
+            if (qNum == 1) {
+                num_quadrants += 1;
+                biodiversity == this.getBiodiversity(q);
+            }
+        });
+        const rangeBiodiversity = [
+            this.#quadrantRangeBiodiversity[0]*num_quadrants, 
+            this.#quadrantRangeBiodiversity[1]*num_quadrants
+        ]
+        const biodiversityRatio = (
+            biodiversity /
+            (rangeBiodiversity[1] - rangeBiodiversity[0])
+        ); // [0, 1]
 
-        //     })
-        // })
-        console.log("getBiodiversityCategory() => TO DO ...");
+        if (biodiversityRatio < 0.25) return "unforested";
+        else if (biodiversityRatio < 0.5) return "plantation";
+        else if (biodiversityRatio < 0.75) return "forest";
+        else return "ecosystem";
     }
 
-    plant = (treeType, rowColumnIdx, treeAge = 0) => {
+    plant(treeType, rowColumnIdx, treeAge=0) {
         /** Plants a tree of given type and age at given location. */
         // Check age class of the tree and throw error if the tree is 
         // older than the sapling stage.
-        console.log("plant() => TO DO ...");
+
+        // Check if given position is valid.
+        checkIndexOutOfRange(rowColumnIdx[0], 0, this.#numRows, rowColumnIdx[1], 0, this.#numColumns); 
+
+        // Create a new tree if a valid tree type was provided.
+        let newTree;
+        if (treeType == 'coniferous') {
+            newTree = new Coniferous(rowColumnIdx, treeAge);
+        } else if (treeType == 'deciduous') {
+            newTree = new Deciduous(rowColumnIdx, treeAge);
+        } else {
+            throw new Error(`Invalid tree type ${treeType}.`);
+        }
+
+        // Check if the age of the tree is appropriate.
+        if (!['seedling', 'sapling'].includes(newTree.getLifeStage())) {
+            throw new Error(`Invalid tree age ${treeAge}. Only seedlings and saplings can be planted.`);
+        }
+
+        // Add the new tree to the land.
+        this.#positions[rowColumnIdx[0]][rowColumnIdx[1]] = newTree;
     }
 
-    clear = (rowIdx, columnIdx, utility) => {
+    clear(rowIdx, columnIdx, utility) {
         /** Clears any plants on a piece of land for a particular
          *  use which could be either "lumber" or "energy". */
         // Check age class of the tree and throw error if the tree is 
@@ -386,7 +531,10 @@ class Action {
         checkIndexOutOfRange(target[0], 0, landRowCol[0], target[1], 0, landRowCol[1]);
         this.#target = target;
         // Give the action a unique id.
-        this.#id, actionIdNext, actionIdAvailable = getNewId(actionIdNext, actionIdAvailable);
+        const idObj = getNewId(actionIdNext, actionIdAvailable);
+        this.#id = idObj.id;
+        actionIdNext = idObj.next;
+        actionIdAvailable = idObj.available;
     }
 
     getTarget() {
@@ -454,6 +602,11 @@ class TreeRequirement {
             this.#treeType = treeType;
         }
     }
+
+    getTreeType() {
+        /** Returns tree type. */
+        return this.#treeType;
+    }
 }
 
 class ReqCo2 extends TreeRequirement {
@@ -477,15 +630,20 @@ class ReqTemperature extends TreeRequirement {
 class Tree {
     #id;
     #ttlSenescent;
-    #age = 0;
+    #age;
     #stress = 0.0;
     #position = 0;
-    _requirements;
-    _height = 0;
-    _diameter = 0;
-    _yearLastReproduced = 0;
+    #height = 0;
+    #diameter = 0;
+    #maxGrowthRate = 1; // [0,1]
+    #biodiversityReductionFactor = {
+        unforested: 0, plantation: 0.01, forest: 0.1, ecosystem: 0.3
+    }
 
-    constructor(position) {
+    constructor(position, age = 0) {
+        // Set age.
+        this.#age = age;
+
         // Set position.
         if (typeof position != typeof [] || position.length != 2) {
             throw new Error(`Invalid position = ${position}.`);
@@ -495,15 +653,38 @@ class Tree {
         this.#position = position; // [x, y]
 
         // Set ID.
-        this.#id, treeIdNext, treeIdAvailable = getNewId(treeIdNext, treeIdAvailable);
+        const idObj = getNewId(treeIdNext, treeIdAvailable);
+        this.#id = idObj.id;
+        treeIdNext = idObj.next;
+        treeIdAvailable = idObj.available;
 
         // Set senescent time to live.
         this.#ttlSenescent = getRandomInt(5, 10);
     }
 
-    #computeStress() {
-        /** Computes stress that this tree is under. */
-        console.log('computeStress() => TO DO ...');
+    getMaxGrowthRate() {
+        /** Returns maximum growth rate. */
+        return this.#maxGrowthRate;
+    }
+
+    getHeight() {
+        /** Returns height of the tree. */
+        return this.#height;
+    }
+
+    setHeight(height) {
+        /** Sets height of the tree. */
+        this.#height = height;
+    }
+
+    getDiameter() {
+        /** Returns diameter of the tree. */
+        return this.#height;
+    }
+
+    setDiameter(diameter) {
+        /** Sets diameter of the tree. */
+        this.#diameter = diameter;
     }
 
     getId() {
@@ -537,11 +718,6 @@ class Tree {
         return this.#ttlSenescent;
     }
 
-    age() {
-        /** Tree ages by one time unit. */
-        console.log('age() => TO DO ...');
-    }
-
     getReproductionInterval() {
         /** Returns the set reproduction interval in years. */
         return this._reproductionInterval;
@@ -567,23 +743,99 @@ class Tree {
         console.log('decay() => TO DO ...');
     }
 
+    #computeBiodiversityReduction() {
+        /** Returns the reduction in stress to the plant due to biodiversity. */
+        let quadrantEnc = [0, 0, 0, 0];
+        quadrantEnc[land.getQuadrant(this.#position[0], this.#position[1])-1] = 1;
+        return this.#biodiversityReductionFactor[land.getBiodiversityCategory(quadrantEnc)];
+    }
+
+    computeVolume() {
+        /** Returns volume of the tree computed as the volume of a cylinder. */
+        return Math.pi * ((this.#diameter/2)^2) * this.#height;
+    }
+
+    computeCo2Requirement() {
+        /** Returns amount of CO2 required by this tree for this month. */
+        console.log('computeCo2Requirement() => TO DO ...');
+    }
+
+    computeCo2Stress() {
+        /** Returns amount of stress that this tree is under for this month
+         *  w.r.t CO2 availability. */
+        console.log('computeCo2Stress() => TO DO ...');
+    }
+
+    computeWaterRequirement() {
+        /** Returns amount of CO2 required by this tree for this month. */
+        console.log('computeWaterRequirement() => TO DO ...');
+    }
+
+    computeWaterStress() {
+        /** Returns amount of stress that this tree is under for this month
+         *  w.r.t water availability. */
+        console.log('computeWaterStress() => TO DO ...');
+    }
+
+    computeTemperatureRequirement() {
+        /** Returns amount of CO2 required by this tree for this month. */
+        console.log('computeTemperatureRequirement() => TO DO ...');
+    }
+
+    computeTemperatureStress() {
+        /** Returns amount of stress that this tree is under for this month
+         *  w.r.t current average temperature. */
+        console.log('computeTemperatureStress() => TO DO ...');
+    }
+
+    #computeStress() {
+        /** Computes stress that this tree is under for this month.. */
+        console.log('computeStress() => TO DO ...');
+    }
+
+    #computeGrowthRate() {
+        /** Calculates and returns growth rate as per current conditions 
+         *  using the following formula.
+         *  GR = (1 - max(0, stress - quadrant_biodiversity_reduction)) * GR_max */
+        return (1 - Math.max(0, this.getStress() - this.#computeBiodiversityReduction(land.getQuadrant(this.#position[0], this.#position[1])))) * this.#maxGrowthRate;
+    }
+
     live() {
         /** Mechanism that models all changes to take place when
          *  the tree lives for another time unit's worth of time. */
-        console.log('live() => TO DO ...');
+        // Compute environment effects.
+        // Compute stress.
+        this.#computeStress();
+
+        // Grow ...
+        const growthRate = this.#computeGrowthRate();
+        console.log('growthRate =', growthRate);
+        // Absorb CO2 ...
     }
 }
 
 class Coniferous extends Tree {
     #reproductionInterval;
+    #maxAge = 90 + this.getTtlSenescent();
+    #yearLastReproduced = 0;
     
-    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
-        super(position);
+    constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
+        super(position, age);
         this.#reproductionInterval = reproductionInterval;
         this._requirements = {
             'water': new ReqWater('coniferous'),
             'co2': new ReqCo2('coniferous'),
             'temperature': new ReqTemperature('coniferous')
+        }
+    }
+
+    age() {
+        /** Tree ages by one time unit. */
+        // Still alive?
+        if (this.getStress() < 1 && this.getAge() < this.#maxAge) {
+            this.live();
+        } else {
+            this.decay();
         }
     }
     
@@ -596,12 +848,12 @@ class Coniferous extends Tree {
     getLifeStage() {
         /** Returns the life stage that this tress is in. */
         let age = this.getAge();
-        if (stress >= 1.0) return "dead";
+        if (this.getStress() >= 1.0) return "dead";
         else if (age < 4) return "seedling";
         else if (age < 26) return "sapling";
         else if (age < 60) return "mature";
         else if (age < 90) return "old-growth";
-        else if (age < 100) return "senescent";
+        else if (age < this.#maxAge) return "senescent";
         else return "dead";
     }
 
@@ -613,14 +865,25 @@ class Coniferous extends Tree {
 
 class Deciduous extends Tree {
     #reproductionInterval;
+    #maxAge = 70 + this.getTtlSenescent();
 
-    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
-        super(position);
+    constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
+        super(position, age);
         this.#reproductionInterval = reproductionInterval;
         this._requirements = {
             'water': new ReqWater('deciduous'),
             'co2': new ReqCo2('deciduous'),
             'temperature': new ReqTemperature('deciduous')
+        }
+    }
+
+    age() {
+        /** Tree ages by one time unit. */
+        // Still alive?
+        if (this.getStress() < 1 && this.getAge() < this.#maxAge) {
+            this.live();
+        } else {
+            this.decay();
         }
     }
 
@@ -633,12 +896,12 @@ class Deciduous extends Tree {
     getLifeStage() {
         /** Returns the life stage that this tress is in. */
         let age = this.getAge();
-        if (stress >= 1.0) return "dead";
+        if (this.getStress() >= 1.0) return "dead";
         else if (age < 3) return "seedling";
         else if (age < 21) return "sapling";
         else if (age < 47) return "mature";
         else if (age < 70) return "old-growth";
-        else if (age < 80) return "senescent";
+        else if (age < this.#maxAge) return "senescent";
         else return "dead";
     }
 
@@ -726,17 +989,7 @@ class Timber {
     }
 }
 
-// Global world properties.
-let time = new Time(0, 0, 0); 
-let actionIdNext = 0;
-let actionIdAvailable = [];
-let treeIdNext = 0;
-let treeIdAvailable = [];
-let funds = START_FUNDS;
-let land = new Land(LAND_DIM, LAND_DIM);
-let environment = new Environment();
-let plan = new Plan();
-
+// Global functions.
 const computeAtmosphericCo2 = () => {
     /** Computes current CO2 levels in the air. */
     console.log('computeAtmosphericCo2() => TO DO ...');
@@ -759,3 +1012,18 @@ const stop = (t = null) => {
     if (t == null) t = time;
     console.log('stop() => TO DO ...');
 }
+
+// Global world properties.
+let time = new Time(0, 0, 0); 
+let actionIdNext = 0;
+let actionIdAvailable = [];
+let treeIdNext = 0;
+let treeIdAvailable = [];
+let funds = START_FUNDS;
+let land = new Land(LAND_DIM, LAND_DIM);
+let environment = new Environment();
+let plan = new Plan();
+
+land.plant('deciduous', [3,2]); 
+const eywa = land.getLandContent(3, 2); 
+eywa.age();
