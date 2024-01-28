@@ -1,3 +1,7 @@
+// Required dependencies.
+const math = require('mathjs');
+
+
 // Global constants. 
 const RANGE_YEARS = [0, 100];
 const RANGE_WATER = [0.0, 310.0];
@@ -113,6 +117,24 @@ const validateQuadrantEncoding = (enc) => {
     if (invalid_quadrant) {
         throw new Error(`Invalid quadrant encoding ${enc}.`);
     }
+}
+
+const createInterpolationFunction = (xPoints, yPoints) => {
+    // Check if the number of x and y points match.
+    if (xPoints.length !== yPoints.length) {
+      throw new Error("Number of x and y points must be the same.");
+    }
+  
+    // Create the interpolation function.
+    const interpolationFunction = math.interpolate(xPoints, yPoints, 'linear', { extrapolate: true });
+  
+    // Define a new function that takes an x value 
+    // and returns the interpolated y value.
+    function interpolatedFunction(x) {
+      return interpolationFunction(x);
+    }
+  
+    return interpolatedFunction;
 }
 
 
@@ -631,10 +653,10 @@ class Tree {
     #id;
     #ttlSenescent;
     #age;
-    #stress = 0.0;
     #position = 0;
     #height = 0;
     #diameter = 0;
+    #stress = 0.0; // [0, 1]
     #maxGrowthRate = 1; // [0,1]
     #biodiversityReductionFactor = {
         unforested: 0, plantation: 0.01, forest: 0.1, ecosystem: 0.3
@@ -788,9 +810,18 @@ class Tree {
         console.log('computeTemperatureStress() => TO DO ...');
     }
 
-    #computeStress() {
-        /** Computes stress that this tree is under for this month.. */
+    #updateStress() {
+        /** Updates stress value based on latest conditions for one more unit of time. */
         console.log('computeStress() => TO DO ...');
+        
+        // Upon reaching the senescence stage, stress increases by 0.01 every year.
+        // This models how health declines slowly when a tree is old and close to death.
+        if (this.getLifeStage() == 'senescent') {
+            this.#stress += 0.01;
+        }
+
+        // Water availability related stress.
+
     }
 
     #computeGrowthRate() {
@@ -805,7 +836,7 @@ class Tree {
          *  the tree lives for another time unit's worth of time. */
         // Compute environment effects.
         // Compute stress.
-        this.#computeStress();
+        this.#updateStress();
 
         // Grow ...
         const growthRate = this.#computeGrowthRate();
@@ -1027,3 +1058,10 @@ let plan = new Plan();
 land.plant('deciduous', [3,2]); 
 const eywa = land.getLandContent(3, 2); 
 eywa.age();
+
+// // Example usage:
+// const xPoints = [1, 2, 3, 4, 5];
+// const yPoints = [10, 20, 15, 25, 30];
+
+// const interpolatedFunc = createInterpolationFunction(xPoints, yPoints);
+// console.log(interpolatedFunc(2.5));  // Output: 17.5
