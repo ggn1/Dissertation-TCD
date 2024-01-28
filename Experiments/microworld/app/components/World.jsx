@@ -1048,7 +1048,6 @@ class Tree {
 class Coniferous extends Tree {
   #reproductionInterval;
   #maxAge = 90 + this.getTtlSenescent();
-  #yearLastReproduced = 0;
   #maxDiameter = getRandomInt(12, 24);
   #maxHeight= 82;
   
@@ -1073,7 +1072,7 @@ class Coniferous extends Tree {
       // Still alive?
       this.age += 1;
       if (this.getLifeStage() == 'dead') {
-          this.decay();
+          this.#decay();
       } else {
           this.#live();
       }
