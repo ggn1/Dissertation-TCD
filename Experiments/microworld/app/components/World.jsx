@@ -1,33 +1,6 @@
 import React from 'react'
 var linearInterpolator = require('linear-interpolator');
 
-// Global constants. 
-const RANGE_YEARS = [0, 100];
-const RANGE_WATER = [0.0, 310.0];
-const RANGE_TEMPERATURE = [-60.0, 100.0];
-const START_FUNDS = 10000.0;
-const START_WATER = 120.0;
-const START_CO2 = 320.0;
-const START_PRICE_TIMBER = 100.0;
-const START_TEMPERATURE = 15.0;
-const RENDER_DELAY = 1; // In seconds.
-const TREE_UTILITY = ["energy", "lumber"];
-const LAND_DIM = 8; // No. of rows = no. of columns.
-const MONTH_DAYS = {
-    'jan': 31, 'feb': 28, 'mar': 31,
-    'apr': 30, 'may': 31, 'jun': 30,
-    'jul': 31, 'aug': 32, 'sep': 30,
-    'oct': 31, 'nov': 30, 'dec': 31
-}
-const SEASON_MONTHS = {
-    'winter': ['dec', 'jan', 'feb'], 
-    'spring': ['mar', 'apr', 'may'],
-    'summer': ['jun', 'jul', 'aug'],
-    'autumn': ['sep', 'oct', 'nov']
-}
-const REPRODUCTION_INTERVAL_CONIFEROUS = 50;
-const REPRODUCTION_INTERVAL_DECIDUOUS = 20;
-
 // Utility Functions
 const checkIndexOutOfRange = (
   idxX, rangeMinX, rangeMaxX,
@@ -129,6 +102,350 @@ const createInterpolationFunction = (xyPoints) => {
   }
 
   return interpolatedFunction;
+}
+
+// Global constants. 
+const RANGE_YEARS = [0, 100];
+const RANGE_WATER = [0.0, 310.0];
+const RANGE_TEMPERATURE = [-60.0, 100.0];
+const START_FUNDS = 10000.0;
+const START_WATER = 120.0;
+const START_CO2 = 500.0;
+const START_PRICE_TIMBER = 100.0;
+const START_TEMPERATURE = 15.0;
+const RENDER_DELAY = 1; // In seconds.
+const START_TIMBER_DEMAND = 10;
+const TREE_UTILITY = ["energy", "lumber"];
+const LAND_DIM = 8; // No. of rows = no. of columns.
+const MONTH_DAYS = {
+    'jan': 31, 'feb': 28, 'mar': 31,
+    'apr': 30, 'may': 31, 'jun': 30,
+    'jul': 31, 'aug': 32, 'sep': 30,
+    'oct': 31, 'nov': 30, 'dec': 31
+}
+const SEASON_MONTHS = {
+    'winter': ['dec', 'jan', 'feb'], 
+    'spring': ['mar', 'apr', 'may'],
+    'summer': ['jun', 'jul', 'aug'],
+    'autumn': ['sep', 'oct', 'nov']
+}
+const REPRODUCTION_INTERVAL_CONIFEROUS = 50;
+const REPRODUCTION_INTERVAL_DECIDUOUS = 20;
+const WATER_STRESS = {
+  requirement: {
+    coniferous: [
+      [0.0, 1.0],
+      [10.0, 1.0],
+      [20.0, 1.0],
+      [30.0, 0.98],
+      [40.0, 0.92],
+      [50.0, 0.8],
+      [60.0, 0.6],
+      [70.0, 0.3],
+      [80.0, 0.1],
+      [90.0, 0.05],
+      [100.0, 0.02],
+      [110.0, 0.0],
+      [120.0, 0.0],
+      [130.0, 0.0],
+      [140.0, 0.0],
+      [150.0, 0.0],
+      [160.0, 0.01],
+      [170.0, 0.03],
+      [180.0, 0.06],
+      [190.0, 0.09],
+      [200.0, 0.12],
+      [210.0, 0.15],
+      [220.0, 0.2],
+      [230.0, 0.25],
+      [240.0, 0.35],
+      [250.0, 0.65],
+      [260.0, 0.95],
+      [270.0, 0.98],
+      [280.0, 1.0],
+      [290.0, 1.0],
+      [300.0, 1.0],
+      [310.0, 1.0]
+    ],
+    deciduous: [
+      [0.0, 1.0],
+      [10.0, 1.0],
+      [20.0, 1.0],
+      [30.0, 1.0],
+      [40.0, 1.0],
+      [50.0, 0.98],
+      [60.0, 0.92],
+      [70.0, 0.8],
+      [80.0, 0.7],
+      [90.0, 0.5],
+      [100.0, 0.3],
+      [110.0, 0.1],
+      [120.0, 0.05],
+      [130.0, 0.03],
+      [140.0, 0.01],
+      [150.0, 0.0],
+      [160.0, 0.0],
+      [170.0, 0.0],
+      [180.0, 0.0],
+      [190.0, 0.01],
+      [200.0, 0.03],
+      [210.0, 0.06],
+      [220.0, 0.1],
+      [230.0, 0.15],
+      [240.0, 0.2],
+      [250.0, 0.25],
+      [260.0, 0.35],
+      [270.0, 0.65],
+      [280.0, 0.95],
+      [290.0, 0.98],
+      [300.0, 1.0],
+      [310.0, 1.0]
+    ]
+  },
+  requirement_sensitive: {
+    coniferous: [
+      [0.0, 1.0],
+      [10.0, 1.0],
+      [20.0, 1.0],
+      [30.0, 1.0],
+      [40.0, 1.0],
+      [50.0, 0.98],
+      [60.0, 0.96],
+      [70.0, 0.9],
+      [80.0, 0.8],
+      [90.0, 0.6],
+      [100.0, 0.4],
+      [110.0, 0.2],
+      [120.0, 0.09],
+      [130.0, 0.04],
+      [140.0, 0.01],
+      [150.0, 0.0],
+      [160.0, 0.0],
+      [170.0, 0.0],
+      [180.0, 0.01],
+      [190.0, 0.05],
+      [200.0, 0.1],
+      [210.0, 0.2],
+      [220.0, 0.3],
+      [230.0, 0.4],
+      [240.0, 0.6],
+      [250.0, 0.8],
+      [260.0, 0.95],
+      [270.0, 0.98],
+      [280.0, 1.0],
+      [290.0, 1.0],
+      [300.0, 1.0],
+      [310.0, 1.0]
+    ], 
+    deciduous: [
+      [0.0, 1.0],
+      [10.0, 1.0],
+      [20.0, 1.0],
+      [30.0, 1.0],
+      [40.0, 1.0],
+      [50.0, 1.0],
+      [60.0, 1.0],
+      [70.0, 1.0],
+      [80.0, 0.98],
+      [90.0, 0.96],
+      [100.0, 0.9],
+      [110.0, 0.8],
+      [120.0, 0.6],
+      [130.0, 0.4],
+      [140.0, 0.2],
+      [150.0, 0.09],
+      [160.0, 0.04],
+      [170.0, 0.01],
+      [180.0, 0.0],
+      [190.0, 0.0],
+      [200.0, 0.0],
+      [210.0, 0.01],
+      [220.0, 0.05],
+      [230.0, 0.1],
+      [240.0, 0.2],
+      [250.0, 0.3],
+      [260.0, 0.4],
+      [270.0, 0.6],
+      [280.0, 0.8],
+      [290.0, 0.95],
+      [300.0, 0.98],
+      [310.0, 1.0]
+    ]
+  }
+}
+WATER_STRESS['stress_function'] = {
+  coniferous: createInterpolationFunction(WATER_STRESS.requirement.coniferous),
+  deciduous: createInterpolationFunction(WATER_STRESS.requirement.deciduous)
+}
+WATER_STRESS['stress_function_sensitive'] = {
+  coniferous: createInterpolationFunction(WATER_STRESS.requirement_sensitive.coniferous),
+  deciduous: createInterpolationFunction(WATER_STRESS.requirement_sensitive.deciduous)
+}
+const CO2_STRESS = {
+  requirement:[
+    [0.0, 1.0],
+    [10.0, 1.0],
+    [20.0, 1.0],
+    [30.0, 0.99],
+    [40.0, 0.978],
+    [50.0, 0.96],
+    [60.0, 0.94],
+    [70.0, 0.92],
+    [80.0, 0.89],
+    [90.0, 0.85],
+    [100.0, 0.8],
+    [110.0, 0.75],
+    [120.0, 0.7],
+    [130.0, 0.64],
+    [140.0, 0.54],
+    [150.0, 0.42],
+    [160.0, 0.3],
+    [170.0, 0.2],
+    [180.0, 0.1],
+    [190.0, 0.05],
+    [200.0, 0.01],
+    [210.0, 0.0],
+    [220.0, 0.0],
+    [230.0, 0.0],
+    [240.0, 0.0],
+    [250.0, 0.0],
+    [260.0, 0.0],
+    [270.0, 0.0],
+    [280.0, 0.0],
+    [290.0, 0.0],
+    [300.0, 0.0],
+    [310.0, 0.0]
+  ],
+  requirement_sensitive:[
+    [0.0, 1.0],
+    [10.0, 1.0],
+    [20.0, 1.0],
+    [30.0, 1.0],
+    [40.0, 1.0],
+    [50.0, 1.0],
+    [60.0, 0.99],
+    [70.0, 0.978],
+    [80.0, 0.96],
+    [90.0, 0.94],
+    [100.0, 0.92],
+    [110.0, 0.89],
+    [120.0, 0.85],
+    [130.0, 0.8],
+    [140.0, 0.75],
+    [150.0, 0.7],
+    [160.0, 0.64],
+    [170.0, 0.54],
+    [180.0, 0.42],
+    [190.0, 0.3],
+    [200.0, 0.2],
+    [210.0, 0.1],
+    [220.0, 0.05],
+    [230.0, 0.01],
+    [240.0, 0.0],
+    [250.0, 0.0],
+    [260.0, 0.0],
+    [270.0, 0.0],
+    [280.0, 0.0],
+    [290.0, 0.0],
+    [300.0, 0.0],
+    [310.0, 0.0]
+  ] 
+}
+CO2_STRESS['stress_function'] = createInterpolationFunction(CO2_STRESS.requirement);
+CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(CO2_STRESS.requirement_sensitive);
+const TEMPERATURE_STRESS = {
+  requirement:{
+    coniferous: [
+      [-60.0, 0.2],
+      [-50.0, 0.15],
+      [-40.0, 0.1],
+      [-30.0, 0.06],
+      [-20.0, 0.03],
+      [-10.0, 0.01],
+      [0.0, 0.0],
+      [10.0, 0.0],
+      [20.0, 0.0],
+      [30.0, 0.01],
+      [40.0, 0.05],
+      [50.0, 0.2],
+      [60.0, 0.4],
+      [70.0, 0.8],
+      [80.0, 1.0],
+      [90.0, 1.0],
+      [100.0, 1.0]
+    ],
+    deciduous: [
+      [-60.0, 0.9],
+      [-50.0, 0.8],
+      [-40.0, 0.7],
+      [-30.0, 0.4],
+      [-20.0, 0.2],
+      [-10.0, 0.1],
+      [0.0, 0.0],
+      [10.0, 0.0],
+      [20.0, 0.0],
+      [30.0, 0.01],
+      [40.0, 0.05],
+      [50.0, 0.2],
+      [60.0, 0.4],
+      [70.0, 0.8],
+      [80.0, 1.0],
+      [90.0, 1.0],
+      [100.0, 1.0]
+    ]
+  },
+  requirement_sensitive: {
+    coniferous: [
+      [-60.0, 1.0],
+      [-50.0, 1.0],
+      [-40.0, 0.9],
+      [-30.0, 0.6],
+      [-20.0, 0.4],
+      [-10.0, 0.25],
+      [0.0, 0.1],
+      [10.0, 0.0],
+      [20.0, 0.0],
+      [30.0, 0.05],
+      [40.0, 0.15],
+      [50.0, 0.4],
+      [60.0, 0.8],
+      [70.0, 1.0],
+      [80.0, 1.0],
+      [90.0, 1.0],
+      [100.0, 1.0]
+    ],
+    deciduous: [
+      [-60.0, 1.0],
+      [-50.0, 1.0],
+      [-40.0, 1.0],
+      [-30.0, 0.9],
+      [-20.0, 0.6],
+      [-10.0, 0.4],
+      [0.0, 0.1],
+      [10.0, 0.0],
+      [20.0, 0.0],
+      [30.0, 0.05],
+      [40.0, 0.15],
+      [50.0, 0.4],
+      [60.0, 0.8],
+      [70.0, 1.0],
+      [80.0, 1.0],
+      [90.0, 1.0],
+      [100.0, 1.0]
+    ]
+  }
+}
+TEMPERATURE_STRESS['stress_function'] = {
+  coniferous: createInterpolationFunction(TEMPERATURE_STRESS.requirement.coniferous),
+  deciduous: createInterpolationFunction(TEMPERATURE_STRESS.requirement.deciduous)
+}
+TEMPERATURE_STRESS['stress_function_sensitive'] = {
+  coniferous: createInterpolationFunction(TEMPERATURE_STRESS.requirement_sensitive.coniferous),
+  deciduous: createInterpolationFunction(TEMPERATURE_STRESS.requirement_sensitive.deciduous)
+}
+const WOOD_DENSITY = { // unit weight per unit volume
+  coniferous: 3,
+  deciduous: 4
 }
 
 // Components.
@@ -389,15 +706,44 @@ class Land {
       this.#positions[rowColumnIdx[0]][rowColumnIdx[1]] = newTree;
   }
 
-  clear(rowIdx, columnIdx, utility) {
+  clear(rowIdx, columnIdx, utility = null) {
       /** Clears any plants on a piece of land for a particular
        *  use which could be either "lumber" or "energy". */
       // Check age class of the tree and throw error if the tree is 
       // older than the sapling stage.
-      if (!TREE_UTILITY.includes(utility)) {
-          throw new Error('Invalid tree utility.')
+      if (utility == null) {
+        const tree = this.#positions[rowIdx][columnIdx];
+        treeIdAvailable.push(tree.getId());
+        this.#positions[rowIdx][columnIdx] = null;
+      } else {
+        if (!TREE_UTILITY.includes(utility)) {
+            throw new Error('Invalid tree utility.')
+        }
+        console.log("clear() => TO DO ...");
+      }   
+  }
+
+  getAdjacentFreeSpace(xy) {
+    /** Returns the coordinates of a space adjacent to given one 
+     *  if it is free and returns -1 if it no such space. */
+    let adjacentPositions = [];
+    for (let i = -1; i <= 1; i++) {
+      for (let j = -1; j <= 1; j++) {
+        adjacentPositions.push([xy[0]+i, xy[1]+j]);
       }
-      console.log("clear() => TO DO ...");
+    }
+    let validPositions = [];
+    for (let i=0; i<adjacentPositions.length; i++) {
+      const position = adjacentPositions[i];
+      if (
+        !checkIndexOutOfRange(position[0], 0, this.#numRows, position[1], 0, this.#numColumns)
+        && this.getLandContent(position[0], position[1]) == null
+      ) {
+        validPositions.push(position);
+      }
+    }
+    if (validPositions.length == 0) return -1;
+    else return validPositions[getRandomInt(0, validPositions.length)];
   }
 }
 
@@ -425,17 +771,17 @@ class Environment {
   }
 
   getWater = (t = null) => {
-      /** Returns monthly water settings if t is null 
-       *  or water setting at given time if it is not null. */
-      if (t == null) return this.#water;
-      else return this.#water[time.year][time.month];
+      /** Returns monthly water settings at current time if t is null 
+       *  or at given time if t is not null. */
+      if (t == null) t = time;
+      return this.#water[t.year][t.month];
   }
 
   getTemperature = (t = null) => {
-      /** Returns monthly temperature settings if t is null 
-       *  or temperature setting at given time if it is not null. */
-      if (t == null) return this.#temperature;
-      else return this.#temperature[time.year][time.month];
+      /** Returns monthly temperature settings at current time if t is null 
+       *  or at given time if t is not null. */
+      if (t == null) t = time;
+      return this.#temperature[t.year][t.month];
   }
 
   getCo2 = () => {
@@ -607,57 +953,16 @@ class PlantTree extends Action {
   }
 }
 
-class TreeRequirement {
-  #treeType;
-
-  constructor(treeType) {
-      if (!['coniferous', 'deciduous'].includes(treeType)) {
-          throw new Error(`Invalid tree type ${treeType}.`);
-      } else {
-          this.#treeType = treeType;
-      }
-  }
-
-  getTreeType() {
-      /** Returns tree type. */
-      return this.#treeType;
-  }
-}
-
-class ReqCo2 extends TreeRequirement {
-  computeStress(treeAge, treeVolume, reqAvailability) {
-      console.log('computeStress() => TO DO ...');
-  }
-}
-
-class ReqWater extends TreeRequirement {
-  computeStress(treeAge, treeVolume, reqAvailability) {
-      console.log('computeStress() => TO DO ...');
-  }
-}
-
-class ReqTemperature extends TreeRequirement {
-  computeStress(treeAge, treeVolume, reqAvailability) {
-      console.log('computeStress() => TO DO ...');
-  }
-}
-
 class Tree {
   #id;
   #ttlSenescent;
-  #age;
-  #position = 0;
-  #height = 0;
-  #diameter = 0;
-  #stress = 0.0; // [0, 1]
+  #position;
   #maxGrowthRate = 1; // [0,1]
-  #biodiversityReductionFactor = {
-      unforested: 0, plantation: 0.01, forest: 0.1, ecosystem: 0.3
-  }
-
-  constructor(position, age = 0) {
-      // Set age.
-      this.#age = age;
+  #biodiversityReductionFactor = { unforested: 0, plantation: 0.01, forest: 0.1, ecosystem: 0.3 }
+  
+  constructor(position) {
+      // Set stress.
+      this.stress = 0.0; // [0, 1]
 
       // Set position.
       if (typeof position != typeof [] || position.length != 2) {
@@ -675,6 +980,9 @@ class Tree {
 
       // Set senescent time to live.
       this.#ttlSenescent = getRandomInt(5, 10);
+
+      // Set reproduction related parameter.
+      this.year_last_reproduced = 0;
   }
 
   getMaxGrowthRate() {
@@ -682,44 +990,9 @@ class Tree {
       return this.#maxGrowthRate;
   }
 
-  getHeight() {
-      /** Returns height of the tree. */
-      return this.#height;
-  }
-
-  setHeight(height) {
-      /** Sets height of the tree. */
-      this.#height = height;
-  }
-
-  getDiameter() {
-      /** Returns diameter of the tree. */
-      return this.#height;
-  }
-
-  setDiameter(diameter) {
-      /** Sets diameter of the tree. */
-      this.#diameter = diameter;
-  }
-
   getId() {
       /** Returns unique identifier of this tree. */
       return this.#id;
-  }
-
-  getAge() {
-      /** Returns this tree's age. */
-      return this.#age;
-  }
-
-  getStress() {
-      /** Returns the % of stress that this tree is under. */
-      return this.#stress;
-  }
-
-  setStress(stressPercent) {
-      /** Set the % of stress that this tree is under. */
-      this.#stress = stressPercent;
   }
 
   getPosition() {
@@ -733,31 +1006,6 @@ class Tree {
       return this.#ttlSenescent;
   }
 
-  getReproductionInterval() {
-      /** Returns the set reproduction interval in years. */
-      return this._reproductionInterval;
-  }
-
-  getRequirements() {
-      /** Returns current requirements of this tree. */
-      return this._requirements;
-  }
-
-  computeGrowthRate() {
-      /** Computes and returns growth rate. */
-      console.log('computeGrowthRate() => TO DO ...');
-  }
-
-  captureCarbon() {
-      /** Removes CO2 from the atmosphere. */
-      console.log('captureCarbon() => TO DO ...');
-  }
-
-  decay() {
-      /** Mechanism that models decaying of the tree over time. */
-      console.log('decay() => TO DO ...');
-  }
-
   #computeBiodiversityReduction() {
       /** Returns the reduction in stress to the plant due to biodiversity. */
       let quadrantEnc = [0, 0, 0, 0];
@@ -765,76 +1013,35 @@ class Tree {
       return this.#biodiversityReductionFactor[land.getBiodiversityCategory(quadrantEnc)];
   }
 
-  computeVolume() {
+  computeVolume(diameter = null, height = null) {
       /** Returns volume of the tree computed as the volume of a cylinder. */
-      return Math.pi * ((this.#diameter/2)^2) * this.#height;
+      if (diameter == null) diameter = this.diameter;
+      if (height == null) height = this.height;
+      return 3.14 * ((this.diameter/2)^2) * this.height;
   }
 
-  computeCo2Requirement() {
-      /** Returns amount of CO2 required by this tree for this month. */
-      console.log('computeCo2Requirement() => TO DO ...');
-  }
-
-  computeCo2Stress() {
-      /** Returns amount of stress that this tree is under for this month
-       *  w.r.t CO2 availability. */
-      console.log('computeCo2Stress() => TO DO ...');
-  }
-
-  computeWaterRequirement() {
-      /** Returns amount of CO2 required by this tree for this month. */
-      console.log('computeWaterRequirement() => TO DO ...');
-  }
-
-  computeWaterStress() {
-      /** Returns amount of stress that this tree is under for this month
-       *  w.r.t water availability. */
-      console.log('computeWaterStress() => TO DO ...');
-  }
-
-  computeTemperatureRequirement() {
-      /** Returns amount of CO2 required by this tree for this month. */
-      console.log('computeTemperatureRequirement() => TO DO ...');
-  }
-
-  computeTemperatureStress() {
-      /** Returns amount of stress that this tree is under for this month
-       *  w.r.t current average temperature. */
-      console.log('computeTemperatureStress() => TO DO ...');
-  }
-
-  #updateStress() {
+  updateStressTimeEnv(basic_needs_stress) {
       /** Updates stress value based on latest conditions for one more unit of time. */
-      console.log('computeStress() => TO DO ...');
-      
+
       // Upon reaching the senescence stage, stress increases by 0.01 every year.
       // This models how health declines slowly when a tree is old and close to death.
       if (this.getLifeStage() == 'senescent') {
-          this.#stress += 0.01;
+          this.stress += 0.01;
       }
 
-      // Water availability related stress.
-
+      // Basic needs availability related stress.
+      this.stress += basic_needs_stress.water(environment.getWater());
+      this.stress += basic_needs_stress.temperature(environment.getTemperature());
+      this.stress += basic_needs_stress.co2(environment.getCo2());
   }
 
-  #computeGrowthRate() {
+  computeGrowthRate() {
       /** Calculates and returns growth rate as per current conditions 
        *  using the following formula.
        *  GR = (1 - max(0, stress - quadrant_biodiversity_reduction)) * GR_max */
-      return (1 - Math.max(0, this.getStress() - this.#computeBiodiversityReduction(land.getQuadrant(this.#position[0], this.#position[1])))) * this.#maxGrowthRate;
-  }
-
-  live() {
-      /** Mechanism that models all changes to take place when
-       *  the tree lives for another time unit's worth of time. */
-      // Compute environment effects.
-      // Compute stress.
-      this.#updateStress();
-
-      // Grow ...
-      const growthRate = this.#computeGrowthRate();
-      console.log('growthRate =', growthRate);
-      // Absorb CO2 ...
+      return (1 - Math.max(0, this.stress - this.#computeBiodiversityReduction(
+        land.getQuadrant(this.#position[0], this.#position[1])
+      ))) * this.#maxGrowthRate;
   }
 }
 
@@ -842,103 +1049,235 @@ class Coniferous extends Tree {
   #reproductionInterval;
   #maxAge = 90 + this.getTtlSenescent();
   #yearLastReproduced = 0;
+  #maxDiameter = getRandomInt(12, 24);
+  #maxHeight= 82;
   
   constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
-      super(position, age);
-      this.#reproductionInterval = reproductionInterval;
-      this._requirements = {
-          'water': new ReqWater('coniferous'),
-          'co2': new ReqCo2('coniferous'),
-          'temperature': new ReqTemperature('coniferous')
-      }
+    super(position);
+    this.age = age;
+    const lifeStage = this.getLifeStage();
+    if(lifeStage == 'sapling') {
+      this.diameter = 1;
+      this.height = 10*this.diameter;
+    } else if (lifeStage == 'seedling') {
+      this.diameter = 0.1;
+      this.height = 10*this.diameter;
+    } else {
+      throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
+    }
+    this.#reproductionInterval = reproductionInterval;
   }
 
-  age() {
+  growOlder() {
       /** Tree ages by one time unit. */
       // Still alive?
-      if (this.getStress() < 1 && this.getAge() < this.#maxAge) {
-          this.live();
-      } else {
+      this.age += 1;
+      if (this.getLifeStage() == 'dead') {
           this.decay();
+      } else {
+          this.#live();
       }
-  }
-  
-  #reproduce() {
-      /** A tree can reproduce if there is free space adjacent to the tree 
-       *  and the tree is mature and Stress ≤ 0.5. A tree may reproduce only every 20 years. */
-      console.log('reproduce() => TO DO ...');
   }
 
   getLifeStage() {
       /** Returns the life stage that this tress is in. */
-      let age = this.getAge();
-      if (this.getStress() >= 1.0) return "dead";
-      else if (age < 4) return "seedling";
-      else if (age < 26) return "sapling";
-      else if (age < 60) return "mature";
-      else if (age < 90) return "old-growth";
-      else if (age < this.#maxAge) return "senescent";
+      if (this.stress >= 1.0) return "dead";
+      else if (this.age < 4) return "seedling";
+      else if (this.age < 26) return "sapling";
+      else if (this.age < 60) return "mature";
+      else if (this.age < 90) return "old-growth";
+      else if (this.age < this.#maxAge) return "senescent";
       else return "dead";
   }
 
-  getReproductionInterval() {
-      /** Returns this tree's reproduction interval. */
-      return this.#reproductionInterval;
+  #live() {
+    /** Mechanism that models all changes to take place when
+     *  the tree lives for another time unit's worth of time. */
+    
+    // Get current stress.
+    if (['seedling', 'sapling'].includes(this.getLifeStage())) {
+      this.updateStressTimeEnv({
+        'water': WATER_STRESS.stress_function_sensitive.coniferous,
+        'temperature': TEMPERATURE_STRESS.stress_function_sensitive.coniferous,
+        'co2': CO2_STRESS.stress_function_sensitive
+      });
+    } else {
+      this.updateStressTimeEnv({
+        'water': WATER_STRESS.stress_function.coniferous,
+        'temperature': TEMPERATURE_STRESS.stress_function.coniferous,
+        'co2': CO2_STRESS.stress_function
+      });
+    }
+
+    // Grow.
+    const growthRate = this.computeGrowthRate();
+    if (this.diameter < this.#maxDiameter) {
+      this.diameter = Math.min(this.#maxDiameter, this.diameter + (1 * growthRate * this.diameter));
+    }
+    if (this.height < this.#maxHeight) {
+      this.height = Math.min(this.#maxHeight, this.height + (10 * growthRate * this.diameter));
+    }
+    
+    // Absorb CO2.
+    const co2_current = environment.getCo2();
+    const co2_removed = (
+      (this.computeVolume() * WOOD_DENSITY.coniferous * 0.5) + (1 + (0.5 * growthRate))
+    ) / 12 / 30; // daily
+    console.log('co2 BEFORE =', co2_current);
+    environment.setCo2(co2_current - co2_removed);
+    console.log('co2 AFTER =', environment.getCo2());
+
+    // Reproduce if possible.
+    // If there is a free space adjacent to the tree 
+    // & the tree is mature & Stress <= 0.5 
+    // then the tree reproduces resulting in a new seedling 
+    // at the adjacent empty land spot. 
+    // Trees may reproduce only once every x no. of years.
+    const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
+    if (
+      this.stress <= 0.5 && 
+      !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+      (time.year - this.year_last_reproduce) >= this.#reproductionInterval &&
+      !(adjacentFreeSpace == -1)
+    ) {
+      land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+      this.year_last_reproduce = time.year;
+      console.log(`Tree ${this.getId()} at ${this.getPosition} created a child tree at ${adjacentFreeSpace}!`);
+    }
   }
+
+  #decay() {
+    /** Mechanism that models decaying of the tree over time. */
+    const decayed_diameter = this.diameter * 0.01;
+    const decayed_height = decayed_diameter * 10;
+    const decayed_volume = this.computeVolume(decayed_diameter, decayed_height);
+    this.height = Math.max(0, this.height - decayed_height);
+    this.diameter = Math.max(0, this.diameter - decayed_volume);
+    environment.setCo2(environment.getCo2() + (decayed_volume * 0.7));
+    if (this.height == 0 || this.diameter == 0) {
+      const position_self = this.getPosition();
+      land.clear(position_self[0], position_self[1]);
+    }
+}
 }
 
 class Deciduous extends Tree {
   #reproductionInterval;
   #maxAge = 70 + this.getTtlSenescent();
+  #maxDiameter = getRandomInt(8, 16);
+  #maxHeight= 65;
 
   constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
-      super(position, age);
-      this.#reproductionInterval = reproductionInterval;
-      this._requirements = {
-          'water': new ReqWater('deciduous'),
-          'co2': new ReqCo2('deciduous'),
-          'temperature': new ReqTemperature('deciduous')
-      }
+    super(position);
+    this.age = age;
+    const lifeStage = this.getLifeStage();
+    if(lifeStage == 'sapling') {
+      this.diameter = 1;
+      this.height = 5*this.diameter;
+    } else if (lifeStage == 'seedling') {
+      this.diameter = 0.1;
+      this.height = 5*this.diameter;
+    } else {
+      throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
+    }
+    this.#reproductionInterval = reproductionInterval;
   }
 
-  age() {
-      /** Tree ages by one time unit. */
-      // Still alive?
-      if (this.getStress() < 1 && this.getAge() < this.#maxAge) {
-          this.live();
-      } else {
-          this.decay();
-      }
-  }
-
-  #reproduce() {
-      /** A tree can reproduce if there is free space adjacent to the tree 
-       *  and the tree is mature and Stress ≤ 0.5. A tree may reproduce only every 20 years. */
-      
-  }
+  growOlder() {
+    /** Tree ages by one time unit. */
+    // Still alive?
+    this.age += 1;
+    if (this.getLifeStage() == 'dead') {
+        this.#decay();
+    } else {
+        this.#live();
+    }
+}
 
   getLifeStage() {
       /** Returns the life stage that this tress is in. */
-      let age = this.getAge();
-      if (this.getStress() >= 1.0) return "dead";
-      else if (age < 3) return "seedling";
-      else if (age < 21) return "sapling";
-      else if (age < 47) return "mature";
-      else if (age < 70) return "old-growth";
-      else if (age < this.#maxAge) return "senescent";
+      if (this.stress >= 1.0) return "dead";
+      else if (this.age < 3) return "seedling";
+      else if (this.age < 21) return "sapling";
+      else if (this.age < 47) return "mature";
+      else if (this.age < 70) return "old-growth";
+      else if (this.age < this.#maxAge) return "senescent";
       else return "dead";
   }
 
-  getReproductionInterval() {
-      /** Returns this tree's reproduction interval. */
-      return this.#reproductionInterval;
+  #live() {
+    /** Mechanism that models all changes to take place when
+     *  the tree lives for another time unit's worth of time. */
+    
+    // Compute stress due to availability of basic needs.
+    if (['seedling', 'sapling'].includes(this.getLifeStage())) {
+      this.updateStressTimeEnv({
+        'water': WATER_STRESS.stress_function_sensitive.deciduous,
+        'temperature': TEMPERATURE_STRESS.stress_function_sensitive.deciduous,
+        'co2': CO2_STRESS.stress_function_sensitive
+      });
+    } else {
+      this.updateStressTimeEnv({
+        'water': WATER_STRESS.stress_function.deciduous,
+        'temperature': TEMPERATURE_STRESS.stress_function.deciduous,
+        'co2': CO2_STRESS.stress_function
+      });
+    }
+
+    // Grow.
+    const growthRate = this.computeGrowthRate();
+    if (this.diameter < this.#maxDiameter) {
+      this.diameter = Math.min(this.#maxDiameter, this.diameter + (1 * growthRate * this.diameter));
+    }
+    if (this.height < this.#maxHeight) {
+      this.height = Math.min(this.#maxHeight, this.height + (5 * growthRate * this.diameter));
+    }
+    
+    // Absorb CO2.
+    const co2_current = environment.getCo2();
+    const co2_removed = (
+      (this.computeVolume() * WOOD_DENSITY.deciduous * 0.5) + (1 + (0.5 * growthRate))
+    ) / 12 / 30; // daily
+    // console.log('co2 BEFORE =', co2_current);
+    environment.setCo2(co2_current - co2_removed);
+    // console.log('co2 AFTER =', environment.getCo2());
+
+    // Reproduce if possible.
+    // If there is a free space adjacent to the tree 
+    // & the tree is mature & Stress <= 0.5 
+    // then the tree reproduces resulting in a new seedling 
+    // at the adjacent empty land spot. 
+    // Trees may reproduce only once every x no. of years.
+    const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
+    if (
+      this.stress <= 0.5 && 
+      !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+      (time.year - this.year_last_reproduce) >= this.#reproductionInterval &&
+      !(adjacentFreeSpace == -1)
+    ) {
+      land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+      this.year_last_reproduce = time.year;
+      console.log(`Tree ${this.getId()} at ${this.getPosition} created a child tree at ${adjacentFreeSpace}!`);
+    }
+  }
+
+  #decay() {
+      /** Mechanism that models decaying of the tree over time. */
+      const decayed_diameter = this.diameter * 0.01;
+      const decayed_height = decayed_diameter * 5;
+      const decayed_volume = this.computeVolume(decayed_diameter, decayed_height);
+      this.height = Math.max(0, this.height - decayed_height);
+      this.diameter = Math.max(0, this.diameter - decayed_volume);
+      environment.setCo2(environment.getCo2() + (decayed_volume * 0.7));
+      if (this.height == 0 || this.diameter == 0) {
+        const position_self = this.getPosition();
+        land.clear(position_self[0], position_self[1]);
+      }
   }
 }
 
 class Timber {
   #basePrice; // per kg
-  #demand;
-  #annualChangePercent;
   #timberUsage;
   #Co2Emission;
 
@@ -947,32 +1286,13 @@ class Timber {
       lumberPercent, energyEmissionPercent, lumberEmissionPercent
   ) {
       this.#basePrice = basePrice;
-      this.setAnnualChangePercent(annualChangePercent);
+      this.annualChangePercent = annualChangePercent;
       this.setTimberUsage(energyPercent, lumberPercent);
       this.#Co2Emission = {
           'energy': energyEmissionPercent,
           'lumber': lumberEmissionPercent
       }
-  }
-
-  getDemand() {
-      /** Returns current demand. */
-      return this.#demand;
-  }
-
-  setDemand(demand) {
-      /** Sets current demand. */
-      this.#demand = demand;
-  }
-
-  getAnnualChangePercent() {
-      /** Returns current annual change percent. */
-      return this.#annualChangePercent;
-  }
-
-  setAnnualChangePercent(changePercent) {
-      /** Sets current annual change percent. */
-      this.#annualChangePercent = changePercent;
+      this.demand = START_TIMBER_DEMAND;
   }
 
   getTimberUsage() {
@@ -1003,11 +1323,11 @@ class Timber {
        *  which is as follows.
        *  futureValue = presentValue * (1 + percentChange)^(+-timeUnit) */
       if (t == null) t = time;
-      const basePriceDemandAdjusted = this.#basePrice + (this.#basePrice * (this.#demand * 0.03))
-      const pricePerUnit = basePriceDemandAdjusted * ((1 + this.#annualChangePercent)^(
-          this.#annualChangePercent < 0 ? 
-          (-1 * this.#annualChangePercent) : 
-          this.#annualChangePercent
+      const basePriceDemandAdjusted = this.#basePrice + (this.#basePrice * (this.demand * 0.03))
+      const pricePerUnit = basePriceDemandAdjusted * ((1 + this.annualChangePercent)^(
+          this.annualChangePercent < 0 ? 
+          (-1 * this.annualChangePercent) : 
+          this.annualChangePercent
       ));
       return pricePerUnit * timberAmount;
   }
@@ -1050,7 +1370,7 @@ let plan = new Plan();
 
 land.plant('deciduous', [3,2]); 
 const eywa = land.getLandContent(3, 2); 
-eywa.age();
+eywa.growOlder();
 
 const World = () => {
   return (
