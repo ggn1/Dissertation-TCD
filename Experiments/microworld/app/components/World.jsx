@@ -19,8 +19,12 @@ const checkIndexOutOfRange = (
 const getNewId = (next, available) => {
   /** Gets a new ID. */
   let id;
-  if (available.length > 0) id = available.pop();
-  else id =+ next;
+  if (available.length > 0) {
+    id = available.pop();
+  } else {
+    id = next;
+    next += 1;
+  }
   return {id: id, next: next, available: available};
 }
 
@@ -108,6 +112,45 @@ const createInterpolationFunction = (xyPoints) => {
   return interpolatedFunction;
 }
 
+const shuffle = (array) => {
+  /** Shuffles an array using the Fisher-Yates Shuffle */
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex > 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+const timeDelta = (from, days, direction) => {
+  /** Returns time that is numSteps no. of steps
+   *  away from given startTime object in the given direction
+   *  wherein size of each step is stepSize. */
+  const newTimeDays = time2days({
+      year: from.year, month: from.month, day: from.day
+  }) + (direction * days);
+  if (newTimeDays < 0 || newTimeDays > time2days({
+      year: RANGE_YEARS[1], month:'dec', day:31
+  })) {
+      throw new Error(`Days ${days} out of range.`);
+  }
+  return days2time(newTimeDays);
+}
+
+const roundToNPlaces = (num, n) => {
+  // Rounds the given number to n decimal places.
+  return Math.round((num + Number.EPSILON) * (10^n)) / (10^n);
+}
+
 // Components.
 
 class Land {
@@ -142,8 +185,6 @@ class Land {
           }
           this.#positions.push(row);
       }
-
-      this.#positions[7][3];
   }
   
   // BEHAVIORS
@@ -310,6 +351,12 @@ class Land {
       // Check if given position is valid.
       checkIndexOutOfRange(rowColumnIdx[0], 0, this.#numRows, rowColumnIdx[1], 0, this.#numColumns); 
 
+      // Check if given position already has a tree. If 
+      // so, then it is not possible to plant another one here.
+      if (this.getLandContent(rowColumnIdx[0], rowColumnIdx[1]) != null) {
+        throw new Error(`Cannot plant at ${JSON.stringify(rowColumnIdx)}. Already occupied.`);
+      }
+
       // Create a new tree if a valid tree type was provided.
       let newTree;
       if (treeType == 'coniferous') {
@@ -327,6 +374,7 @@ class Land {
 
       // Add the new tree to the land.
       this.#positions[rowColumnIdx[0]][rowColumnIdx[1]] = newTree;
+      trees[newTree.getId()] = [rowColumnIdx[0], rowColumnIdx[1]];
   }
 
   clear(rowIdx, columnIdx, utility = null) {
@@ -341,6 +389,7 @@ class Land {
       const tree = this.#positions[rowIdx][columnIdx];
       treeIdAvailable.push(tree.getId());
       this.#positions[rowIdx][columnIdx] = null;
+      delete trees[tree.getId()];
 
       if (utility == 'energy') environment += tree.computeVolume() * 0.5;
       else environment.co2 += tree.computeVolume() * 0.5 * 0.1; // utility == 'lumber'
@@ -349,24 +398,24 @@ class Land {
   getAdjacentFreeSpace(xy) {
     /** Returns the coordinates of a space adjacent to given one 
      *  if it is free and returns -1 if it no such space. */
-    let adjacentPositions = [];
-    for (let i = -1; i <= 1; i++) {
+    let validAdjacentPositions = [];
+    let x;
+    let y;
+    for (let i = -1; i <= 1; i++) { // Loop through possible adjacent positions.
       for (let j = -1; j <= 1; j++) {
-        adjacentPositions.push([xy[0]+i, xy[1]+j]);
+        x = xy[0]+i;
+        y = xy[1]+j;
+        if (
+          !(x < 0 || x >= this.#numRows || y < 0 || y >= this.#numColumns)
+          && (this.getLandContent(x, y) == null)
+        ) {
+          validAdjacentPositions.push([x, y]);
+        }
       }
     }
-    let validPositions = [];
-    for (let i=0; i<adjacentPositions.length; i++) {
-      const position = adjacentPositions[i];
-      if (
-        !checkIndexOutOfRange(position[0], 0, this.#numRows, position[1], 0, this.#numColumns)
-        && this.getLandContent(position[0], position[1]) == null
-      ) {
-        validPositions.push(position);
-      }
-    }
-    if (validPositions.length == 0) return -1;
-    else return validPositions[getRandomInt(0, validPositions.length)];
+    // Loop through valid adjacent positions and return a random one.
+    if (validAdjacentPositions.length == 0) return -1;
+    else return validAdjacentPositions[getRandomInt(0, validAdjacentPositions.length)];
   }
 }
 
@@ -404,6 +453,7 @@ class Environment {
 
 class Plan {
   #timeline
+  // TO DO ...
 
   constructor() {
       // Initialize timeline to have an empty array for every
@@ -754,6 +804,10 @@ class Coniferous extends Tree {
     this.reproduce(this.#reproductionInterval);
   }
 
+  getTreeType() {
+    /** Returns what kind of tree this is. */
+    return 'coniferous';
+  }
 }
 
 class Deciduous extends Tree {
@@ -825,9 +879,15 @@ class Deciduous extends Tree {
     // Reproduce if possible.
     this.reproduce(this.#reproductionInterval);
   }
+
+  getTreeType() {
+    /** Returns what kind of tree this is. */
+    return 'deciduous';
+  }
 }
 
 class TimberDemand {
+  // TO DO ...
   #basePrice; // per kg
   #timberUsage;
 
@@ -895,23 +955,21 @@ const takeTimeStep = () => {
   environment.temperature += tempChangeMonthly + tempChange;
 
   // Loop through all trees and make them age.
-  const landSize = land.getLandSize();
-  for (let x=0; x<landSize[0]; x++) {
-    for (let y=0; y<landSize[1]; y++) {
-      const tree = land.getLandContent(x, y);
-      if (tree != null) tree.growOlder();
-    }
-  }
-
-  // Display latest world state.
-  console.log(`TIME = ${JSON.stringify(TIME[curTimeIdx])} | CO2 = ${environment.co2} | °C = ${environment.temperature} | Biodiversity = ${land.getBiodiversity()}`);
+  const treeOrder = shuffle(Object.keys(trees));
+  treeOrder.forEach(treeId => {
+    const treePosition = trees[treeId];
+    const tree = land.getLandContent(treePosition[0], treePosition[1]);
+    tree.growOlder();
+  });
 }
 
 const play = () => {
   /** Start the simulation. */
-  console.log('play() => TO DO ...');
-  for(let i=0; i<TIME.length-1; i++) {
+  // const timeSteps = TIME.length-1;
+  const timeSteps = 20;
+  for(let i=0; i<timeSteps; i++) {
     takeTimeStep();
+    printWorld();
   }
 }
 
@@ -923,19 +981,41 @@ const stop = (t = null) => {
   console.log('stop() => TO DO ...');
 }
 
-const timeDelta = (from, days, direction) => {
-  /** Returns time that is numSteps no. of steps
-   *  away from given startTime object in the given direction
-   *  wherein size of each step is stepSize. */
-  const newTimeDays = time2days({
-      year: from.year, month: from.month, day: from.day
-  }) + (direction * days);
-  if (newTimeDays < 0 || newTimeDays > time2days({
-      year: RANGE_YEARS[1], month:'dec', day:31
-  })) {
-      throw new Error(`Days ${days} out of range.`);
+const printWorld = () => {
+  /** Console log the state of the world. 
+   *  This function is meant to be used during development. */
+  let landSize = land.getLandSize();
+  const curTime = TIME[curTimeIdx];
+  console.log(`\nTIME = year: ${curTime.year} / month: ${curTime.month} / day: ${curTime.day}`);
+  console.log(`CO2 = ${environment.co2}`);
+  console.log(`Biodiversity = ${land.getBiodiversity()}`);
+  console.log(`Temperature = ${environment.temperature}`);
+  console.log(`No. of trees = ${Object.keys(trees).length}`);
+  let row;
+  for (let x=0; x<landSize[0]; x++) {
+    row = "|"
+    for (let y=0; y<landSize[1]; y++) {
+      const tree = land.getLandContent(x, y);
+      if (tree == null) row = row.concat("_|");
+      else row = row.concat(`${tree.getLifeStage().substring(0,3)}(${roundToNPlaces(tree.stress, 2)})|`);
+    }
+    console.log(row);
   }
-  return days2time(newTimeDays);
+}
+
+const initializeWorld = () => {
+  /** Define trees in  a new world here.
+   *  This function is meant to be used during development. */
+  
+  // Plant trees.
+  const toPlant = [
+    ['deciduous', [3, 2]],
+    ['coniferous', [2, 3]]
+  ];
+  toPlant.forEach(treeTypePos => land.plant(treeTypePos[0], treeTypePos[1]));
+
+  // Start world.
+  play();
 }
 
 // Global constants. 
@@ -951,7 +1031,7 @@ const START_MONTH = 'mar'
 const RENDER_DELAY = 1; // In seconds.
 const START_TIMBER_DEMAND = 10;
 const TREE_UTILITY = ["energy", "lumber"];
-const LAND_DIM = 8; // No. of rows = no. of columns.
+const LAND_DIM = 4; // No. of rows = no. of columns.
 const MONTH_DAYS = {
     'jan': 31, 'feb': 28, 'mar': 31,
     'apr': 30, 'may': 31, 'jun': 30,
@@ -1315,16 +1395,9 @@ let land = new Land(LAND_DIM, LAND_DIM);
 let environment = new Environment();
 let plan = new Plan();
 let co2Emission = START_CO2_EMISSION;
+let trees = {};
 
-// land.plant('deciduous', [3,2]); 
-// const eywa = land.getLandContent(3, 2);
-// while (land.getLandContent(3, 2) != null) {
-//   eywa.growOlder();
-//   console.log(`TREE Life Stage = ${eywa.getLifeStage()}, Stress = ${eywa.stress}.`);
-//   console.log(`ENV: CO2 = ${environment.co2}, TEMP = ${environment.temperature}.`)
-// }
-
-play();
+initializeWorld();
 
 const World = () => {
   return (
