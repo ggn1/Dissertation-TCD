@@ -339,7 +339,7 @@ class Land {
       /** Calculates and updates land state with 
        *  latest biodiversity of each quadrant. */
       for (let i=0; i<4; i++) {
-        this.#biodiversity[0] = this.#computeQuadrantBiodiversity(i+1);
+        this.#biodiversity[i] = this.#computeQuadrantBiodiversity(i+1);
       }
   }
 
