@@ -444,11 +444,12 @@ class Environment {
 
   updateTemperature() {
     // Always runs after update CO2.
-    const tempChange = 2 * this.#co2ChangePercent;
+    const tempChange = 0.01 * this.#co2ChangePercent;
     const month_old = TIME[curTimeIdx - 1].month
     const month_now = TIME[curTimeIdx].month
     const tempChangeMonthly = (month_now == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_now}`];
-    this.temperature = tempChangeMonthly + (tempChange*tempChangeMonthly);
+    this.temperature += tempChangeMonthly;
+    this.temperature += (this.temperature * tempChange);
   }
 }
 
@@ -669,8 +670,8 @@ class Tree {
 
       // Basic needs availability related stress.
       let stress_env = basic_needs_stress.co2(environment.co2);
+      stress_env += basic_needs_stress.temperature(environment.temperature);
       // this.stress += basic_needs_stress.water(environment.getWater());
-      // this.stress += basic_needs_stress.temperature(environment.temperature);
       if (stress_env == 0 && this.stress > 0){
         this.stress = Math.max(0, this.stress - ((1 - this.stress) * 0.1))
       } else {
@@ -701,30 +702,10 @@ class Tree {
     const growthRate = this.#computeGrowthRate();
     const mass = this.computeVolume() * WOOD_DENSITY[treeType]
     let co2_removed = (
-      (mass * 0.3) // CO2 to maintain existing mass.
+      (mass * 0.2) // CO2 to maintain existing mass.
       + (0.5 * growthRate * mass) // CO2 to make new mass.
-    ) / 12 / 4; // weekly
-    // co2_removed = co2_removed;
+    ) / 12 / 10; // monthly
     environment.co2 -= co2_removed;
-  }
-
-  reproduce(reproductionInterval) {
-    // If there is a free space adjacent to the tree 
-    // & the tree is mature & Stress <= 0.5 
-    // then the tree reproduces resulting in a new seedling 
-    // at the adjacent empty land spot. 
-    // Trees may reproduce only once every x no. of years.
-    const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
-    if (
-      this.stress <= 0.5 && 
-      !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
-      (this.last_reproduced >= reproductionInterval) &&
-      !(adjacentFreeSpace == -1)
-    ) {
-      land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
-      this.last_reproduced = 0;
-      console.log(`Tree ${this.getId()} at ${this.getPosition()} created a child tree at ${adjacentFreeSpace}!`);
-    }
   }
 
   decay() {
@@ -813,6 +794,25 @@ class Coniferous extends Tree {
     this.reproduce(this.#reproductionInterval);
   }
 
+  reproduce() {
+    // If there is a free space adjacent to the tree 
+    // & the tree is mature & Stress <= 0.5 
+    // then the tree reproduces resulting in a new seedling 
+    // at the adjacent empty land spot. 
+    // Trees may reproduce only once every x no. of years.
+    const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
+    if (
+      this.stress <= 0.5 && 
+      !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+      (this.last_reproduced >= this.#reproductionInterval) &&
+      !(adjacentFreeSpace == -1)
+    ) {
+      land.plant('coniferous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+      this.last_reproduced = 0;
+      console.log(`Tree ${this.getId()} at ${this.getPosition()} gave life to a new coniferous tree at ${adjacentFreeSpace}!`);
+    }
+  }
+
   getTreeType() {
     /** Returns what kind of tree this is. */
     return 'coniferous';
@@ -893,6 +893,25 @@ class Deciduous extends Tree {
   getTreeType() {
     /** Returns what kind of tree this is. */
     return 'deciduous';
+  }
+
+  reproduce() {
+    // If there is a free space adjacent to the tree 
+    // & the tree is mature & Stress <= 0.5 
+    // then the tree reproduces resulting in a new seedling 
+    // at the adjacent empty land spot. 
+    // Trees may reproduce only once every x no. of years.
+    const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
+    if (
+      this.stress <= 0.5 && 
+      !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+      (this.last_reproduced >= this.#reproductionInterval) &&
+      !(adjacentFreeSpace == -1)
+    ) {
+      land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+      this.last_reproduced = 0;
+      console.log(`Tree ${this.getId()} at ${this.getPosition()} gave life to a new deciduous tree at ${adjacentFreeSpace}!`);
+    }
   }
 }
 
@@ -1018,6 +1037,7 @@ const initializeWorld = () => {
   toPlant.forEach(treeTypePos => land.plant(treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]));
 
   // Start world.
+  console.log('\n##################### START #####################');
   play();
 }
 
@@ -1057,40 +1077,27 @@ const REPRODUCTION_INTERVAL_CONIFEROUS = 20;
 const REPRODUCTION_INTERVAL_DECIDUOUS = 10;
 const WATER_STRESS = {
   requirement: {
-    coniferous: [
-      [0.0, 1.0],
-      [10.0, 1.0],
-      [20.0, 1.0],
-      [30.0, 0.98],
-      [40.0, 0.92],
-      [50.0, 0.8],
-      [60.0, 0.6],
-      [70.0, 0.3],
-      [80.0, 0.1],
-      [90.0, 0.05],
-      [100.0, 0.02],
-      [110.0, 0.0],
-      [120.0, 0.0],
-      [130.0, 0.0],
-      [140.0, 0.0],
-      [150.0, 0.0],
-      [160.0, 0.01],
-      [170.0, 0.03],
-      [180.0, 0.06],
-      [190.0, 0.09],
-      [200.0, 0.12],
-      [210.0, 0.15],
-      [220.0, 0.2],
-      [230.0, 0.25],
-      [240.0, 0.35],
-      [250.0, 0.65],
-      [260.0, 0.95],
-      [270.0, 0.98],
-      [280.0, 1.0],
-      [290.0, 1.0],
-      [300.0, 1.0],
-      [310.0, 1.0]
-    ],
+    coniferous: [[-90.0, 1.0],
+    [-80.0, 1.0],
+    [-70.0, 0.5],
+    [-60.0, 0.2],
+    [-50.0, 0.15],
+    [-40.0, 0.1],
+    [-30.0, 0.06],
+    [-20.0, 0.03],
+    [-10.0, 0.0],
+    [0.0, 0.0],
+    [10.0, 0.0],
+    [20.0, 0.0],
+    [30.0, 0.01],
+    [40.0, 0.05],
+    [50.0, 0.2],
+    [60.0, 0.4],
+    [70.0, 0.8],
+    [80.0, 1.0],
+    [90.0, 1.0],
+    [100.0, 1.0]
+  ],
     deciduous: [
       [0.0, 1.0],
       [10.0, 1.0],
@@ -1280,12 +1287,15 @@ CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(CO2_STRESS
 const TEMPERATURE_STRESS = {
   requirement:{
     coniferous: [
+      [-90.0, 1.0],
+      [-80.0, 1.0],
+      [-70.0, 0.5],
       [-60.0, 0.2],
       [-50.0, 0.15],
       [-40.0, 0.1],
       [-30.0, 0.06],
       [-20.0, 0.03],
-      [-10.0, 0.01],
+      [-10.0, 0.0],
       [0.0, 0.0],
       [10.0, 0.0],
       [20.0, 0.0],
@@ -1299,12 +1309,15 @@ const TEMPERATURE_STRESS = {
       [100.0, 1.0]
     ],
     deciduous: [
-      [-60.0, 0.9],
+      [-90.0, 1.0],
+      [-80.0, 1.0],
+      [-70.0, 1.0],
+      [-60.0, 1.0],
       [-50.0, 0.8],
       [-40.0, 0.7],
       [-30.0, 0.4],
       [-20.0, 0.2],
-      [-10.0, 0.1],
+      [-10.0, 0.0],
       [0.0, 0.0],
       [10.0, 0.0],
       [20.0, 0.0],
@@ -1320,13 +1333,16 @@ const TEMPERATURE_STRESS = {
   },
   requirement_sensitive: {
     coniferous: [
+      [-90.0, 1.0],
+      [-80.0, 1.0],
+      [-70.0, 1.0],
       [-60.0, 1.0],
-      [-50.0, 1.0],
-      [-40.0, 0.9],
-      [-30.0, 0.6],
-      [-20.0, 0.4],
-      [-10.0, 0.25],
-      [0.0, 0.1],
+      [-50.0, 0.9],
+      [-40.0, 0.6],
+      [-30.0, 0.25],
+      [-20.0, 0.1],
+      [-10.0, 0.05],
+      [0.0, 0.0],
       [10.0, 0.0],
       [20.0, 0.0],
       [30.0, 0.05],
@@ -1339,17 +1355,20 @@ const TEMPERATURE_STRESS = {
       [100.0, 1.0]
     ],
     deciduous: [
+      [-90.0, 1.0],
+      [-80.0, 1.0],
+      [-70.0, 1.0],
       [-60.0, 1.0],
       [-50.0, 1.0],
       [-40.0, 1.0],
       [-30.0, 0.9],
       [-20.0, 0.6],
-      [-10.0, 0.4],
-      [0.0, 0.1],
+      [-10.0, 0.0],
+      [0.0, 0.0],
       [10.0, 0.0],
-      [20.0, 0.0],
-      [30.0, 0.05],
-      [40.0, 0.15],
+      [20.0, 0.01],
+      [30.0, 0.1],
+      [40.0, 0.3],
       [50.0, 0.4],
       [60.0, 0.8],
       [70.0, 1.0],
