@@ -181,7 +181,7 @@ class Land {
       for (let x=0; x<this.#numRows; x++) { 
           let row = [];
           for (let y=0; y<this.#numColumns; y++) {
-              row.push(null);
+              row.push(-1);
           }
           this.#positions.push(row);
       }
@@ -229,9 +229,9 @@ class Land {
   }
 
   getLandContent(rowIdx, columnIdx) {
-      /** Returns land position content at given xy coordinates. */
-      checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
-      return this.#positions[rowIdx][columnIdx];
+    /** Returns land position content at given xy coordinates. */
+    checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
+    return this.#positions[rowIdx][columnIdx];
   }
 
   #countTrees(q) {
@@ -246,7 +246,7 @@ class Land {
       for (let x = rangeQuadrant[0][0]; x <= rangeQuadrant[0][1]; x++) {
           for (let y = rangeQuadrant[1][0]; y <= rangeQuadrant[1][1]; y++) {
               let tree = this.getLandContent(x, y);
-              if (tree != null) {
+              if (tree != -1) {
                   counts[tree.getTreeType()] += 1;
                   counts[tree.getLifeStage()] += 1;
               }
@@ -343,26 +343,26 @@ class Land {
       }
   }
 
-  plant(treeType, rowColumnIdx, treeAge=0) {
+  plant(treeType, rowIdx, columnIdx, treeAge=0) {
       /** Plants a tree of given type and age at given location. */
       // Check age class of the tree and throw error if the tree is 
       // older than the sapling stage.
 
       // Check if given position is valid.
-      checkIndexOutOfRange(rowColumnIdx[0], 0, this.#numRows, rowColumnIdx[1], 0, this.#numColumns); 
+      checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns); 
 
       // Check if given position already has a tree. If 
       // so, then it is not possible to plant another one here.
-      if (this.getLandContent(rowColumnIdx[0], rowColumnIdx[1]) != null) {
-        throw new Error(`Cannot plant at ${JSON.stringify(rowColumnIdx)}. Already occupied.`);
+      if (this.getLandContent(rowIdx, columnIdx) != -1) {
+        throw new Error(`Cannot plant at [${rowIdx}, ${columnIdx}])}. Already occupied.`);
       }
 
       // Create a new tree if a valid tree type was provided.
       let newTree;
       if (treeType == 'coniferous') {
-          newTree = new Coniferous(rowColumnIdx, treeAge);
+          newTree = new Coniferous([rowIdx, columnIdx], treeAge);
       } else if (treeType == 'deciduous') {
-          newTree = new Deciduous(rowColumnIdx, treeAge);
+          newTree = new Deciduous([rowIdx, columnIdx], treeAge);
       } else {
           throw new Error(`Invalid tree type ${treeType}.`);
       }
@@ -373,8 +373,8 @@ class Land {
       }
 
       // Add the new tree to the land.
-      this.#positions[rowColumnIdx[0]][rowColumnIdx[1]] = newTree;
-      trees[newTree.getId()] = [rowColumnIdx[0], rowColumnIdx[1]];
+      this.#positions[rowIdx][columnIdx] = newTree;
+      trees[newTree.getId()] = [rowIdx, columnIdx];
   }
 
   clear(rowIdx, columnIdx, utility = null) {
@@ -388,7 +388,7 @@ class Land {
 
       const tree = this.#positions[rowIdx][columnIdx];
       treeIdAvailable.push(tree.getId());
-      this.#positions[rowIdx][columnIdx] = null;
+      this.#positions[rowIdx][columnIdx] = -1;
       delete trees[tree.getId()];
 
       if (utility == 'energy') environment += tree.computeVolume() * 0.5;
@@ -405,22 +405,21 @@ class Land {
       for (let j = -1; j <= 1; j++) {
         x = xy[0]+i;
         y = xy[1]+j;
-        if (
-          !(x < 0 || x >= this.#numRows || y < 0 || y >= this.#numColumns)
-          && (this.getLandContent(x, y) == null)
-        ) {
-          validAdjacentPositions.push([x, y]);
+        if (x >= 0 && x < this.#numRows && y >= 0 && y < this.#numColumns) {
+          if (this.getLandContent(x, y) == -1) {
+            validAdjacentPositions.push([x, y]);
+          }
         }
       }
     }
     // Loop through valid adjacent positions and return a random one.
     if (validAdjacentPositions.length == 0) return -1;
-    else return validAdjacentPositions[getRandomInt(0, validAdjacentPositions.length)];
+    return validAdjacentPositions[getRandomInt(0, validAdjacentPositions.length-1)];
   }
 }
 
 class Environment {
-  // #water;
+  #co2ChangePercent;
 
   constructor() {
       // this.#water = Array.from({ length: RANGE_YEARS[1] }, () => {
@@ -432,23 +431,25 @@ class Environment {
       // });
       this.temperature = START_TEMPERATURE;
       this.co2 = START_CO2;
+      this.#co2ChangePercent = 0;
   }
 
-  // getWater = (t = null) => {
-  //     /** Returns monthly water settings at current time if t is null 
-  //      *  or at given time if t is not null. */
-  //     if (t == null) t = time;
-  //     return this.#water[t.year][t.month];
-  // }
+  updateCo2() {
+    const co2Old = this.co2;
+    co2Emission *= 1 + CHANGE_PERCENT_CO2;
+    this.co2 += co2Emission;
+    const co2New = this.co2;
+    this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
+  }
 
-  // setWater = (settings) => {
-  //     /** Sets water settings for any one/multiple 
-  //      *  month(s) of each year. 
-  //      *  settings = [{'year':x, 'month':y, 'val':z}, ...] */
-  //     settings.forEach(s => {
-  //         this.#water[s.year][s.month] = s.val;
-  //     });
-  // }
+  updateTemperature() {
+    // Always runs after update CO2.
+    const tempChange = 2 * this.#co2ChangePercent;
+    const month_old = TIME[curTimeIdx - 1].month
+    const month_now = TIME[curTimeIdx].month
+    const tempChangeMonthly = (month_now == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_now}`];
+    this.temperature = tempChangeMonthly + (tempChange*tempChangeMonthly);
+  }
 }
 
 class Plan {
@@ -619,7 +620,7 @@ class Tree {
       this.#ttlSenescent = getRandomInt(5, 10);
 
       // Set reproduction related parameter.
-      this.year_last_reproduced = 0;
+      this.last_reproduced = 0;
   }
 
   getMaxGrowthRate() {
@@ -667,9 +668,14 @@ class Tree {
       }
 
       // Basic needs availability related stress.
+      let stress_env = basic_needs_stress.co2(environment.co2);
       // this.stress += basic_needs_stress.water(environment.getWater());
       // this.stress += basic_needs_stress.temperature(environment.temperature);
-      this.stress += basic_needs_stress.co2(environment.co2);
+      if (stress_env == 0 && this.stress > 0){
+        this.stress = Math.max(0, this.stress - ((1 - this.stress) * 0.1))
+      } else {
+        this.stress += stress_env
+      }
   }
 
   #computeGrowthRate() {
@@ -691,12 +697,14 @@ class Tree {
     }
   }
 
-  absorbCo2() {
+  absorbCo2(treeType) {
     const growthRate = this.#computeGrowthRate();
-    const co2_current = environment.co2;
-    const co2_removed = (
-      (this.computeVolume() * WOOD_DENSITY.deciduous * 0.5) + (1 + (0.5 * growthRate))
+    const mass = this.computeVolume() * WOOD_DENSITY[treeType]
+    let co2_removed = (
+      (mass * 0.3) // CO2 to maintain existing mass.
+      + (0.5 * growthRate * mass) // CO2 to make new mass.
     ) / 12 / 4; // weekly
+    // co2_removed = co2_removed;
     environment.co2 -= co2_removed;
   }
 
@@ -710,12 +718,12 @@ class Tree {
     if (
       this.stress <= 0.5 && 
       !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
-      (TIME[curTimeIdx].year - this.year_last_reproduce) >= reproductionInterval &&
+      (this.last_reproduced >= reproductionInterval) &&
       !(adjacentFreeSpace == -1)
     ) {
       land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
-      this.year_last_reproduce = TIME[curTimeIdx].year;
-      console.log(`Tree ${this.getId()} at ${this.getPosition} created a child tree at ${adjacentFreeSpace}!`);
+      this.last_reproduced = 0;
+      console.log(`Tree ${this.getId()} at ${this.getPosition()} created a child tree at ${adjacentFreeSpace}!`);
     }
   }
 
@@ -766,7 +774,7 @@ class Coniferous extends Tree {
 
   getLifeStage() {
       /** Returns the life stage that this tress is in. */
-      if (this.stress >= 1.0) return "dead";
+      if (this.stress >= 1) return "dead";
       else if (this.age < 4) return "seedling";
       else if (this.age < 26) return "sapling";
       else if (this.age < 60) return "mature";
@@ -798,9 +806,10 @@ class Coniferous extends Tree {
     this.grow(this.#maxDiameter, this.#maxHeight);
     
     // Absorb CO2.
-    this.absorbCo2()
+    this.absorbCo2('coniferous');
 
     // Reproduce if possible.
+    this.last_reproduced += 1;
     this.reproduce(this.#reproductionInterval);
   }
 
@@ -842,7 +851,7 @@ class Deciduous extends Tree {
 
   getLifeStage() {
       /** Returns the life stage that this tress is in. */
-      if (this.stress >= 1.0) return "dead";
+      if (this.stress >= 1) return "dead";
       else if (this.age < 3) return "seedling";
       else if (this.age < 21) return "sapling";
       else if (this.age < 47) return "mature";
@@ -874,9 +883,10 @@ class Deciduous extends Tree {
     this.grow(this.#maxDiameter, this.#maxHeight);
     
     // Absorb CO2.
-    this.absorbCo2()
+    this.absorbCo2('deciduous')
 
     // Reproduce if possible.
+    this.last_reproduced += 1
     this.reproduce(this.#reproductionInterval);
   }
 
@@ -938,21 +948,13 @@ const takeTimeStep = () => {
   land.updateBiodiversity();
 
   // Turn the wheel of time.
-  const month_old = TIME[curTimeIdx].month;
-  curTimeIdx += 1;
-  const month_new = TIME[curTimeIdx].month;
+  curTimeIdx += 1
 
   // Update environment CO2 amount.
-  co2Emission += (co2Emission * CHANGE_PERCENT_CO2);
-  const co2Old = environment.co2;
-  let co2New = co2Old + co2Emission;
-  environment.co2 = co2New;
+  environment.updateCo2()
   
   // Update environment temperature.
-  const co2ChangePercent =  ((co2New - co2Old) / co2Old);
-  const tempChange = 3 * co2ChangePercent;
-  const tempChangeMonthly = (month_new == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_new}`];
-  environment.temperature += tempChangeMonthly + tempChange;
+  environment.updateTemperature();
 
   // Loop through all trees and make them age.
   const treeOrder = shuffle(Object.keys(trees));
@@ -966,10 +968,10 @@ const takeTimeStep = () => {
 const play = () => {
   /** Start the simulation. */
   // const timeSteps = TIME.length-1;
-  const timeSteps = 20;
+  const timeSteps = TIME.length-1; // max = 1199
   for(let i=0; i<timeSteps; i++) {
     takeTimeStep();
-    printWorld();
+    printWorld(i);
   }
 }
 
@@ -981,12 +983,13 @@ const stop = (t = null) => {
   console.log('stop() => TO DO ...');
 }
 
-const printWorld = () => {
+const printWorld = (timeStep = null) => {
   /** Console log the state of the world. 
    *  This function is meant to be used during development. */
   let landSize = land.getLandSize();
   const curTime = TIME[curTimeIdx];
   console.log(`\nTIME = year: ${curTime.year} / month: ${curTime.month} / day: ${curTime.day}`);
+  if (timeStep != null) console.log(`Time Step = ${timeStep}`);
   console.log(`CO2 = ${environment.co2}`);
   console.log(`Biodiversity = ${land.getBiodiversity()}`);
   console.log(`Temperature = ${environment.temperature}`);
@@ -996,7 +999,7 @@ const printWorld = () => {
     row = "|"
     for (let y=0; y<landSize[1]; y++) {
       const tree = land.getLandContent(x, y);
-      if (tree == null) row = row.concat("_|");
+      if (tree == -1) row = row.concat("_|");
       else row = row.concat(`${tree.getLifeStage().substring(0,3)}(${roundToNPlaces(tree.stress, 2)})|`);
     }
     console.log(row);
@@ -1012,7 +1015,7 @@ const initializeWorld = () => {
     ['deciduous', [3, 2]],
     ['coniferous', [2, 3]]
   ];
-  toPlant.forEach(treeTypePos => land.plant(treeTypePos[0], treeTypePos[1]));
+  toPlant.forEach(treeTypePos => land.plant(treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]));
 
   // Start world.
   play();
@@ -1024,7 +1027,7 @@ const RANGE_WATER = [0.0, 310.0];
 const RANGE_TEMPERATURE = [-60.0, 100.0];
 const START_FUNDS = 10000.0;
 const START_WATER = 120.0;
-const START_CO2 = 500.0;
+const START_CO2 = 1000.0;
 const START_PRICE_TIMBER = 100.0;
 const START_TEMPERATURE = -3.0;
 const START_MONTH = 'mar'
@@ -1050,8 +1053,8 @@ const MONTH_SEASON = {
   'jun': 'summer', 'jul': 'summer', 'aug': 'summer',
   'sep': 'autumn', 'oct': 'autumn', 'nov': 'autumn',
 }
-const REPRODUCTION_INTERVAL_CONIFEROUS = 50;
-const REPRODUCTION_INTERVAL_DECIDUOUS = 20;
+const REPRODUCTION_INTERVAL_CONIFEROUS = 20;
+const REPRODUCTION_INTERVAL_DECIDUOUS = 10;
 const WATER_STRESS = {
   requirement: {
     coniferous: [
@@ -1375,13 +1378,14 @@ const CHANGE_MONTHLY_TEMPERATURE = {
   'sep-oct': -7, 'oct-nov': -7, 'nov-dec': -7
 }
 const CHANGE_PERCENT_CO2 = 0.0019/52; // weekly
-const START_CO2_EMISSION = 5; // weekly
+const START_CO2_EMISSION = 320;
 
 const TIME = []; // World Timeline
 let t = {year:0, month:'mar', day: 0};
+TIME.push(t);
 while (t.year < RANGE_YEARS[1]) {
-  TIME.push(t);
   t = timeDelta(t, 7, 1); // Increment by 7 days.
+  if (t.month != TIME[TIME.length-1].month) TIME.push(t); // Time step unit = 1 month.
 }
 
 // Global world properties.
