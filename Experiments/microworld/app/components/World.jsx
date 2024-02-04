@@ -113,7 +113,8 @@ const createInterpolationFunction = (xyPoints) => {
 }
 
 const shuffle = (array) => {
-  /** Shuffles an array using the Fisher-Yates Shuffle */
+  /** Shuffles an array using the Fisher-Yates Shuffle 
+   *  and returns this array. */
   let currentIndex = array.length,  randomIndex;
 
   // While there remain elements to shuffle.
@@ -193,7 +194,7 @@ class Land {
       return [this.#numRows, this.#numColumns];
   }
 
-  #getQuadrantRange(q) {
+  getQuadrantRange(q) {
       /** Given a quadrant number, returns range of position of that quadrant. */
       const numRowsHalf = Math.round(this.#numRows / 2);
       const numColumnsHalf = Math.round(this.#numColumns / 2);
@@ -236,7 +237,7 @@ class Land {
 
   #countTrees(q) {
       /** Counts all trees in a given quadrant. */       
-      const rangeQuadrant = this.#getQuadrantRange(q);
+      const rangeQuadrant = this.getQuadrantRange(q);
 
       let counts = {
           deciduous: 0, coniferous: 0,
@@ -343,7 +344,7 @@ class Land {
       }
   }
 
-  plant(treeType, rowIdx, columnIdx, treeAge=0) {
+  plant(treeType, rowIdx, columnIdx) {
       /** Plants a tree of given type and age at given location. */
       // Check age class of the tree and throw error if the tree is 
       // older than the sapling stage.
@@ -360,16 +361,18 @@ class Land {
       // Create a new tree if a valid tree type was provided.
       let newTree;
       if (treeType == 'coniferous') {
-          newTree = new Coniferous([rowIdx, columnIdx], treeAge);
+          newTree = new Coniferous([rowIdx, columnIdx]);
       } else if (treeType == 'deciduous') {
-          newTree = new Deciduous([rowIdx, columnIdx], treeAge);
+          newTree = new Deciduous([rowIdx, columnIdx]);
       } else {
           throw new Error(`Invalid tree type ${treeType}.`);
       }
 
       // Check if the age of the tree is appropriate.
       if (!['seedling', 'sapling'].includes(newTree.getLifeStage())) {
-          throw new Error(`Invalid tree age ${treeAge}. Only seedlings and saplings can be planted.`);
+          throw new Error(
+            `Invalid tree age ${treeAge}. Only seedlings and saplings can be planted.`
+          );
       }
 
       // Add the new tree to the land.
@@ -377,22 +380,16 @@ class Land {
       trees[newTree.getId()] = [rowIdx, columnIdx];
   }
 
-  clear(rowIdx, columnIdx, utility = null) {
+  clear(rowIdx, columnIdx) {
       /** Clears any plants on a piece of land for a particular
        *  use which could be either "lumber" or "energy". */
       // Check age class of the tree and throw error if the tree is 
       // older than the sapling stage.
-      if (utility != null && !TREE_UTILITY.includes(utility)) {
-          throw new Error('Invalid tree utility.')
-      }
-
       const tree = this.#positions[rowIdx][columnIdx];
       treeIdAvailable.push(tree.getId());
       this.#positions[rowIdx][columnIdx] = -1;
       delete trees[tree.getId()];
-
-      if (utility == 'energy') environment += tree.computeVolume() * 0.5;
-      else environment.co2 += tree.computeVolume() * 0.5 * 0.1; // utility == 'lumber'
+      return tree;
   }
 
   getAdjacentFreeSpace(xy) {
@@ -420,175 +417,227 @@ class Land {
 
 class Environment {
   #co2ChangePercent;
+  #co2;
+  #temperature;
 
   constructor() {
-      // this.#water = Array.from({ length: RANGE_YEARS[1] }, () => {
-      //     let month_vals = {};
-      //     for (let k in Object.keys(MONTH_DAYS)) {
-      //         month_vals[k] = START_WATER;
-      //     }
-      //     return month_vals;
-      // });
-      this.temperature = START_TEMPERATURE;
-      this.co2 = START_CO2;
+      this.#temperature = START_TEMPERATURE;
+      this.#co2 = START_CO2;
       this.#co2ChangePercent = 0;
   }
 
-  updateCo2() {
-    const co2Old = this.co2;
-    co2Emission *= 1 + CHANGE_PERCENT_CO2;
-    this.co2 += co2Emission;
-    const co2New = this.co2;
-    this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
+  updateCo2(co2 = null) {
+    if (co2 == null) {
+      const co2Old = this.#co2;
+      co2Emission *= 1 + CHANGE_PERCENT_CO2;
+      this.#co2 += co2Emission;
+      const co2New = this.#co2;
+      this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
+    } else this.#co2 == co2;
   }
 
-  updateTemperature() {
+  updateTemperature(temperature=null) {
     // Always runs after update CO2.
-    const tempChange = 0.01 * this.#co2ChangePercent;
-    const month_old = TIME[curTimeIdx - 1].month
-    const month_now = TIME[curTimeIdx].month
-    const tempChangeMonthly = (month_now == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_now}`];
-    this.temperature += tempChangeMonthly;
-    this.temperature += (this.temperature * tempChange);
+    if (temperature == null) {
+      const tempChange = 0.01 * this.#co2ChangePercent;
+      const month_old = TIME[curTimeIdx - 1].month
+      const month_now = TIME[curTimeIdx].month
+      const tempChangeMonthly = (
+        (month_now == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_now}`]
+      );
+      this.#temperature += tempChangeMonthly;
+      this.#temperature += (this.#temperature * tempChange);
+    } else {
+      this.#temperature = temperature;
+    }
+    
+  }
+
+  getCo2() {
+    return this.#co2;
+  }
+
+  getTemperature() {
+    return this.#temperature;
   }
 }
 
 class Plan {
-  #timeline
-  // TO DO ...
+  #actions;
 
   constructor() {
       // Initialize timeline to have an empty array for every
       // day in the set time period.
-      this.#timeline = {};
-      let tl = [];
-      for(let y = RANGE_YEARS[0]; y <= RANGE_YEARS[1]; y++) {
-          Object.keys(MONTH_DAYS).forEach(m => {
-              const days = MONTH_DAYS[m];
-              for(let d=1; d<=days; d++){
-                  this.#timeline[[y, m, d]] = [];
-                  tl.push([y, m, d]);
-              }
-          })
-      }
+      this.#actions = {};
+      this.rotationPeriod = START_ROTATION_PERIOD;
   }
 
-  getTimeline() {
-      /** Returns current timeline. */
-      return this.#timeline;
+  getAllActions() {
+      /** Returns current action queue. */
+      return this.#actions;
   }
 
-  getAction(year, month, day, actionId=null) {
-      /** Returns given action if exists. If no
-       *  action ID is provided, then all actions
-       *  are returned. */
-      if (this.#timeline.hasOwnProperty([year, month, day])) {
-          const actions = this.#timeline[[year, month, day]];
-          if (actionId == null) return actions;
-          actions.forEach(a => {
-              if (a.getId() == actionId) return a
-          });
-      }
+  getTimeActions(day, month, year) {
+      /** Returns all actions for a given time
+       *  if it exists and [] otherwise. */
+      let actions = this.#actions[`${day}-${month}-${year}`];
+      if (actions == undefined) actions = {};
+      return actions;
   }
 
-  addAction(year, month, day, action, repeat) {
+  addAction(
+    day, month, year, repeat, actionName, quadrant,
+    treeType, maxNumAffected = 1, treeLifeStage
+  ) {
       /** Adds given action at given time in timeline.
        *  If repeat is set to true, then the same action 
        *  will be repeated annually for all years hence. */
-      if (this.#timeline.hasOwnProperty([year, month, day])) {
-          for (let y = year; y <= RANGE_YEARS[1]; y++) {
-              this.#timeline[[y, month, day]].push(action);            
-              if (repeat != true) break;
-          }
+      if (actionName == 'fell' && !treeLifeStage) {
+        throw new Error ('Fell action required tree life stage.');
       }
+
+      // create action.
+      let action;
+      let timeIdx = TIME.findIndex({'day':day, 'month':month, 'year':year});
+      let t;
+      do {
+        t = TIME[timeIdx];
+        if (actionName == 'plant') {
+          action = new Plant(quadrant, maxNumAffected, treeType);
+        } else if (actionName == 'fell') {
+          action = new Fell(quadrant, maxNumAffected, treeType, treeLifeStage);
+        } else {
+          throw new Error(`Invalid action name ${actionName}.`);
+        }
+        if (!this.#actions.hasOwnProperty(`${day}-${month}-${year}`)) {
+          this.#actions[`${day}-${month}-${year}`] = {};
+        }
+        this.#actions[`${t.day}-${t.month}-${t.year}`][action.getId()] = action;
+        timeIdx += this.rotationPeriod;
+      } while (repeat && timeIdx < (TIME.length-1))
   }
 
-  removeAction(year, month, day, actionId = null) {
-      /** Removes action at given time. If no actionId is
-       *  given, then all actions at given time point are removed. */
-      if (this.#timeline.hasOwnProperty([year, month, day])) {
-          const actions = this.#timeline[[year, month, day]];
-          if (actionId == null) {
-              this.#timeline[[year, month, day]] = [];
-              actions.forEach(a => {
-                  if (!actionIdAvailable.includes(a)) actionIdAvailable.push(a.getId());
-              })
-          } else {
-              this.#timeline[[year, month, day]] = actions.filter(a => a.getId() !== actionId);
-              if (!actionIdAvailable.includes(actionId)) actionIdAvailable.push(actionId);
-          }
+  executeTimeActions(day, month, year) {
+    /** Execute all actions at a particular time. */
+    if (this.#actions.hasOwnProperty(`${day}-${month}-${year}`)) {
+      const actions = this.#actions[`${day}-${month}-${year}`];
+      let idsToRemove = [];
+      Object.keys(actions).forEach(actionId => {
+        actions[actionId].execute();
+        actionIdAvailable.push(actionId);
+        idsToRemove.push(actionId);
+      });
+      idsToRemove.forEach(actionId => delete actions[actionId]);
+      if (Object.keys(actions).length == 0) {
+        delete this.#actions[`${day}-${month}-${year}`];
       }
+    }
   }
 }
 
 class Action {
   #id
-  #target
+  #quadrantRange
 
-  constructor(target) {
-      // Set target only if it is a valid xy position on the land.
-      const landRowCol = land.getLandSize();
-      checkIndexOutOfRange(target[0], 0, landRowCol[0], target[1], 0, landRowCol[1]);
-      this.#target = target;
-      // Give the action a unique id.
-      const idObj = getNewId(actionIdNext, actionIdAvailable);
+  constructor(quadrant, maxNumAffected) {
+      // Sanity checks.
+      if (quadrant < 1 || quadrant > 4) {
+        throw new Error(`Invalid quadrant number ${quadrant}.`);
+      }
+      
+      // Initialize properties.
+      const idObj = getNewId(actionIdNext, actionIdAvailable);  // Give the action a unique id.
       this.#id = idObj.id;
       actionIdNext = idObj.next;
       actionIdAvailable = idObj.available;
-  }
-
-  getTarget() {
-      /** Returns target land unit. */
-      return this.#target;
+      this.quadrant = quadrant;
+      this.maxNumAffected = maxNumAffected;
+      this.#quadrantRange = land.getQuadrantRange(q);
   }
 
   getId() {
       /** Returns ID of this action. */
       return this.#id;
   }
+
+  getQuadrantRange() {
+    return this.#quadrantRange;
+  }
 }
 
-class FellTree extends Action {
-  #lifeStageFilters;
-  #timberUsageFilter;
+class Fell extends Action {
 
-  constructor(target, lifeStageFilters, timberUsageFilter) {
-      super(target)
-      this.#lifeStageFilters = lifeStageFilters;
-      // Only lumber and energy are valid timber uses.
-      if (!['lumber', 'energy'].includes(timberUsageFilter)) {
-          throw new Error(`Invalid timber usage filter ${use}.`)
+  constructor(quadrant, maxNumAffected, treeType, treeLifeStage) {
+    // Check if age filters are valid.
+    if (!['coniferous', 'deciduous'].includes(treeType)) {
+      throw new Error(`Invalid tree type ${treeType}.`);
+    }
+    if (![
+      'seedling', 'sapling', 'mature', 
+      'old_growth', 'senescent'
+    ].includes(treeLifeStage)) {
+      throw new Error(`Invalid tree life stage filter ${treeLifeStage}.`);
+    }
+    super(quadrant, maxNumAffected);
+    this.treeType = treeType;
+    this.treeLifeStage = treeLifeStage;
+  }
+
+  execute() {
+    const quadrantRange = this.getQuadrantRange();
+    let numAffected = 0;
+    for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
+      for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
+        if (numAffected >= this.maxNumAffected) break;
+        let tree = this.getLandContent(x, y);
+        if (!tree == -1 && tree.getLifeStage() == this.treeLifeStage) {
+          tree = land.clear(x, y);
+          timberDemand.meetDemand(tree.computeVolume() * tree.woodDensity);
+          numAffected += 1;
+        };
       }
-      this.#timberUsageFilter = timberUsageFilter;
-  }
-
-  getLifeStageFilters() {
-      /** Returns set life stage filters. */
-      return this.#lifeStageFilters;
-  }
-
-  getTimberUsageFilter() {
-      /** Returns set timber usage filter. */
-      return this.#timberUsageFilter;
+      if (numAffected >= this.maxNumAffected) break;
+    }
+    console.log(
+      `Executed action ${this.getId()}. Fell ${numAffected}`,
+      `${this.treeAge} ${this.treeType} trees in`,
+      `quadrant ${this.quadrant}.`
+    )
   }
 }
 
-class PlantTree extends Action {
-  #lifeStageFilters;
+class Plant extends Action {
 
-  constructor(target, lifeStageFilters) {
-      super(target)
-      lifeStageFilters.forEach(stage => { // Only seedlings and saplings can be planted.
-          if (!['seedling', 'sapling'].includes(stage)) {
-              throw new Error(`Invalid life stage filter ${stage}.`)
-          }
-      })
-      this.#lifeStageFilters = lifeStageFilters;
+  constructor(quadrant, maxNumAffected, treeType) {
+    // Check if age filters are valid.
+    if (!['coniferous', 'deciduous'].includes(treeType)) {
+      throw new Error(`Invalid tree type ${treeType}.`);
+    }
+    super(quadrant, maxNumAffected);
+    this.treeType = treeType;
+    this.treeAge = treeAge;
   }
 
-  getLifeStageFilters() {
-      /** Returns set life stage filters. */
-      return this.#lifeStageFilters;
+  execute() {
+    // Find free spaces in the specified quadrant to plant a tree to.
+    const quadrantRange = this.getQuadrantRange();
+    let freeSpaces = [];
+    for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
+      for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
+          let tree = this.getLandContent(x, y);
+          if (tree == -1) freeSpaces.push([x, y]);
+      }
+    }
+    freeSpaces = shuffle(freeSpaces);
+    freeSpaces = freeSpaces.slice(0, this.maxNumAffected);
+    freeSpaces.forEach(xy => {
+      land.plant(this.treeType, xy[0], xy[1]);
+      funds -= COST_PLANTING;
+    });
+    console.log(
+      `Executed action ${this.getId()}. Planted ${freeSpaces.length}`,
+      `${this.treeType} seedlings in quadrant ${this.quadrant}.`
+    );
   }
 }
 
@@ -597,7 +646,10 @@ class Tree {
   #ttlSenescent;
   #position;
   #maxGrowthRate = 1; // [0,1]
-  #biodiversityReductionFactor = { unforested: 0, plantation: 0.01, forest: 0.1, ecosystem: 0.3 }
+  #biodiversityReductionFactor = { 
+    unforested: 0, plantation: 0.01, 
+    forest: 0.1, ecosystem: 0.3 
+  }
   
   constructor(position) {
       // Set stress.
@@ -616,6 +668,9 @@ class Tree {
       this.#id = idObj.id;
       treeIdNext = idObj.next;
       treeIdAvailable = idObj.available;
+
+      // Set age.
+      this.age = 0;
 
       // Set senescent time to live.
       this.#ttlSenescent = getRandomInt(5, 10);
@@ -669,9 +724,8 @@ class Tree {
       }
 
       // Basic needs availability related stress.
-      let stress_env = basic_needs_stress.co2(environment.co2);
-      stress_env += basic_needs_stress.temperature(environment.temperature);
-      // this.stress += basic_needs_stress.water(environment.getWater());
+      let stress_env = basic_needs_stress.co2(environment.getCo2());
+      stress_env += basic_needs_stress.temperature(environment.getTemperature());
       if (stress_env == 0 && this.stress > 0){
         this.stress = Math.max(0, this.stress - ((1 - this.stress) * 0.1))
       } else {
@@ -698,24 +752,25 @@ class Tree {
     }
   }
 
-  absorbCo2(treeType) {
+  absorbCo2(woodDensity) {
     const growthRate = this.#computeGrowthRate();
-    const mass = this.computeVolume() * WOOD_DENSITY[treeType]
+    const mass = this.computeVolume() * woodDensity
     let co2_removed = (
       (mass * 0.2) // CO2 to maintain existing mass.
       + (0.5 * growthRate * mass) // CO2 to make new mass.
     ) / 12 / 10; // monthly
-    environment.co2 -= co2_removed;
+    environment.updateCo2(environment.getCo2()-co2_removed);
   }
 
-  decay() {
+  decay(woodDensity) {
     /** Mechanism that models decaying of the tree over time. */
     const decayed_diameter = this.diameter * 0.01;
     const decayed_height = decayed_diameter * 5;
     const decayed_volume = this.computeVolume(decayed_diameter, decayed_height);
     this.height = Math.max(0, this.height - decayed_height);
     this.diameter = Math.max(0, this.diameter - decayed_volume);
-    environment.co2 += decayed_volume * 0.7;
+    const decayed_mass = decayed_volume * woodDensity;
+    environment.updateCo2(decayed_mass * 0.2);
     if (this.height == 0 || this.diameter == 0) {
       const position_self = this.getPosition();
       land.clear(position_self[0], position_self[1]);
@@ -728,10 +783,10 @@ class Coniferous extends Tree {
   #maxAge = 90 + this.getTtlSenescent();
   #maxDiameter = getRandomInt(12, 24);
   #maxHeight= 82;
+  #woodDensity = 2;
   
-  constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
+  constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
     super(position);
-    this.age = age;
     const lifeStage = this.getLifeStage();
     if(lifeStage == 'sapling') {
       this.diameter = 1;
@@ -787,7 +842,7 @@ class Coniferous extends Tree {
     this.grow(this.#maxDiameter, this.#maxHeight);
     
     // Absorb CO2.
-    this.absorbCo2('coniferous');
+    this.absorbCo2(this.#woodDensity);
 
     // Reproduce if possible.
     this.last_reproduced += 1;
@@ -809,7 +864,10 @@ class Coniferous extends Tree {
     ) {
       land.plant('coniferous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
       this.last_reproduced = 0;
-      console.log(`Tree ${this.getId()} at ${this.getPosition()} gave life to a new coniferous tree at ${adjacentFreeSpace}!`);
+      console.log(
+        `Tree ${this.getId()} at ${this.getPosition()} gave life to`,
+        `a new coniferous tree at ${adjacentFreeSpace}!`
+      );
     }
   }
 
@@ -824,10 +882,10 @@ class Deciduous extends Tree {
   #maxAge = 70 + this.getTtlSenescent();
   #maxDiameter = getRandomInt(8, 16);
   #maxHeight= 65;
+  #woodDensity = 3;
 
-  constructor(position, age = 0, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
+  constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
     super(position);
-    this.age = age;
     const lifeStage = this.getLifeStage();
     if(lifeStage == 'sapling') {
       this.diameter = 1;
@@ -883,7 +941,7 @@ class Deciduous extends Tree {
     this.grow(this.#maxDiameter, this.#maxHeight);
     
     // Absorb CO2.
-    this.absorbCo2('deciduous')
+    this.absorbCo2(this.#woodDensity);
 
     // Reproduce if possible.
     this.last_reproduced += 1
@@ -910,56 +968,95 @@ class Deciduous extends Tree {
     ) {
       land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
       this.last_reproduced = 0;
-      console.log(`Tree ${this.getId()} at ${this.getPosition()} gave life to a new deciduous tree at ${adjacentFreeSpace}!`);
+      console.log(
+        `Tree ${this.getId()} at ${this.getPosition()} gave life to a`,
+        `new deciduous tree at ${adjacentFreeSpace}!`
+      );
     }
   }
 }
 
 class TimberDemand {
-  // TO DO ...
   #basePrice; // per kg
-  #timberUsage;
+  #currentPrice; // per kg
+  #demand;
+  #baseDemand;
 
-  constructor(basePrice, annualChangePercent, energyPercent, lumberPercent) {
-      this.#basePrice = basePrice;
-      this.annualChangePercent = annualChangePercent;
-      this.setTimberUsage(energyPercent, lumberPercent);
-      this.demand = START_TIMBER_DEMAND;
+  constructor(basePrice, baseDemand, changePercent, energyPercent, lumberPercent) {
+    if (energyPercent + lumberPercent != 1) {
+      throw new Error('Lumber and energy timber usage percentages must add up to 1.')
+    }
+    this.#basePrice = basePrice;
+    this.#currentPrice = basePrice;
+    this.changePercent = changePercent;
+    this.timberUsage = {'lumber': lumberPercent, 'energy': energyPercent};
+    this.#demand = baseDemand;
+    this.#baseDemand = baseDemand;
   }
 
-  getTimberUsage() {
-      /** Returns how much percent of the demand comes from need for
-       *  timber for each kind of usage (here, energy and lumber). */
-      return this.#timberUsage;
+  #useTimber(timberWeightEnergy, timberWeightLumber) {
+    /** Adds differing amounts of CO2 into the environment 
+     *  based on what received wood was used for. */
+    environment.updateCo2(
+      environment.getCo2() 
+      + (1.0 * timberWeightEnergy) 
+      + (0.3 * timberWeightLumber)
+    )
   }
 
-  setTimberUsage(energyPercent, lumberPercent) {
-      /** Sets current annual change percent. */
-      this.#timberUsage = {
-          'energy': energyPercent,
-          'lumber': lumberPercent
-      };
-  }
-
-  fetchPrice(timberAmount, t = null) {
-      /** Computes price for given given amount of timber upon
+  #computePrice(demandChangePercent) {
+      /** Computes price for given amount of timber upon
        *  considering base timber price, current/given time and 
-       *  annual change percent. 
-       *  This can be calculated using the formula for compound interest
-       *  which is as follows.
+       *  annual change percent. This can be calculated using the 
+       *  formula for compound interest which is as follows.
        *  futureValue = presentValue * (1 + percentChange)^(+-timeUnit) */
-      if (t == null) t = TIME[curTimeIdx];
-      const basePriceDemandAdjusted = this.#basePrice + (this.#basePrice * (this.demand * 0.03))
-      const pricePerUnit = basePriceDemandAdjusted * ((1 + this.annualChangePercent)^(
-          this.annualChangePercent < 0 ? 
-          (-1 * this.annualChangePercent) : 
-          this.annualChangePercent
+      const basePriceDemandAdjusted = this.#basePrice + (this.#basePrice * (this.#demand * 0.03))
+      const pricePerUnit = basePriceDemandAdjusted * ((1 + demandChangePercent)^(
+        demandChangePercent < 0 ? (-1 * demandChangePercent) : demandChangePercent
       ));
-      return pricePerUnit * timberAmount;
+      return pricePerUnit;
+  }
+
+  updateDemand(demand=null) {
+    /** Updates the demand based on change percent. */
+    const demandOld = this.#demand;
+    let demandNew = demand;
+    if (demandNew == null) {
+      demandNew = (
+        demandOld + this.#baseDemand 
+        + (this.#baseDemand * TIME[curTimeIdx].year * this.changePercent)
+      );
+    }
+    const demandChangePercent = (demandNew - demandOld) / demandOld;
+    this.#demand = demandNew;
+    this.#currentPrice = this.#computePrice(demandChangePercent);
+  }
+
+  getDemand() {
+    /** Returns current demand. */
+    return this.#demand;
+  }
+
+  getBasePrice() {
+    /** Returns base price per kg of timber. */
+    return this.#basePrice;
+  }
+
+  getCurrentPrice() {
+    /** Returns current price per kg of timber. */
+    return this.#currentPrice;
+  }
+
+  meetDemand(suppliedWeight) {
+    this.#useTimber(
+      (suppliedWeight*this.timberUsage['energy']*1) 
+      + (suppliedWeight*this.timberUsage['lumber']*0.3)
+    )
+    this.#demand -= suppliedWeight;
+    funds += this.getCurrentPrice() * suppliedWeight;
   }
 }
 
-// Global functions.
 const takeTimeStep = () => {
   /** Updates time by 1 week. */
 
@@ -982,12 +1079,16 @@ const takeTimeStep = () => {
     const tree = land.getLandContent(treePosition[0], treePosition[1]);
     tree.growOlder();
   });
+
+  // Update timber demand.
+  timberDemand.updateDemand();
 }
 
 const play = () => {
   /** Start the simulation. */
-  // const timeSteps = TIME.length-1;
   const timeSteps = TIME.length-1; // max = 1199
+  // const timeSteps = 10;
+  // plan.addAction(); // TO DO
   for(let i=0; i<timeSteps; i++) {
     takeTimeStep();
     printWorld(i);
@@ -1007,11 +1108,15 @@ const printWorld = (timeStep = null) => {
    *  This function is meant to be used during development. */
   let landSize = land.getLandSize();
   const curTime = TIME[curTimeIdx];
-  console.log(`\nTIME = year: ${curTime.year} / month: ${curTime.month} / day: ${curTime.day}`);
+  console.log(
+    `\nTIME = year: ${curTime.year} / month: ${curTime.month} / day: ${curTime.day}`
+  );
   if (timeStep != null) console.log(`Time Step = ${timeStep}`);
-  console.log(`CO2 = ${environment.co2}`);
+  console.log(`CO2 = ${environment.getCo2()} kg`);
   console.log(`Biodiversity = ${land.getBiodiversity()}`);
-  console.log(`Temperature = ${environment.temperature}`);
+  console.log(`Temperature = ${environment.getTemperature()} °C`);
+  console.log(`Timber Demand = ${timberDemand.getDemand()} kg`);
+  console.log(`Funds = ${funds} Barcon`);
   console.log(`No. of trees = ${Object.keys(trees).length}`);
   let row;
   for (let x=0; x<landSize[0]; x++) {
@@ -1019,7 +1124,9 @@ const printWorld = (timeStep = null) => {
     for (let y=0; y<landSize[1]; y++) {
       const tree = land.getLandContent(x, y);
       if (tree == -1) row = row.concat("_|");
-      else row = row.concat(`${tree.getLifeStage().substring(0,3)}(${roundToNPlaces(tree.stress, 2)})|`);
+      else row = row.concat(`${
+        tree.getLifeStage().substring(0,3)
+      }(${roundToNPlaces(tree.stress, 2)})|`);
     }
     console.log(row);
   }
@@ -1034,7 +1141,9 @@ const initializeWorld = () => {
     ['deciduous', [3, 2]],
     ['coniferous', [2, 3]]
   ];
-  toPlant.forEach(treeTypePos => land.plant(treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]));
+  toPlant.forEach(treeTypePos => land.plant(
+    treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]
+  ));
 
   // Start world.
   console.log('\n##################### START #####################');
@@ -1050,11 +1159,12 @@ const START_WATER = 120.0;
 const START_CO2 = 1000.0;
 const START_PRICE_TIMBER = 100.0;
 const START_TEMPERATURE = -3.0;
+const START_ROTATION_PERIOD = 100; // time steps
 const START_MONTH = 'mar'
 const RENDER_DELAY = 1; // In seconds.
 const START_TIMBER_DEMAND = 10;
-const TREE_UTILITY = ["energy", "lumber"];
 const LAND_DIM = 4; // No. of rows = no. of columns.
+const COST_PLANTING = 100;
 const MONTH_DAYS = {
     'jan': 31, 'feb': 28, 'mar': 31,
     'apr': 30, 'may': 31, 'jun': 30,
@@ -1283,7 +1393,9 @@ const CO2_STRESS = {
   ] 
 }
 CO2_STRESS['stress_function'] = createInterpolationFunction(CO2_STRESS.requirement);
-CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(CO2_STRESS.requirement_sensitive);
+CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(
+  CO2_STRESS.requirement_sensitive
+);
 const TEMPERATURE_STRESS = {
   requirement:{
     coniferous: [
@@ -1383,13 +1495,14 @@ TEMPERATURE_STRESS['stress_function'] = {
   deciduous: createInterpolationFunction(TEMPERATURE_STRESS.requirement.deciduous)
 }
 TEMPERATURE_STRESS['stress_function_sensitive'] = {
-  coniferous: createInterpolationFunction(TEMPERATURE_STRESS.requirement_sensitive.coniferous),
-  deciduous: createInterpolationFunction(TEMPERATURE_STRESS.requirement_sensitive.deciduous)
+  coniferous: createInterpolationFunction(
+    TEMPERATURE_STRESS.requirement_sensitive.coniferous
+  ),
+  deciduous: createInterpolationFunction(
+    TEMPERATURE_STRESS.requirement_sensitive.deciduous
+  )
 }
-const WOOD_DENSITY = { // unit weight per unit volume
-  coniferous: 3,
-  deciduous: 4
-}
+
 const CHANGE_MONTHLY_TEMPERATURE = {
   'dec-jan': -5, 'jan-feb': 2, 'feb-mar': 6,
   'mar-apr': 7, 'apr-may': 8, 'may-jun': 5,
@@ -1398,9 +1511,10 @@ const CHANGE_MONTHLY_TEMPERATURE = {
 }
 const CHANGE_PERCENT_CO2 = 0.0019/52; // weekly
 const START_CO2_EMISSION = 320;
+const TIMBER_USAGE_PERCENT = {'lumber': 0.4, 'energy': 0.6}
 
 const TIME = []; // World Timeline
-let t = {year:0, month:'mar', day: 0};
+let t = {day: 0, month:'mar', year:0};
 TIME.push(t);
 while (t.year < RANGE_YEARS[1]) {
   t = timeDelta(t, 7, 1); // Increment by 7 days.
@@ -1419,6 +1533,11 @@ let environment = new Environment();
 let plan = new Plan();
 let co2Emission = START_CO2_EMISSION;
 let trees = {};
+let timberDemand = new TimberDemand(
+  START_PRICE_TIMBER, START_TIMBER_DEMAND, 
+  CHANGE_PERCENT_CO2, TIMBER_USAGE_PERCENT['energy'], 
+  TIMBER_USAGE_PERCENT['lumber']
+)
 
 initializeWorld();
 
