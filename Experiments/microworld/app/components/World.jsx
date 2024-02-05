@@ -453,7 +453,7 @@ class Environment {
       this.#co2 += co2Emission;
       const co2New = this.#co2;
       this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
-    } else this.#co2 == co2;
+    } else this.#co2 = co2;
   }
 
   updateTemperature(temperature=null) {
@@ -491,7 +491,6 @@ class Plan {
       // Initialize timeline to have an empty array for every
       // day in the set time period.
       this.#actions = {};
-      this.rotationPeriod = START_ROTATION_PERIOD;
   }
 
   getAllActions() {
@@ -499,24 +498,12 @@ class Plan {
       return this.#actions;
   }
 
-  getActionsInRange(time_range) {
-      /** Returns all actions within a given time range if exists. 
-       *  time_range should have the format {
-       *    start:{day:d, month:m, year:y}, 
-       *    end:{day:d, month:m, year:y}
-       *  }*/
-      let t = time_range.start;
-      let actions_list = [];
-      while(!(
-        t.day == time_range.end.day && 
-        t.month == time_range.end.month && 
-        t.year == time_range.end.year
-      )) {
-        let actions = this.#actions[`${t.day}-${t.month}-${t.year}`];
-        if (actions != undefined) actions_list.push(actions);
-        t = timeDelta(t, 1, 1);
-      }
-      return actions_list;
+  getTimeActions(month, year) {
+    /** Returns all actions for a given time
+     *  if it exists and [] otherwise. */
+    let actions = this.#actions[`${month}-${year}`];
+    if (actions == undefined) actions = {};
+    return actions;
   }
 
   addAction(
@@ -530,9 +517,8 @@ class Plan {
 
     // create action.
     let action;
-    let t;
+    let t = {'month':month, 'year':year};;
     do {
-      t = {'month':month, 'year':year};
       if (actionName == 'plant') {
         action = new Plant(quadrant, maxNumAffected, treeType);
       } else if (actionName == 'fell') {
@@ -540,18 +526,18 @@ class Plan {
       } else {
         throw new Error(`Invalid action name ${actionName}.`);
       }
-      if (!this.#actions.hasOwnProperty(`${month}-${year}`)) {
-        this.#actions[`${month}-${year}`] = {};
+      if (!this.#actions.hasOwnProperty(`${t.month}-${t.year}`)) {
+        this.#actions[`${t.month}-${t.year}`] = {};
       }
       this.#actions[`${t.month}-${t.year}`][action.getId()] = action;
-      t = timeDelta(t, this.rotationPeriod);
+      t = timeDelta(t, rotationPeriod);
     } while (repeat && timeCompare(t, TIME_RANGE[1]) > 0);
   }
 
-  executeTimeActions(day, month, year) {
+  executeTimeActions(month, year) {
     /** Execute all actions at a particular time. */
-    if (this.#actions.hasOwnProperty(`${day}-${month}-${year}`)) {
-      const actions = this.#actions[`${day}-${month}-${year}`];
+    if (this.#actions.hasOwnProperty(`${month}-${year}`)) {
+      const actions = this.#actions[`${month}-${year}`];
       let idsToRemove = [];
       Object.keys(actions).forEach(actionId => {
         actions[actionId].execute();
@@ -560,7 +546,7 @@ class Plan {
       });
       idsToRemove.forEach(actionId => delete actions[actionId]);
       if (Object.keys(actions).length == 0) {
-        delete this.#actions[`${day}-${month}-${year}`];
+        delete this.#actions[`${month}-${year}`];
       }
     }
   }
@@ -583,7 +569,7 @@ class Action {
       actionIdAvailable = idObj.available;
       this.quadrant = quadrant;
       this.maxNumAffected = maxNumAffected;
-      this.#quadrantRange = land.getQuadrantRange(q);
+      this.#quadrantRange = land.getQuadrantRange(quadrant);
   }
 
   getId() {
@@ -617,21 +603,25 @@ class Fell extends Action {
   execute() {
     const quadrantRange = this.getQuadrantRange();
     let numAffected = 0;
+    let tree;
     for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
       for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
         if (numAffected >= this.maxNumAffected) break;
-        let tree = this.getLandContent(x, y);
-        if (!tree == -1 && tree.getLifeStage() == this.treeLifeStage) {
-          tree = land.clear(x, y);
-          timberDemand.meetDemand(tree.computeVolume() * tree.woodDensity);
-          numAffected += 1;
+        tree = land.getLandContent(x, y);
+        if (tree != -1) {
+          if (tree.getLifeStage() == this.treeLifeStage) {
+            tree = land.clear(x, y);
+            funds -= cost_felling;
+            timberDemand.meetDemand(tree.computeVolume() * tree.getWoodDensity());
+            numAffected += 1;
+          }
         };
       }
       if (numAffected >= this.maxNumAffected) break;
     }
     console.log(
-      `Executed action ${this.getId()}. Fell ${numAffected}`,
-      `${this.treeAge} ${this.treeType} trees in`,
+      `\nExecuted action ${this.getId()}. Fell ${numAffected}`,
+      `${this.treeLifeStage} ${this.treeType} trees in`,
       `quadrant ${this.quadrant}.`
     )
   }
@@ -646,7 +636,6 @@ class Plant extends Action {
     }
     super(quadrant, maxNumAffected);
     this.treeType = treeType;
-    this.treeAge = treeAge;
   }
 
   execute() {
@@ -655,7 +644,7 @@ class Plant extends Action {
     let freeSpaces = [];
     for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
       for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
-          let tree = this.getLandContent(x, y);
+          let tree = land.getLandContent(x, y);
           if (tree == -1) freeSpaces.push([x, y]);
       }
     }
@@ -663,11 +652,11 @@ class Plant extends Action {
     freeSpaces = freeSpaces.slice(0, this.maxNumAffected);
     freeSpaces.forEach(xy => {
       land.plant(this.treeType, xy[0], xy[1]);
-      funds -= COST_PLANTING;
+      funds -= cost_planing;
     });
     console.log(
-      `Executed action ${this.getId()}. Planted ${freeSpaces.length}`,
-      `${this.treeType} seedlings in quadrant ${this.quadrant}.`
+      `\nExecuted action ${this.getId()}. Planted ${freeSpaces.length}`,
+      `${this.treeType} seedling(s) in quadrant ${this.quadrant}.`
     );
   }
 }
@@ -789,8 +778,8 @@ class Tree {
     let co2_removed = (
       (mass * 0.2) // CO2 to maintain existing mass.
       + (0.5 * growthRate * mass) // CO2 to make new mass.
-    ) / 12 / 10; // monthly
-    environment.updateCo2(environment.getCo2()-co2_removed);
+    ) / 12 / 30; // monthly
+    environment.updateCo2(environment.getCo2() - co2_removed);
   }
 
   decay(woodDensity) {
@@ -801,7 +790,7 @@ class Tree {
     this.height = Math.max(0, this.height - decayed_height);
     this.diameter = Math.max(0, this.diameter - decayed_volume);
     const decayed_mass = decayed_volume * woodDensity;
-    environment.updateCo2(decayed_mass * 0.2);
+    environment.updateCo2(environment.getCo2() - (decayed_mass * 0.2));
     if (this.height == 0 || this.diameter == 0) {
       const position_self = this.getPosition();
       land.clear(position_self[0], position_self[1]);
@@ -835,7 +824,7 @@ class Coniferous extends Tree {
       /** Tree ages by one time unit. */
       // Still alive?
       this.age += 1;
-      if (this.getLifeStage() == 'dead') this.decay();
+      if (this.getLifeStage() == 'dead') this.decay(this.#woodDensity);
       else this.#live();
   }
 
@@ -896,7 +885,7 @@ class Coniferous extends Tree {
       land.plant('coniferous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
       this.last_reproduced = 0;
       console.log(
-        `Tree ${this.getId()} at ${this.getPosition()} gave life to`,
+        `\nTree ${this.getId()} at ${this.getPosition()} gave life to`,
         `a new coniferous tree at ${adjacentFreeSpace}!`
       );
     }
@@ -905,6 +894,10 @@ class Coniferous extends Tree {
   getTreeType() {
     /** Returns what kind of tree this is. */
     return 'coniferous';
+  }
+
+  getWoodDensity() {
+    return this.#woodDensity;
   }
 }
 
@@ -934,7 +927,7 @@ class Deciduous extends Tree {
     /** Tree ages by one time unit. */
     // Still alive?
     this.age += 1;
-    if (this.getLifeStage() == 'dead') this.decay();
+    if (this.getLifeStage() == 'dead') this.decay(this.#woodDensity);
     else this.#live();
   }
 
@@ -1000,10 +993,14 @@ class Deciduous extends Tree {
       land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
       this.last_reproduced = 0;
       console.log(
-        `Tree ${this.getId()} at ${this.getPosition()} gave life to a`,
+        `\nTree ${this.getId()} at ${this.getPosition()} gave life to a`,
         `new deciduous tree at ${adjacentFreeSpace}!`
       );
     }
+  }
+
+  getWoodDensity() {
+    return this.#woodDensity;
   }
 }
 
@@ -1080,11 +1077,11 @@ class TimberDemand {
 
   meetDemand(suppliedWeight) {
     this.#useTimber(
-      (suppliedWeight*this.timberUsage['energy']*1) 
-      + (suppliedWeight*this.timberUsage['lumber']*0.3)
+      (suppliedWeight*this.timberUsage['energy']*1),
+      (suppliedWeight*this.timberUsage['lumber']*0.3)
     )
     this.#demand -= suppliedWeight;
-    funds += this.getCurrentPrice() * suppliedWeight;
+    funds += this.getCurrentPrice() * suppliedWeight * 0.01;
   }
 }
 
@@ -1115,24 +1112,22 @@ const takeTimeStep = () => {
   timberDemand.updateDemand();
 
   // Execute all planned actions.
-  // TO DO ..
+  plan.executeTimeActions(time.month, time.year);
 }
 
 const play = () => {
   /** Start the simulation. */
-  const timeSteps = (
-    ((TIME_RANGE[1].year - TIME_RANGE[0].year) * 12)
-    + (TIME_RANGE[1].month - TIME_RANGE[0].month)
-  );
+  // const timeSteps = (
+  //   ((TIME_RANGE[1].year - TIME_RANGE[0].year) * 12)
+  //   + (TIME_RANGE[1].month - TIME_RANGE[0].month)
+  // );
+  const timeSteps = 35;
 
-  // // add planned actions
-  // plan.addAction(15, 'feb', 2, true, 'plant', 1, 'deciduous', 1);
-  // plan.addAction(24, 'jan', 3, false, 'fell', 3, 'coniferous', 1, 'mature');
-
-  // console.log(plan.getActionsInRange({
-  //   start:{day:0, month:'mar', year:0},
-  //   stop:{day:25, month:'jan', year:3}
-  // }));
+  // add planned actions
+  // rotationPeriod = 20;
+  // plan.addAction(5, 0, true, 'plant', 1, 'deciduous', 1);
+  plan.addAction(1, 3, false, 'fell', 3, 'deciduous', 1, 'mature');
+  plan.addAction(1, 3, false, 'fell', 3, 'coniferous', 1, 'mature');
 
   for(let i=0; i<timeSteps; i++) {
     takeTimeStep();
@@ -1207,7 +1202,6 @@ const START_MONTH = 'mar'
 const RENDER_DELAY = 1; // In seconds.
 const START_TIMBER_DEMAND = 10;
 const LAND_DIM = 4; // No. of rows = no. of columns.
-const COST_PLANTING = 100;
 const MONTH_DAYS = {
     'jan': 31, 'feb': 28, 'mar': 31,
     'apr': 30, 'may': 31, 'jun': 30,
@@ -1575,6 +1569,9 @@ let environment = new Environment();
 let plan = new Plan();
 let co2Emission = START_CO2_EMISSION;
 let trees = {};
+let cost_planing = 100;
+let cost_felling = 200;
+let rotationPeriod = START_ROTATION_PERIOD;
 let timberDemand = new TimberDemand(
   START_PRICE_TIMBER, START_TIMBER_DEMAND, 
   CHANGE_PERCENT_CO2, TIMBER_USAGE_PERCENT['energy'], 
