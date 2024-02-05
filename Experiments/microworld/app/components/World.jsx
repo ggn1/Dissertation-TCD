@@ -132,19 +132,39 @@ const shuffle = (array) => {
   return array;
 }
 
-const timeDelta = (from, days, direction) => {
-  /** Returns time that is numSteps no. of steps
-   *  away from given startTime object in the given direction
-   *  wherein size of each step is stepSize. */
-  const newTimeDays = time2days({
-      year: from.year, month: from.month, day: from.day
-  }) + (direction * days);
-  if (newTimeDays < 0 || newTimeDays > time2days({
-      year: RANGE_YEARS[1], month:'dec', day:31
-  })) {
-      throw new Error(`Days ${days} out of range.`);
+const timeDelta = (from, months) => {
+  const fromMonth = (from.year * 12) + (from.month - 1);
+  let toMonth = fromMonth + months;
+  if (toMonth < 0) throw new Error('Time out of range.');
+  const toYear = Math.floor(toMonth / 12);
+  toMonth = (toMonth - (toYear * 12)) + 1;
+  return {year: toYear, month: toMonth};
+}
+
+const timeCompare = (time1, time2) => {
+  /** Compare the 2 given times and return 1 if 
+   *  time2 > time1, 0 if time2 = time1 and -1 if
+   *  time2 < time1. Both times much be of the format 
+   *  {day:d, month:m, year:y}.
+   */
+  if (time2.year > time1.year) return 1;
+  else if (time2.year < time1.year) return -1;
+  else { // time2.year == time1.year
+    if (time2.month > time1.month) return 1;
+    else if (time2.month < time1.month) return -1;
+    else return 0; // time2.month == time1.month
   }
-  return days2time(newTimeDays);
+}
+
+const validateTimeInRange = (t) => {
+  if (
+    timeCompare(t, TIME_RANGE[0]) > 0 ||
+    timeCompare(t, TIME_RANGE[1]) < 0
+  ) throw new Error (
+    `Time "${t.month} ${t.year}" not in range [`
+    + `${TIME_RANGE[0].month} ${TIME_RANGE[0].year},`
+    + `${TIME_RANGE[1].month} ${TIME_RANGE[1].year}].`
+  )
 }
 
 const roundToNPlaces = (num, n) => {
@@ -439,18 +459,20 @@ class Environment {
   updateTemperature(temperature=null) {
     // Always runs after update CO2.
     if (temperature == null) {
+      const timePast = timeDelta(time, -1);
       const tempChange = 0.01 * this.#co2ChangePercent;
-      const month_old = TIME[curTimeIdx - 1].month
-      const month_now = TIME[curTimeIdx].month
+      const month_past = timePast.month;
+      const month_now = time.month;
       const tempChangeMonthly = (
-        (month_now == month_old) ? 0 : CHANGE_MONTHLY_TEMPERATURE[`${month_old}-${month_now}`]
+        (month_now == month_past) ? 0 : CHANGE_MONTHLY_TEMPERATURE[
+          `${month_past}-${month_now}`
+        ]
       );
       this.#temperature += tempChangeMonthly;
       this.#temperature += (this.#temperature * tempChange);
     } else {
       this.#temperature = temperature;
     }
-    
   }
 
   getCo2() {
@@ -477,44 +499,53 @@ class Plan {
       return this.#actions;
   }
 
-  getTimeActions(day, month, year) {
-      /** Returns all actions for a given time
-       *  if it exists and [] otherwise. */
-      let actions = this.#actions[`${day}-${month}-${year}`];
-      if (actions == undefined) actions = {};
-      return actions;
+  getActionsInRange(time_range) {
+      /** Returns all actions within a given time range if exists. 
+       *  time_range should have the format {
+       *    start:{day:d, month:m, year:y}, 
+       *    end:{day:d, month:m, year:y}
+       *  }*/
+      let t = time_range.start;
+      let actions_list = [];
+      while(!(
+        t.day == time_range.end.day && 
+        t.month == time_range.end.month && 
+        t.year == time_range.end.year
+      )) {
+        let actions = this.#actions[`${t.day}-${t.month}-${t.year}`];
+        if (actions != undefined) actions_list.push(actions);
+        t = timeDelta(t, 1, 1);
+      }
+      return actions_list;
   }
 
   addAction(
-    day, month, year, repeat, actionName, quadrant,
+    month, year, repeat, actionName, quadrant,
     treeType, maxNumAffected = 1, treeLifeStage
   ) {
-      /** Adds given action at given time in timeline.
-       *  If repeat is set to true, then the same action 
-       *  will be repeated annually for all years hence. */
-      if (actionName == 'fell' && !treeLifeStage) {
-        throw new Error ('Fell action required tree life stage.');
-      }
+    if (actionName == 'fell' && !treeLifeStage) {
+      throw new Error ('Fell action required tree life stage.');
+    }
+    validateTimeInRange({'month':month, 'year':year});
 
-      // create action.
-      let action;
-      let timeIdx = TIME.findIndex({'day':day, 'month':month, 'year':year});
-      let t;
-      do {
-        t = TIME[timeIdx];
-        if (actionName == 'plant') {
-          action = new Plant(quadrant, maxNumAffected, treeType);
-        } else if (actionName == 'fell') {
-          action = new Fell(quadrant, maxNumAffected, treeType, treeLifeStage);
-        } else {
-          throw new Error(`Invalid action name ${actionName}.`);
-        }
-        if (!this.#actions.hasOwnProperty(`${day}-${month}-${year}`)) {
-          this.#actions[`${day}-${month}-${year}`] = {};
-        }
-        this.#actions[`${t.day}-${t.month}-${t.year}`][action.getId()] = action;
-        timeIdx += this.rotationPeriod;
-      } while (repeat && timeIdx < (TIME.length-1))
+    // create action.
+    let action;
+    let t;
+    do {
+      t = {'month':month, 'year':year};
+      if (actionName == 'plant') {
+        action = new Plant(quadrant, maxNumAffected, treeType);
+      } else if (actionName == 'fell') {
+        action = new Fell(quadrant, maxNumAffected, treeType, treeLifeStage);
+      } else {
+        throw new Error(`Invalid action name ${actionName}.`);
+      }
+      if (!this.#actions.hasOwnProperty(`${month}-${year}`)) {
+        this.#actions[`${month}-${year}`] = {};
+      }
+      this.#actions[`${t.month}-${t.year}`][action.getId()] = action;
+      t = timeDelta(t, this.rotationPeriod);
+    } while (repeat && timeCompare(t, TIME_RANGE[1]) > 0);
   }
 
   executeTimeActions(day, month, year) {
@@ -1024,7 +1055,7 @@ class TimberDemand {
     if (demandNew == null) {
       demandNew = (
         demandOld + this.#baseDemand 
-        + (this.#baseDemand * TIME[curTimeIdx].year * this.changePercent)
+        + (this.#baseDemand * time.year * this.changePercent)
       );
     }
     const demandChangePercent = (demandNew - demandOld) / demandOld;
@@ -1060,11 +1091,11 @@ class TimberDemand {
 const takeTimeStep = () => {
   /** Updates time by 1 week. */
 
+  // Turn the wheel of time.
+  time = timeDelta(time, 1);
+
   // Update the land's biodiversity.
   land.updateBiodiversity();
-
-  // Turn the wheel of time.
-  curTimeIdx += 1
 
   // Update environment CO2 amount.
   environment.updateCo2()
@@ -1082,16 +1113,30 @@ const takeTimeStep = () => {
 
   // Update timber demand.
   timberDemand.updateDemand();
+
+  // Execute all planned actions.
+  // TO DO ..
 }
 
 const play = () => {
   /** Start the simulation. */
-  const timeSteps = TIME.length-1; // max = 1199
-  // const timeSteps = 10;
-  // plan.addAction(); // TO DO
+  const timeSteps = (
+    ((TIME_RANGE[1].year - TIME_RANGE[0].year) * 12)
+    + (TIME_RANGE[1].month - TIME_RANGE[0].month)
+  );
+
+  // // add planned actions
+  // plan.addAction(15, 'feb', 2, true, 'plant', 1, 'deciduous', 1);
+  // plan.addAction(24, 'jan', 3, false, 'fell', 3, 'coniferous', 1, 'mature');
+
+  // console.log(plan.getActionsInRange({
+  //   start:{day:0, month:'mar', year:0},
+  //   stop:{day:25, month:'jan', year:3}
+  // }));
+
   for(let i=0; i<timeSteps; i++) {
     takeTimeStep();
-    printWorld(i);
+    printWorld(i+1);
   }
 }
 
@@ -1099,7 +1144,7 @@ const stop = (t = null) => {
   /** Start the simulation. If not specific moment is given at 
    *  which to stop the simulation, then it is stopped at the 
    *  current moment. */
-  if (t == null) t = TIME[curTimeIdx];
+  if (t == null) t = time;
   console.log('stop() => TO DO ...');
 }
 
@@ -1107,10 +1152,8 @@ const printWorld = (timeStep = null) => {
   /** Console log the state of the world. 
    *  This function is meant to be used during development. */
   let landSize = land.getLandSize();
-  const curTime = TIME[curTimeIdx];
-  console.log(
-    `\nTIME = year: ${curTime.year} / month: ${curTime.month} / day: ${curTime.day}`
-  );
+  const curTime = time;
+  console.log(`\nTIME = month: ${curTime.month} / year: ${curTime.year}`);
   if (timeStep != null) console.log(`Time Step = ${timeStep}`);
   console.log(`CO2 = ${environment.getCo2()} kg`);
   console.log(`Biodiversity = ${land.getBiodiversity()}`);
@@ -1151,7 +1194,7 @@ const initializeWorld = () => {
 }
 
 // Global constants. 
-const RANGE_YEARS = [0, 100];
+// const RANGE_YEARS = [0, 100];
 const RANGE_WATER = [0.0, 310.0];
 const RANGE_TEMPERATURE = [-60.0, 100.0];
 const START_FUNDS = 10000.0;
@@ -1392,7 +1435,9 @@ const CO2_STRESS = {
     [310.0, 0.0]
   ] 
 }
-CO2_STRESS['stress_function'] = createInterpolationFunction(CO2_STRESS.requirement);
+CO2_STRESS['stress_function'] = createInterpolationFunction(
+  CO2_STRESS.requirement
+);
 CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(
   CO2_STRESS.requirement_sensitive
 );
@@ -1491,8 +1536,12 @@ const TEMPERATURE_STRESS = {
   }
 }
 TEMPERATURE_STRESS['stress_function'] = {
-  coniferous: createInterpolationFunction(TEMPERATURE_STRESS.requirement.coniferous),
-  deciduous: createInterpolationFunction(TEMPERATURE_STRESS.requirement.deciduous)
+  coniferous: createInterpolationFunction(
+    TEMPERATURE_STRESS.requirement.coniferous
+  ),
+  deciduous: createInterpolationFunction(
+    TEMPERATURE_STRESS.requirement.deciduous
+  )
 }
 TEMPERATURE_STRESS['stress_function_sensitive'] = {
   coniferous: createInterpolationFunction(
@@ -1504,25 +1553,18 @@ TEMPERATURE_STRESS['stress_function_sensitive'] = {
 }
 
 const CHANGE_MONTHLY_TEMPERATURE = {
-  'dec-jan': -5, 'jan-feb': 2, 'feb-mar': 6,
-  'mar-apr': 7, 'apr-may': 8, 'may-jun': 5,
-  'jun-jul': 3, 'jul-aug': 0, 'aug-sep': -5,
-  'sep-oct': -7, 'oct-nov': -7, 'nov-dec': -7
+  '12-1': -5, '1-2': 2, '2-3': 6,
+  '3-4': 7, '4-5': 8, '5-6': 5,
+  '6-7': 3, '7-8': 0, '8-9': -5,
+  '9-10': -7, '10-11': -7, '11-12': -7
 }
 const CHANGE_PERCENT_CO2 = 0.0019/52; // weekly
 const START_CO2_EMISSION = 320;
 const TIMBER_USAGE_PERCENT = {'lumber': 0.4, 'energy': 0.6}
-
-const TIME = []; // World Timeline
-let t = {day: 0, month:'mar', year:0};
-TIME.push(t);
-while (t.year < RANGE_YEARS[1]) {
-  t = timeDelta(t, 7, 1); // Increment by 7 days.
-  if (t.month != TIME[TIME.length-1].month) TIME.push(t); // Time step unit = 1 month.
-}
+const TIME_RANGE = [{month:3, year:0}, {month:3, year:100}];
 
 // Global world properties.
-let curTimeIdx = 0;
+let time = TIME_RANGE[0];
 let actionIdNext = 0;
 let actionIdAvailable = [];
 let treeIdNext = 0;
