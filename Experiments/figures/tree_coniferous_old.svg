@@ -1,8 +1,8 @@
-<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg">
  <title>cm</title>
 
  <g>
   <title>Layer 1</title>
-  <path stroke-width="5" id="svg_22" d="m241.12429,10.53406l-137.9469,160.37034l304.93961,4.20418l-164.83222,-172.37181l-127.74497,315.31427l267.85236,-4.20418l-138.98657,-209.20952l3,394.19389" opacity="NaN" stroke="#000" fill="#559E84"/>
+  <path fill="#559E84" stroke="#000" opacity="NaN" d="m142.08448,2.5l-138.9469,228.37034l292.93961,-3.79582l-153.83222,-224.37181l-139.74497,372.31427l293.85236,-2.20418l-152.98657,-268.20952l3,394.19389" id="svg_22" stroke-width="5"/>
  </g>
 </svg>
