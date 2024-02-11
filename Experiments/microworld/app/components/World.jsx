@@ -774,13 +774,13 @@ class Coniferous extends Tree {
         super(position);
         const lifeStage = this.getLifeStage();
         if(lifeStage == 'sapling') {
-        this.diameter = 1;
-        this.height = 10*this.diameter;
+            this.diameter = 1;
+            this.height = 10*this.diameter;
         } else if (lifeStage == 'seedling') {
-        this.diameter = 0.1;
-        this.height = 10*this.diameter;
+            this.diameter = 0.1;
+            this.height = 10*this.diameter;
         } else {
-        throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
+            throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
         }
         this.#reproductionInterval = reproductionInterval;
     }
@@ -810,17 +810,17 @@ class Coniferous extends Tree {
         
         // Compute environmental stress.
         if (['seedling', 'sapling'].includes(this.getLifeStage())) {
-        this.updateStressTimeEnv({
-            'water': WATER_STRESS.stress_function_sensitive.coniferous,
-            'temperature': TEMPERATURE_STRESS.stress_function_sensitive.coniferous,
-            'co2': CO2_STRESS.stress_function_sensitive
-        });
+            this.updateStressTimeEnv({
+                'water': WATER_STRESS.stress_function_sensitive.coniferous,
+                'temperature': TEMPERATURE_STRESS.stress_function_sensitive.coniferous,
+                'co2': CO2_STRESS.stress_function_sensitive
+            });
         } else {
-        this.updateStressTimeEnv({
-            'water': WATER_STRESS.stress_function.coniferous,
-            'temperature': TEMPERATURE_STRESS.stress_function.coniferous,
-            'co2': CO2_STRESS.stress_function
-        });
+            this.updateStressTimeEnv({
+                'water': WATER_STRESS.stress_function.coniferous,
+                'temperature': TEMPERATURE_STRESS.stress_function.coniferous,
+                'co2': CO2_STRESS.stress_function
+            });
         }
 
         // Grow.
@@ -842,17 +842,17 @@ class Coniferous extends Tree {
         // Trees may reproduce only once every x no. of years.
         const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
         if (
-        this.stress <= 0.5 && 
-        !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
-        (this.last_reproduced >= this.#reproductionInterval) &&
-        !(adjacentFreeSpace == -1)
+            this.stress <= 0.5 && 
+            !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+            (this.last_reproduced >= this.#reproductionInterval) &&
+            !(adjacentFreeSpace == -1)
         ) {
-        land.plant('coniferous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
-        this.last_reproduced = 0;
-        console.log(
-            `\nTree ${this.getId()} at ${this.getPosition()} gave life to`,
-            `a new coniferous tree at ${adjacentFreeSpace}!`
-        );
+            land.plant('coniferous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+            this.last_reproduced = 0;
+            // console.log(
+            //     `\nTree ${this.getId()} at ${this.getPosition()} gave life to`,
+            //     `a new coniferous tree at ${adjacentFreeSpace}!`
+            // );
         }
     }
 
@@ -877,13 +877,13 @@ class Deciduous extends Tree {
         super(position);
         const lifeStage = this.getLifeStage();
         if(lifeStage == 'sapling') {
-        this.diameter = 1;
-        this.height = 5*this.diameter;
+            this.diameter = 1;
+            this.height = 5*this.diameter;
         } else if (lifeStage == 'seedling') {
-        this.diameter = 0.1;
-        this.height = 5*this.diameter;
+            this.diameter = 0.1;
+            this.height = 5*this.diameter;
         } else {
-        throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
+            throw new Error(`Cannot create trees in the life stage ${lifeStage}.`);
         }
         this.#reproductionInterval = reproductionInterval;
     }
@@ -913,17 +913,17 @@ class Deciduous extends Tree {
         
         // Compute environmental stress.
         if (['seedling', 'sapling'].includes(this.getLifeStage())) {
-        this.updateStressTimeEnv({
-            'water': WATER_STRESS.stress_function_sensitive.deciduous,
-            'temperature': TEMPERATURE_STRESS.stress_function_sensitive.deciduous,
-            'co2': CO2_STRESS.stress_function_sensitive
-        });
+            this.updateStressTimeEnv({
+                'water': WATER_STRESS.stress_function_sensitive.deciduous,
+                'temperature': TEMPERATURE_STRESS.stress_function_sensitive.deciduous,
+                'co2': CO2_STRESS.stress_function_sensitive
+            });
         } else {
-        this.updateStressTimeEnv({
-            'water': WATER_STRESS.stress_function.deciduous,
-            'temperature': TEMPERATURE_STRESS.stress_function.deciduous,
-            'co2': CO2_STRESS.stress_function
-        });
+            this.updateStressTimeEnv({
+                'water': WATER_STRESS.stress_function.deciduous,
+                'temperature': TEMPERATURE_STRESS.stress_function.deciduous,
+                'co2': CO2_STRESS.stress_function
+            });
         }
 
         // Grow.
@@ -950,17 +950,17 @@ class Deciduous extends Tree {
         // Trees may reproduce only once every x no. of years.
         const adjacentFreeSpace = land.getAdjacentFreeSpace(this.getPosition());
         if (
-        this.stress <= 0.5 && 
-        !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
-        (this.last_reproduced >= this.#reproductionInterval) &&
-        !(adjacentFreeSpace == -1)
+            this.stress <= 0.5 && 
+            !(['seedling', 'sapling'].includes(this.getLifeStage())) &&
+            (this.last_reproduced >= this.#reproductionInterval) &&
+            !(adjacentFreeSpace == -1)
         ) {
-        land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
-        this.last_reproduced = 0;
-        console.log(
-            `\nTree ${this.getId()} at ${this.getPosition()} gave life to a`,
-            `new deciduous tree at ${adjacentFreeSpace}!`
-        );
+            land.plant('deciduous', adjacentFreeSpace[0], adjacentFreeSpace[1]);
+            this.last_reproduced = 0;
+            // console.log(
+            //     `\nTree ${this.getId()} at ${this.getPosition()} gave life to a`,
+            //     `new deciduous tree at ${adjacentFreeSpace}!`
+            // );
         }
     }
 
@@ -1502,11 +1502,7 @@ const TIME_STEPS = (
 
 // Global world properties.
 let timeStep = 0;
-let time = TIME_RANGE[0];
-let actionIdNext = 0;
-let actionIdAvailable = [];
-let treeIdNext = 0;
-let treeIdAvailable = [];
+let time = {year: TIME_RANGE[0].year, month: TIME_RANGE[0].month};
 let funds = START_FUNDS;
 let land = new Land(LAND_DIM, LAND_DIM);
 let environment = new Environment();
@@ -1522,6 +1518,10 @@ let timberDemand = new TimberDemand(
     TIMBER_USAGE_PERCENT['lumber']
 )
 let playLoopInterval = -1;
+let actionIdNext = 0;
+let actionIdAvailable = [];
+let treeIdNext = 0;
+let treeIdAvailable = [];
 
 const World = () => {
     const [landGrid, setLandGrid] = useState([]);
@@ -1549,12 +1549,7 @@ const World = () => {
 
         // Take time steps.
         const loopFun = () => {
-            if (timeStep >= timeSteps-1) {
-                if (playLoopInterval >= 0) {
-                    clearInterval(playLoopInterval);
-                    playLoopInterval = -1;
-                };
-            }
+            if (timeStep >= timeSteps-1) stop();
             takeTimeStep(); // timeStep gets updated here.
             setLandGrid(getLandTreesToRender());
             setStateBiodiversity(Math.round(land.getBiodiversity(), 2));
@@ -1565,11 +1560,29 @@ const World = () => {
             setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
             setStateFunds(Math.round(funds, 2));
             setStateTreeCount(Object.keys(trees).length);
-            
             timeStep = timeStep + 1;
         }
-
         playLoopInterval = setInterval(loopFun, 1000/FPS);
+    }
+
+    const playUntil = (month, year) => {
+        resetWorld();
+        time.month = 1;
+        const timeSteps = (year * 12) + month;
+        while (timeStep < timeSteps-1) {
+            takeTimeStep(); // timeStep gets updated here.
+            timeStep = timeStep + 1;
+        }   
+        stop();
+        setLandGrid(getLandTreesToRender());
+        setStateBiodiversity(Math.round(land.getBiodiversity(), 2));
+        setStateCo2(Math.round(environment.getCo2(), 2));
+        setStateTemperature(Math.round(environment.getTemperature(), 2));
+        setStateTimeStep(`${timeStep+1}/${TIME_STEPS}`);
+        setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
+        setStateFunds(Math.round(funds, 2));
+        setStateTreeCount(Object.keys(trees).length);
+        setStateTime(time);
     }
 
     const stop = () => {
@@ -1623,13 +1636,12 @@ const World = () => {
         // Start world.
         let landGrid = getLandTreesToRender();
         setLandGrid(landGrid);
-        // console.log('\n##################### START #####################');
-        // play();
     }
 
     const resetWorld = () => {
+        stop();
         timeStep = 0;
-        time = TIME_RANGE[0];
+        time = {year: TIME_RANGE[0].year, month: TIME_RANGE[0].month};
         actionIdNext = 0;
         actionIdAvailable = [];
         treeIdNext = 0;
@@ -1648,10 +1660,8 @@ const World = () => {
             CHANGE_PERCENT_CO2, TIMBER_USAGE_PERCENT['energy'], 
             TIMBER_USAGE_PERCENT['lumber']
         )
-        playLoopInterval = -1;
-        
+
         setLandGrid([]);
-        setStateTime(time);
         setStateTimeStep(`0 / ${TIME_STEPS}`);
         setStateCo2(environment.getCo2());
         setStateTemperature(environment.getTemperature());
@@ -1659,19 +1669,21 @@ const World = () => {
         setStateTimberDemand(timberDemand.getDemand());
         setStateBiodiversity(land.getBiodiversity());
         setStateTreeCount(Object.keys(trees).length);
+        setStateTime(time);
         setIsPaused(true);
 
         initializeWorld();
     }
 
-    const refSvg = useRef();
+    const refSvgLand = useRef();
+    const refSvgTimeline = useRef();
 
     useEffect(() => {
         initializeWorld();
     }, []);
 
     useEffect(() => {
-        const svg = d3.select(refSvg.current);
+        const svg = d3.select(refSvgLand.current);
         const widthSvg = Number(svg.style('width').replace('px', ''));
         const heightSvg = Number(svg.style('height').replace('px', ''));
         const margins = {left: 30, top: 20, right: 0, bottom: 0};
@@ -1731,23 +1743,212 @@ const World = () => {
         else play();
     }, [isPaused]);
 
+    useEffect(() => {
+        const svg = d3.select(refSvgTimeline.current);
+        const widthSvg = Number(svg.style('width').replace('px', ''));
+        const heightSvg = Number(svg.style('height').replace('px', ''));
+        const margins = {left: 30, top: 35, right: 35, bottom: 20};
+        const widthPlot = widthSvg - margins.left - margins.right;
+        const heightPlot = heightSvg - margins.top - margins.bottom;
+        const gPlot = svg.selectAll('.group-plot')
+                        .data(['g'])
+                        .join('g')
+                        .attr('class', 'group-plot')
+                        .attr('width', widthPlot)
+                        .attr('height', heightPlot)
+                        .attr('transform', `translate(${margins.left}, ${margins.top})`);
+        
+        // Month timeline.
+        const gYAxisMonth = gPlot.selectAll('#y-axis-month')
+                                .data(['g'])
+                                .join('g')
+                                .attr('class', 'group-y-axis')
+                                .attr('id', 'y-axis-month');
+        const scaleYMonth = d3.scaleBand()
+                            .domain(d3.range(1, 13))
+                            .range([0, heightPlot])
+                            .paddingInner(1);
+        gYAxisMonth.call(d3.axisLeft(scaleYMonth));
+        gYAxisMonth.selectAll('path')
+                .attr('opacity', 0);
+        gYAxisMonth.selectAll('line')
+                .attr('x2', 2)
+                .attr('stroke-width', 2);
+        gPlot.selectAll('#label-month')
+                .data(['M'])
+                .join('text')
+                .attr('id', 'label-month')
+                .text(d => d)
+                .attr("x", 0)
+                .attr("y", -1 * (margins.top/2.5))
+                .attr("font-size", "10px")
+                .attr('text-anchor', 'end')
+                .style("font-weight", "bold");
+        gYAxisMonth.selectAll('.marker')
+                .data([stateTime])
+                .join('circle')
+                .attr('class', 'marker')
+                .attr('cx', 0)
+                .attr('r', 5)
+                .attr('fill', '#8888ff')
+                .transition()
+                .duration(100)
+                .attr('cy', d => scaleYMonth(d.month));
+
+        // Year timeline.
+        const gYAxisYear = gPlot.selectAll('#y-axis-year')
+                .data(['g'])
+                .join('g')
+                .attr('class', 'group-y-axis')
+                .attr('id', 'y-axis-year')
+                .attr('transform', `translate(${widthPlot}, ${0})`);
+        const scaleYYear = d3.scaleBand()
+                            .domain(d3.range(TIME_RANGE[0].year, TIME_RANGE[1].year+1))
+                            .range([0, heightPlot])
+                            .paddingInner(1);
+        gYAxisYear.call(d3.axisRight(scaleYYear));
+        gYAxisYear.selectAll('path')
+        .attr('opacity', 0);
+        gYAxisYear.selectAll('line')
+                .attr('x2', 2)
+                .attr('stroke-width', 2);
+        gPlot.selectAll('#label-year')
+            .data(['Y'])
+            .join('text')
+            .attr('id', 'label-year')
+            .text(d => d)
+            .attr("x", widthPlot)
+            .attr("y", -1 * (margins.top/2.5))
+            .attr("font-size", "10px")
+            .attr('text-anchor', 'middle')
+            .style("font-weight", "bold");
+        gYAxisYear.selectAll('.marker')
+                .data([stateTime])
+                .join('circle')
+                .attr('class', 'marker')
+                .attr('cx', 0)
+                .attr('r', 5)
+                .attr('fill', '#ff8888')
+                .transition()
+                .duration(500)
+                .attr('cy', d => scaleYYear(d.year));
+    }, [stateTime]);
+
+    useEffect(() => {
+        // Timeline selection action.
+        const svg = d3.select(refSvgTimeline.current);
+        const heightSvg = Number(svg.style('height').replace('px', ''));
+        const margins = {top: 35, bottom: 20};
+        const heightPlot = heightSvg - margins.top - margins.bottom;
+        
+        const scaleYMonth = d3.scaleBand()
+                            .domain(d3.range(1, 13))
+                            .range([0, heightPlot])
+                            .paddingInner(1);
+        const yAxisMonth = d3.select('#y-axis-month');
+        const handleMonth = yAxisMonth.selectAll('.handle')
+                                    .data([1])
+                                    .join('circle')
+                                    .attr('class', 'handle')
+                                    .attr('cx', 0)
+                                    .attr('cy', scaleYMonth(1))
+                                    .attr('r', 0)
+                                    .attr('fill', 'yellow')
+                                    .attr('stroke', 'black')
+                                    .attr('stroke-width', 1);
+        yAxisMonth.selectAll('.tick')
+                .on("mouseover", (e, d) => {
+                    handleMonth.transition()
+                            .duration(500)
+                            .attr('cy', scaleYMonth(d))
+                            .attr('r', 5);
+                })
+                .on("mouseout", () => {
+                    handleMonth.transition()
+                            .duration(500)
+                            .attr('r', 0);
+                })
+                .on('click', (e, d) => {
+                    yAxisMonth.select('.marker')
+                            .transition()
+                            .duration(500)
+                            .attr('cy', scaleYMonth(d));
+                    handleMonth.transition()
+                            .duration(500)
+                            .attr('r', 0);
+                    playUntil(d, time.year);
+                });
+        
+        const scaleYYear = d3.scaleBand()
+            .domain(d3.range(TIME_RANGE[0].year, TIME_RANGE[1].year+1))
+            .range([0, heightPlot])
+            .paddingInner(1);
+        
+        const yAxisYear = d3.select('#y-axis-year');
+        const handleYear = yAxisYear.selectAll('.handle')
+                                    .data([1])
+                                    .join('circle')
+                                    .attr('class', 'handle')
+                                    .attr('cx', 0)
+                                    .attr('cy', scaleYYear(0))
+                                    .attr('r', 0)
+                                    .attr('fill', 'yellow')
+                                    .attr('stroke', 'black')
+                                    .attr('stroke-width', 1);
+        yAxisYear.selectAll('.tick')
+                .on("mouseover", (e, d) => {
+                    handleYear.transition()
+                            .duration(500)
+                            .attr('cy', scaleYYear(d))
+                            .attr('r', 5);
+                })
+                .on("mouseout", () => {
+                    handleYear.transition()
+                            .duration(500)
+                            .attr('r', 0);
+                })
+                .on('click', (e, d) => {
+                    yAxisYear.select('.marker')
+                            .transition()
+                            .duration(500)
+                            .attr('cy', scaleYYear(d));
+                    handleYear.transition()
+                            .duration(500)
+                            .attr('r', 0);
+                    playUntil(time.month, d);
+                });
+
+    }, []);
+
     return (
         <div className='p-10'>
             <div className='grid justify-center'>
-                <svg className='bg-slate-100 min-w-96 rounded-xl min-h-96 rounded-xl border-4' ref={refSvg}></svg>
-                <div className='px-0 py-3 flex justify-between'>
-                    <Button 
-                        onClick={() => {setIsPaused(prevVal => !prevVal)}} 
-                        colorBg={isPaused ? "#8888ff" : "#ff8888"}
-                        colorFg="white"
-                    >
-                        {isPaused ? "PLAY" : "PAUSE"}
-                    </Button>
-                    <Button 
-                        onClick={resetWorld} 
-                        colorBg={"grey"}
-                        colorFg="white"
-                    > RESET </Button>
+                <div className='flex'>
+                    <svg className='
+                        bg-slate-100 w-24 border-4
+                        rounded-xl h-1/1 mr-5
+                    ' ref={refSvgTimeline}></svg>
+                    <svg className='
+                        bg-slate-100 min-w-96 
+                        rounded-xl min-h-96 rounded-xl 
+                        border-4
+                    ' ref={refSvgLand}></svg>
+                </div>
+                <div className='px-0 py-3 flex justify-center gap-x-5'>
+                    {/* <div className='flex gap-x-2'> */}
+                        <Button 
+                            onClick={() => {setIsPaused(prevVal => !prevVal)}} 
+                            colorBg={isPaused ? "#8888ff" : "#ff8888"}
+                            colorFg="white"
+                        >
+                            {isPaused ? "PLAY" : "PAUSE"}
+                        </Button>
+                        <Button 
+                            onClick={resetWorld} 
+                            colorBg={"grey"}
+                            colorFg="white"
+                        > RESET </Button>
+                    {/* </div> */}
                     <div className='flex items-center'>
                         Time Step: &nbsp;<b>{stateTimeStep}</b>
                     </div>
