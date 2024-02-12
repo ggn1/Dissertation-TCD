@@ -1,15 +1,16 @@
 'use client'
 
-import * as d3 from 'd3'
-import React, { useState, useEffect, useRef } from 'react'
+import * as d3 from 'd3';
+import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import Button from './Button';
-var linearInterpolator = require('linear-interpolator');
+import GlobalConfig from '../app.config.js'
 
 // Utility Functions
 const checkIndexOutOfRange = (
     idxX, rangeMinX, rangeMaxX,
     idxY, rangeMinY, rangeMaxY
-  ) => {
+) => {
     /** Checks if given x and y indices are within given range
      *  and raises an error if they are not. */
     if (idxX < rangeMinX || idxX > rangeMaxX) {
@@ -18,31 +19,31 @@ const checkIndexOutOfRange = (
     if (idxY < rangeMinY || idxY > rangeMaxY) {
         throw new Error(`Y index out of range [${rangeMinY}, ${rangeMaxY}]`);
     }
-  }
+}
 
-  const getNewId = (next, available) => {
+const getNewId = (next, available) => {
     /** Gets a new ID. */
     let id;
     if (available.length > 0) {
-      id = available.pop();
+        id = available.pop();
     } else {
-      id = next;
-      next += 1;
+        id = next;
+        next += 1;
     }
     return {id: id, next: next, available: available};
-  }
+}
 
-  const getRandomInt = (min, max) => {
+const getRandomInt = (min, max) => {
     /** Returns a random integer within given inclusive range. */
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+}
 
-  const validateQuadrantEncoding = (enc) => {
+const validateQuadrantEncoding = (enc) => {
     /** Check if given one hot encoding if land quadrants is
      *  in the right format. */
     let num_zeros = 0;
     let invalid_quadrant = (enc.length != 4);
-    
+
     if (!invalid_quadrant) {
         for (let i = 0; i < enc.length; i++) {
             if (enc[i] < 0) {
@@ -56,26 +57,13 @@ const checkIndexOutOfRange = (
             invalid_quadrant = true;
         }
     }
-    
+
     if (invalid_quadrant) {
         throw new Error(`Invalid quadrant encoding ${enc}.`);
     }
-  }
+}
 
-  const createInterpolationFunction = (xyPoints) => {
-    // Create the interpolation function.
-    const interpolationFunction = linearInterpolator(xyPoints);
-
-    // Define a new function that takes an x value 
-    // and returns the interpolated y value.
-    function interpolatedFunction(x) {
-      return interpolationFunction(x);
-    }
-
-    return interpolatedFunction;
-  }
-
-  const shuffle = (array) => {
+const shuffle = (array) => {
     /** Shuffles an array using the Fisher-Yates Shuffle 
      *  and returns this array. */
     let currentIndex = array.length,  randomIndex;
@@ -83,28 +71,28 @@ const checkIndexOutOfRange = (
     // While there remain elements to shuffle.
     while (currentIndex > 0) {
 
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
 
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
 
     return array;
-  }
+}
 
-  const timeDelta = (from, months) => {
+const timeDelta = (from, months) => {
     const fromMonth = (from.year * 12) + (from.month - 1);
     let toMonth = fromMonth + months;
     if (toMonth < 0) throw new Error('Time out of range.');
     const toYear = Math.floor(toMonth / 12);
     toMonth = (toMonth - (toYear * 12)) + 1;
     return {year: toYear, month: toMonth};
-  }
+}
 
-  const timeCompare = (time1, time2) => {
+const timeCompare = (time1, time2) => {
     /** Compare the 2 given times and return 1 if 
      *  time2 > time1, 0 if time2 = time1 and -1 if
      *  time2 < time1. Both times much be of the format 
@@ -113,29 +101,29 @@ const checkIndexOutOfRange = (
     if (time2.year > time1.year) return 1;
     else if (time2.year < time1.year) return -1;
     else { // time2.year == time1.year
-      if (time2.month > time1.month) return 1;
-      else if (time2.month < time1.month) return -1;
-      else return 0; // time2.month == time1.month
+        if (time2.month > time1.month) return 1;
+        else if (time2.month < time1.month) return -1;
+        else return 0; // time2.month == time1.month
     }
-  }
+}
 
-  const validateTimeInRange = (t) => {
+const validateTimeInRange = (t) => {
     if (
-      timeCompare(t, TIME_RANGE[0]) > 0 ||
-      timeCompare(t, TIME_RANGE[1]) < 0
+        timeCompare(t, GlobalConfig.time_range[0]) > 0 ||
+        timeCompare(t, GlobalConfig.time_range[1]) < 0
     ) throw new Error (
-      `Time "${t.month} ${t.year}" not in range [`
-      + `${TIME_RANGE[0].month} ${TIME_RANGE[0].year},`
-      + `${TIME_RANGE[1].month} ${TIME_RANGE[1].year}].`
-    )
-  }
+        `Time "${t.month} ${t.year}" not in range [`
+        + `${GlobalConfig.time_range[0].month} ${GlobalConfig.time_range[0].year},`
+        + `${GlobalConfig.time_range[1].month} ${GlobalConfig.time_range[1].year}].`
+    );
+}
 
-  const roundToNPlaces = (num, n) => {
+const roundToNPlaces = (num, n) => {
     // Rounds the given number to n decimal places.
     return Math.round((num + Number.EPSILON) * (10^n)) / (10^n);
-  }
+}
 
-  // Components.
+// Components.
 
 class Land {
     #numRows;
@@ -408,15 +396,15 @@ class Environment {
     #temperature;
 
     constructor() {
-        this.#temperature = START_TEMPERATURE;
-        this.#co2 = START_CO2;
+        this.#temperature = GlobalConfig.start_temperature;
+        this.#co2 = GlobalConfig.start_co2;
         this.#co2ChangePercent = 0;
     }
 
     updateCo2(co2 = null) {
       if (co2 == null) {
         const co2Old = this.#co2;
-        co2Emission *= 1 + CHANGE_PERCENT_CO2;
+        co2Emission *= 1 + GlobalConfig.co2_change_percent;
         this.#co2 += co2Emission;
         const co2New = this.#co2;
         this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
@@ -431,7 +419,7 @@ class Environment {
         const month_past = timePast.month;
         const month_now = time.month;
         const tempChangeMonthly = (
-          (month_now == month_past) ? 0 : CHANGE_MONTHLY_TEMPERATURE[
+          (month_now == month_past) ? 0 : GlobalConfig.temperature_monthly_change[
             `${month_past}-${month_now}`
           ]
         );
@@ -458,6 +446,7 @@ class Plan {
         // Initialize timeline to have an empty array for every
         // day in the set time period.
         this.#actions = {};
+        this.rotationPeriod = GlobalConfig.start_rotation_period;
     }
 
     getAllActions() {
@@ -497,8 +486,8 @@ class Plan {
           this.#actions[`${t.month}-${t.year}`] = {};
         }
         this.#actions[`${t.month}-${t.year}`][action.getId()] = action;
-        t = timeDelta(t, rotationPeriod);
-      } while (repeat && timeCompare(t, TIME_RANGE[1]) > 0);
+        t = timeDelta(t, GlobalConfig.plan.rotationPeriod);
+      } while (repeat && timeCompare(t, GlobalConfig.time_range[1]) > 0);
     }
 
     executeTimeActions(month, year) {
@@ -770,7 +759,7 @@ class Coniferous extends Tree {
     #maxHeight= 82;
     #woodDensity = 2;
 
-    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_CONIFEROUS) {
+    constructor(position, reproductionInterval = GlobalConfig.reproduction_interval_coniferous) {
         super(position);
         const lifeStage = this.getLifeStage();
         if(lifeStage == 'sapling') {
@@ -811,15 +800,13 @@ class Coniferous extends Tree {
         // Compute environmental stress.
         if (['seedling', 'sapling'].includes(this.getLifeStage())) {
             this.updateStressTimeEnv({
-                'water': WATER_STRESS.stress_function_sensitive.coniferous,
-                'temperature': TEMPERATURE_STRESS.stress_function_sensitive.coniferous,
-                'co2': CO2_STRESS.stress_function_sensitive
+                'temperature': GlobalConfig.temperature_stress.stress_function_sensitive.coniferous,
+                'co2': GlobalConfig.co2_stress.stress_function_sensitive
             });
         } else {
             this.updateStressTimeEnv({
-                'water': WATER_STRESS.stress_function.coniferous,
-                'temperature': TEMPERATURE_STRESS.stress_function.coniferous,
-                'co2': CO2_STRESS.stress_function
+                'temperature': GlobalConfig.temperature_stress.stress_function.coniferous,
+                'co2': GlobalConfig.co2_stress.stress_function
             });
         }
 
@@ -873,7 +860,7 @@ class Deciduous extends Tree {
     #maxHeight= 65;
     #woodDensity = 3;
 
-    constructor(position, reproductionInterval = REPRODUCTION_INTERVAL_DECIDUOUS) {
+    constructor(position, reproductionInterval = GlobalConfig.reproduction_interval_deciduous) {
         super(position);
         const lifeStage = this.getLifeStage();
         if(lifeStage == 'sapling') {
@@ -914,15 +901,13 @@ class Deciduous extends Tree {
         // Compute environmental stress.
         if (['seedling', 'sapling'].includes(this.getLifeStage())) {
             this.updateStressTimeEnv({
-                'water': WATER_STRESS.stress_function_sensitive.deciduous,
-                'temperature': TEMPERATURE_STRESS.stress_function_sensitive.deciduous,
-                'co2': CO2_STRESS.stress_function_sensitive
+                'temperature': GlobalConfig.temperature_stress.stress_function_sensitive.deciduous,
+                'co2': GlobalConfig.co2_stress.stress_function_sensitive
             });
         } else {
             this.updateStressTimeEnv({
-                'water': WATER_STRESS.stress_function.deciduous,
-                'temperature': TEMPERATURE_STRESS.stress_function.deciduous,
-                'co2': CO2_STRESS.stress_function
+                'temperature': GlobalConfig.temperature_stress.stress_function.deciduous,
+                'co2': GlobalConfig.co2_stress.stress_function
             });
         }
 
@@ -1077,7 +1062,7 @@ const takeTimeStep = () => {
     timberDemand.updateDemand();
 
     // Execute all planned actions.
-    plan.executeTimeActions(time.month, time.year);
+    GlobalConfig.plan.executeTimeActions(time.month, time.year);
 }
 
 const getLandTreesToRender = () => {
@@ -1092,18 +1077,18 @@ const getLandTreesToRender = () => {
             if (['seedling', 'sapling', 'dead'].includes(lifeStage)) {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': TREE_IMGS[lifeStage]
+                    'treeImg': GlobalConfig.TreeImgs[lifeStage]
                 });
             } else {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': TREE_IMGS[lifeStage][tree.getTreeType()]
+                    'treeImg': GlobalConfig.TreeImgs[lifeStage][tree.getTreeType()]
                 });
             }
             } else {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': TREE_IMGS['none']
+                    'treeImg': GlobalConfig.TreeImgs['none']
                 });
             }
         }
@@ -1111,422 +1096,33 @@ const getLandTreesToRender = () => {
     return landGrid;
 }
 
-// Global constants. 
-const FPS = 10;
-const START_FUNDS = 10000.0;
-const START_WATER = 120.0;
-const START_CO2 = 1000.0;
-const START_PRICE_TIMBER = 100.0;
-const START_TEMPERATURE = -3.0;
-const START_ROTATION_PERIOD = 100; // time steps
-const START_TIMBER_DEMAND = 10;
-const LAND_DIM = 6; // No. of rows = no. of columns.
-const MONTH_DAYS = {
-    'jan': 31, 'feb': 28, 'mar': 31,
-    'apr': 30, 'may': 31, 'jun': 30,
-    'jul': 31, 'aug': 32, 'sep': 30,
-    'oct': 31, 'nov': 30, 'dec': 31
-}
-const SEASON_MONTH = {
-    'winter': [12, 1, 2], 
-    'spring': [3, 4, 5],
-    'summer': [6, 7, 8],
-    'autumn': [9, 10, 11]
-}
-const MONTH_SEASON = {
-12: 'winter', 1: 'winter', 2: 'winter',
-3: 'spring', 4: 'spring', 5: 'spring',
-6: 'summer', 7: 'summer', 8: 'summer',
-9: 'autumn', 10: 'autumn', 11: 'autumn',
-}
-const REPRODUCTION_INTERVAL_CONIFEROUS = 20;
-const REPRODUCTION_INTERVAL_DECIDUOUS = 10;
-const WATER_STRESS = {
-    requirement: {
-        coniferous: [
-            [-90.0, 1.0],
-            [-80.0, 1.0],
-            [-70.0, 0.5],
-            [-60.0, 0.2],
-            [-50.0, 0.15],
-            [-40.0, 0.1],
-            [-30.0, 0.06],
-            [-20.0, 0.03],
-            [-10.0, 0.0],
-            [0.0, 0.0],
-            [10.0, 0.0],
-            [20.0, 0.0],
-            [30.0, 0.01],
-            [40.0, 0.05],
-            [50.0, 0.2],
-            [60.0, 0.4],
-            [70.0, 0.8],
-            [80.0, 1.0],
-            [90.0, 1.0],
-            [100.0, 1.0]
-        ],
-        deciduous: [
-            [0.0, 1.0],
-            [10.0, 1.0],
-            [20.0, 1.0],
-            [30.0, 1.0],
-            [40.0, 1.0],
-            [50.0, 0.98],
-            [60.0, 0.92],
-            [70.0, 0.8],
-            [80.0, 0.7],
-            [90.0, 0.5],
-            [100.0, 0.3],
-            [110.0, 0.1],
-            [120.0, 0.05],
-            [130.0, 0.03],
-            [140.0, 0.01],
-            [150.0, 0.0],
-            [160.0, 0.0],
-            [170.0, 0.0],
-            [180.0, 0.0],
-            [190.0, 0.01],
-            [200.0, 0.03],
-            [210.0, 0.06],
-            [220.0, 0.1],
-            [230.0, 0.15],
-            [240.0, 0.2],
-            [250.0, 0.25],
-            [260.0, 0.35],
-            [270.0, 0.65],
-            [280.0, 0.95],
-            [290.0, 0.98],
-            [300.0, 1.0],
-            [310.0, 1.0]
-        ]
-    },
-    requirement_sensitive: {
-        coniferous: [
-            [0.0, 1.0],
-            [10.0, 1.0],
-            [20.0, 1.0],
-            [30.0, 1.0],
-            [40.0, 1.0],
-            [50.0, 0.98],
-            [60.0, 0.96],
-            [70.0, 0.9],
-            [80.0, 0.8],
-            [90.0, 0.6],
-            [100.0, 0.4],
-            [110.0, 0.2],
-            [120.0, 0.09],
-            [130.0, 0.04],
-            [140.0, 0.01],
-            [150.0, 0.0],
-            [160.0, 0.0],
-            [170.0, 0.0],
-            [180.0, 0.01],
-            [190.0, 0.05],
-            [200.0, 0.1],
-            [210.0, 0.2],
-            [220.0, 0.3],
-            [230.0, 0.4],
-            [240.0, 0.6],
-            [250.0, 0.8],
-            [260.0, 0.95],
-            [270.0, 0.98],
-            [280.0, 1.0],
-            [290.0, 1.0],
-            [300.0, 1.0],
-            [310.0, 1.0]
-        ], 
-        deciduous: [
-            [0.0, 1.0],
-            [10.0, 1.0],
-            [20.0, 1.0],
-            [30.0, 1.0],
-            [40.0, 1.0],
-            [50.0, 1.0],
-            [60.0, 1.0],
-            [70.0, 1.0],
-            [80.0, 0.98],
-            [90.0, 0.96],
-            [100.0, 0.9],
-            [110.0, 0.8],
-            [120.0, 0.6],
-            [130.0, 0.4],
-            [140.0, 0.2],
-            [150.0, 0.09],
-            [160.0, 0.04],
-            [170.0, 0.01],
-            [180.0, 0.0],
-            [190.0, 0.0],
-            [200.0, 0.0],
-            [210.0, 0.01],
-            [220.0, 0.05],
-            [230.0, 0.1],
-            [240.0, 0.2],
-            [250.0, 0.3],
-            [260.0, 0.4],
-            [270.0, 0.6],
-            [280.0, 0.8],
-            [290.0, 0.95],
-            [300.0, 0.98],
-            [310.0, 1.0]
-        ]
-    }
-}
-WATER_STRESS['stress_function'] = {
-coniferous: createInterpolationFunction(WATER_STRESS.requirement.coniferous),
-deciduous: createInterpolationFunction(WATER_STRESS.requirement.deciduous)
-}
-WATER_STRESS['stress_function_sensitive'] = {
-coniferous: createInterpolationFunction(WATER_STRESS.requirement_sensitive.coniferous),
-deciduous: createInterpolationFunction(WATER_STRESS.requirement_sensitive.deciduous)
-}
-const CO2_STRESS = {
-    requirement:[
-        [0.0, 1.0],
-        [10.0, 1.0],
-        [20.0, 1.0],
-        [30.0, 0.99],
-        [40.0, 0.978],
-        [50.0, 0.96],
-        [60.0, 0.94],
-        [70.0, 0.92],
-        [80.0, 0.89],
-        [90.0, 0.85],
-        [100.0, 0.8],
-        [110.0, 0.75],
-        [120.0, 0.7],
-        [130.0, 0.64],
-        [140.0, 0.54],
-        [150.0, 0.42],
-        [160.0, 0.3],
-        [170.0, 0.2],
-        [180.0, 0.1],
-        [190.0, 0.05],
-        [200.0, 0.01],
-        [210.0, 0.0],
-        [220.0, 0.0],
-        [230.0, 0.0],
-        [240.0, 0.0],
-        [250.0, 0.0],
-        [260.0, 0.0],
-        [270.0, 0.0],
-        [280.0, 0.0],
-        [290.0, 0.0],
-        [300.0, 0.0],
-        [310.0, 0.0]
-    ],
-    requirement_sensitive:[
-        [0.0, 1.0],
-        [10.0, 1.0],
-        [20.0, 1.0],
-        [30.0, 1.0],
-        [40.0, 1.0],
-        [50.0, 1.0],
-        [60.0, 0.99],
-        [70.0, 0.978],
-        [80.0, 0.96],
-        [90.0, 0.94],
-        [100.0, 0.92],
-        [110.0, 0.89],
-        [120.0, 0.85],
-        [130.0, 0.8],
-        [140.0, 0.75],
-        [150.0, 0.7],
-        [160.0, 0.64],
-        [170.0, 0.54],
-        [180.0, 0.42],
-        [190.0, 0.3],
-        [200.0, 0.2],
-        [210.0, 0.1],
-        [220.0, 0.05],
-        [230.0, 0.01],
-        [240.0, 0.0],
-        [250.0, 0.0],
-        [260.0, 0.0],
-        [270.0, 0.0],
-        [280.0, 0.0],
-        [290.0, 0.0],
-        [300.0, 0.0],
-        [310.0, 0.0]
-    ] 
-}
-CO2_STRESS['stress_function'] = createInterpolationFunction(
-CO2_STRESS.requirement
-);
-CO2_STRESS['stress_function_sensitive'] = createInterpolationFunction(
-CO2_STRESS.requirement_sensitive
-);
-const TEMPERATURE_STRESS = {
-    requirement:{
-        coniferous: [
-            [-90.0, 1.0],
-            [-80.0, 1.0],
-            [-70.0, 0.5],
-            [-60.0, 0.2],
-            [-50.0, 0.15],
-            [-40.0, 0.1],
-            [-30.0, 0.06],
-            [-20.0, 0.03],
-            [-10.0, 0.0],
-            [0.0, 0.0],
-            [10.0, 0.0],
-            [20.0, 0.0],
-            [30.0, 0.01],
-            [40.0, 0.05],
-            [50.0, 0.2],
-            [60.0, 0.4],
-            [70.0, 0.8],
-            [80.0, 1.0],
-            [90.0, 1.0],
-            [100.0, 1.0]
-        ],
-        deciduous: [
-            [-90.0, 1.0],
-            [-80.0, 1.0],
-            [-70.0, 1.0],
-            [-60.0, 1.0],
-            [-50.0, 0.8],
-            [-40.0, 0.7],
-            [-30.0, 0.4],
-            [-20.0, 0.2],
-            [-10.0, 0.0],
-            [0.0, 0.0],
-            [10.0, 0.0],
-            [20.0, 0.0],
-            [30.0, 0.01],
-            [40.0, 0.05],
-            [50.0, 0.2],
-            [60.0, 0.4],
-            [70.0, 0.8],
-            [80.0, 1.0],
-            [90.0, 1.0],
-            [100.0, 1.0]
-        ]
-    },
-    requirement_sensitive: {
-        coniferous: [
-            [-90.0, 1.0],
-            [-80.0, 1.0],
-            [-70.0, 1.0],
-            [-60.0, 1.0],
-            [-50.0, 0.9],
-            [-40.0, 0.6],
-            [-30.0, 0.25],
-            [-20.0, 0.1],
-            [-10.0, 0.05],
-            [0.0, 0.0],
-            [10.0, 0.0],
-            [20.0, 0.0],
-            [30.0, 0.05],
-            [40.0, 0.15],
-            [50.0, 0.4],
-            [60.0, 0.8],
-            [70.0, 1.0],
-            [80.0, 1.0],
-            [90.0, 1.0],
-            [100.0, 1.0]
-        ],
-        deciduous: [
-            [-90.0, 1.0],
-            [-80.0, 1.0],
-            [-70.0, 1.0],
-            [-60.0, 1.0],
-            [-50.0, 1.0],
-            [-40.0, 1.0],
-            [-30.0, 0.9],
-            [-20.0, 0.6],
-            [-10.0, 0.0],
-            [0.0, 0.0],
-            [10.0, 0.0],
-            [20.0, 0.01],
-            [30.0, 0.1],
-            [40.0, 0.3],
-            [50.0, 0.4],
-            [60.0, 0.8],
-            [70.0, 1.0],
-            [80.0, 1.0],
-            [90.0, 1.0],
-            [100.0, 1.0]
-        ]
-    }
-}
-TEMPERATURE_STRESS['stress_function'] = {
-    coniferous: createInterpolationFunction(
-        TEMPERATURE_STRESS.requirement.coniferous
-    ),
-    deciduous: createInterpolationFunction(
-        TEMPERATURE_STRESS.requirement.deciduous
-    )
-}
-TEMPERATURE_STRESS['stress_function_sensitive'] = {
-    coniferous: createInterpolationFunction(
-        TEMPERATURE_STRESS.requirement_sensitive.coniferous
-    ),
-    deciduous: createInterpolationFunction(
-        TEMPERATURE_STRESS.requirement_sensitive.deciduous
-    )
-}
-const CHANGE_MONTHLY_TEMPERATURE = {
-    '12-1': -5, '1-2': 2, '2-3': 6,
-    '3-4': 7, '4-5': 8, '5-6': 5,
-    '6-7': 3, '7-8': 0, '8-9': -5,
-    '9-10': -7, '10-11': -7, '11-12': -7
-}
-const CHANGE_PERCENT_CO2 = 0.0019/52; // weekly
-const START_CO2_EMISSION = 320;
-const TIMBER_USAGE_PERCENT = {'lumber': 0.4, 'energy': 0.6}
-const TREE_IMGS = {
-    seedling: {scale: 0.08, fill:'#8CD79F', d:'m162.2743,437.27095l-2.50097,-188.63198c26.37647,-34.68576 34.49183,-179.01323 111.29489,-141.75297c76.80307,37.26025 -56.75655,171.3249 -136.83437,146.74104c-80.07782,-24.58387 -134.62989,-177.08951 -129.10635,-187.23457c5.52355,-10.14506 69.87351,-1.80811 99.12336,58.20945c29.24985,60.01757 61.22376,121.41582 54.39886,124.59996'},
-    sapling: {scale: 0.08, fill:'#A0D58A', d:'m143.59497,502.42732c9.92454,-24.14193 -22.17414,-147.43604 9.97679,-355.78825c32.15092,-208.35221 208.90818,-110.951 102.76621,-27.1678c-106.14197,83.7832 -218.58312,261.81413 -255.88496,133.13932c-37.30184,-128.67481 291.21799,79.96256 299.51983,-18.74967c8.30184,-98.71223 -93.21773,18.0862 -160.59189,-2.59414c-67.37416,-20.68033 -188.26779,-235.90001 -114.39021,-228.68581c73.87758,7.2142 110.77998,168.67195 117.98073,229.43053'},
-    mature: {
-        coniferous: {scale: 0.08, fill:'#619E73', d:'m148.49104,2.5l-145.99104,378.74059l293.59494,0.68714l-146.36226,-368.26646l0,484.82127'},
-        deciduous: {scale: 0.08, fill:'#B8D078', d:'m155.45452,222.11132c-216.34574,74.99975 -179.89617,-200.33584 -34.90544,-217.72988c144.99073,-17.39407 162.04848,91.31884 166.31291,100.01588c4.26444,8.69704 42.64432,173.94065 -76.7598,208.72876c-119.40412,34.78815 -199.12919,-7.33401 -204.37282,-120.63504c-5.24363,-113.30103 171.20717,-150.71794 198.47201,-59.25669c27.26482,91.46125 -35.60817,132.05803 -36.74352,132.05803c-19.30098,18.5238 -16.81067,147.31317 -14.78185,233.38573'},
-    },
-    old_growth: {
-        coniferous: {scale: 0.08, fill:'#559E84', d:'m142.08448,2.5l-138.9469,228.37034l292.93961,-3.79582l-153.83222,-224.37181l-139.74497,372.31427l293.85236,-2.20418l-152.98657,-268.20952l3,394.19389'},
-        deciduous: {scale: 0.08, fill:'#B8D078', d:'m154.14571,501.78073l-3.07919,-337.32207c2.28468,-17.821 81.13642,-67.1167 122.02708,20.50616c40.89065,87.62283 -33.80155,156.4735 -55.6363,164.10563c-21.83479,7.63211 -110.5192,27.81815 -177.6967,-27.67631c-67.17752,-55.49447 -25.67527,-149.4774 -12.22605,-166.62524c13.44922,-17.14785 49.81923,-54.12944 119.91748,-54.12944c70.09828,0 92.33431,52.24684 92.71098,63.68229c0.37668,11.43546 15.54323,95.59455 -110.04952,98.5153c-125.59274,2.92076 -133.05859,-117.84784 -125.37762,-161.77671c7.68097,-43.92886 36.86415,-78.24429 81.75689,-89.26691c44.89274,-11.02262 93.82793,-13.2191 129.39571,-1.23963c46.97165,17.53627 66.6736,41.62498 76.0719,91.27792c9.3983,49.65294 -1.23446,74.64481 -16.96843,104.77215c-15.73397,30.12732 -19.06387,64.73514 -121.83811,57.75174'},
-    },
-    senescent: {
-        coniferous: {scale: 0.08, fill:'#6F5C2A', d:'m142.08448,2.5l-138.9469,228.37034l292.93961,-3.79582l-153.83222,-224.37181l-139.74497,372.31427l293.85236,-2.20418l-152.98657,-268.20952l3,394.19389'},
-        deciduous: {scale: 0.08, fill:'#C48157', d:'m154.14571,501.78073l-3.07919,-337.32207c2.28468,-17.821 81.13642,-67.1167 122.02708,20.50616c40.89065,87.62283 -33.80155,156.4735 -55.6363,164.10563c-21.83479,7.63211 -110.5192,27.81815 -177.6967,-27.67631c-67.17752,-55.49447 -25.67527,-149.4774 -12.22605,-166.62524c13.44922,-17.14785 49.81923,-54.12944 119.91748,-54.12944c70.09828,0 92.33431,52.24684 92.71098,63.68229c0.37668,11.43546 15.54323,95.59455 -110.04952,98.5153c-125.59274,2.92076 -133.05859,-117.84784 -125.37762,-161.77671c7.68097,-43.92886 36.86415,-78.24429 81.75689,-89.26691c44.89274,-11.02262 93.82793,-13.2191 129.39571,-1.23963c46.97165,17.53627 66.6736,41.62498 76.0719,91.27792c9.3983,49.65294 -1.23446,74.64481 -16.96843,104.77215c-15.73397,30.12732 -19.06387,64.73514 -121.83811,57.75174'},
-    },
-    dead: {scale: 0.08, fill:'#845335', d:'m190.88308,71.11615c-84.02814,-52.35866 -172.05762,0 -138.04623,36.10942c34.01139,36.10942 192.06432,32.49848 218.07303,-1.80547c26.00871,-34.30395 -32.01072,-88.46807 -110.03685,-101.10637c-78.02613,-12.6383 -158.05293,43.3313 -158.05293,88.46807c0,45.13677 -2.00067,308.73552 4.00134,343.03946c6.00201,34.30395 118.03953,68.60789 182.06097,57.77507c64.02144,-10.83283 88.02948,-34.30395 96.03216,-45.13677c8.00268,-10.83283 24.00804,-364.70511 -6.00201,-389.98171c-30.01005,-25.27659 -74.02479,-37.91489 -74.02479,-39.5398'},
-    none: {scale:0.08, fill:'#894F3F', d: 'm7.44019,293.80132c-45.43813,-187.79474 236.27827,-293.42928 283.9883,-84.50763c47.71003,208.92165 -238.55018,272.30237 -283.9883,84.50763z'}
-}
-const START_COST_PLANTING = 200;
-const START_COST_FELLING = 500;
-const TIME_RANGE = [{month:3, year:0}, {month:3, year:20}];
-const TIME_STEPS = (
-((TIME_RANGE[1].year - TIME_RANGE[0].year) * 12)
-+ (TIME_RANGE[1].month - TIME_RANGE[0].month)
-);
-
 // Global world properties.
+GlobalConfig.plan = new Plan();
 let timeStep = 0;
-let time = {year: TIME_RANGE[0].year, month: TIME_RANGE[0].month};
-let funds = START_FUNDS;
-let land = new Land(LAND_DIM, LAND_DIM);
+let time = {year: GlobalConfig.time_range[0].year, month: GlobalConfig.time_range[0].month};
+let funds = GlobalConfig.start_funds;
+let land = new Land(GlobalConfig.land_dim, GlobalConfig.land_dim);
 let environment = new Environment();
-let plan = new Plan();
-let co2Emission = START_CO2_EMISSION;
+let co2Emission = GlobalConfig.start_co2_emission;
 let trees = {};
 let cost_planting = 100;
 let cost_felling = 200;
-let rotationPeriod = START_ROTATION_PERIOD;
 let timberDemand = new TimberDemand(
-    START_PRICE_TIMBER, START_TIMBER_DEMAND, 
-    CHANGE_PERCENT_CO2, TIMBER_USAGE_PERCENT['energy'], 
-    TIMBER_USAGE_PERCENT['lumber']
+    GlobalConfig.start_price_timber, GlobalConfig.start_timber_demand, 
+    GlobalConfig.co2_change_percent, GlobalConfig.timber_use_percent['energy'], 
+    GlobalConfig.timber_use_percent['lumber']
 )
 let playLoopInterval = -1;
 let actionIdNext = 0;
 let actionIdAvailable = [];
 let treeIdNext = 0;
 let treeIdAvailable = [];
+let isInitialized = false;
 
 const World = () => {
     const [landGrid, setLandGrid] = useState([]);
     const [stateTime, setStateTime] = useState(time);
-    const [stateTimeStep, setStateTimeStep] = useState(`0 / ${TIME_STEPS}`);
+    const [stateTimeStep, setStateTimeStep] = useState(`0 / ${GlobalConfig.time_steps}`);
     const [stateCo2, setStateCo2] = useState(environment.getCo2());
     const [stateTemperature, setStateTemperature] = useState(environment.getTemperature());
     const [stateFunds, setStateFunds] = useState(funds);
@@ -1538,14 +1134,14 @@ const World = () => {
     const play = () => {
         /** Start the simulation. */
         // const timeSteps = 100;
-        const timeSteps = TIME_STEPS;
+        const timeSteps = GlobalConfig.time_steps;
 
         // add planned actions
         // rotationPeriod = 10;
-        // plan.addAction(1, 2, true, 'fell', 1, 'deciduous', 3, 'mature');
-        // plan.addAction(1, 2, true, 'fell', 2, 'deciduous', 3, 'mature');
-        // plan.addAction(1, 2, true, 'fell', 3, 'deciduous', 3, 'mature');
-        // plan.addAction(1, 2, true, 'fell', 4, 'deciduous', 3, 'mature');
+        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 1, 'deciduous', 3, 'mature');
+        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 2, 'deciduous', 3, 'mature');
+        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 3, 'deciduous', 3, 'mature');
+        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 4, 'deciduous', 3, 'mature');
 
         // Take time steps.
         const loopFun = () => {
@@ -1562,7 +1158,7 @@ const World = () => {
             setStateTreeCount(Object.keys(trees).length);
             timeStep = timeStep + 1;
         }
-        playLoopInterval = setInterval(loopFun, 1000/FPS);
+        playLoopInterval = setInterval(loopFun, 1000/GlobalConfig.fps);
     }
 
     const playUntil = (month, year) => {
@@ -1578,7 +1174,7 @@ const World = () => {
         setStateBiodiversity(Math.round(land.getBiodiversity(), 2));
         setStateCo2(Math.round(environment.getCo2(), 2));
         setStateTemperature(Math.round(environment.getTemperature(), 2));
-        setStateTimeStep(`${timeStep+1}/${TIME_STEPS}`);
+        setStateTimeStep(`${timeStep+1}/${GlobalConfig.time_steps}`);
         setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
         setStateFunds(Math.round(funds, 2));
         setStateTreeCount(Object.keys(trees).length);
@@ -1624,45 +1220,47 @@ const World = () => {
         /** Define trees in  a new world here.
          *  This function is meant to be used during development. */
         
-        // Plant trees.
-        const toPlant = [
-        ['deciduous', [3, 2]],
-        ['coniferous', [2, 3]]
-        ];
-        toPlant.forEach(treeTypePos => land.plant(
-        treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]
-        ));
+        // Plant starter trees.
+        if (!isInitialized) {
+            const toPlant = [
+                ['deciduous', [3, 2]],
+                ['coniferous', [2, 3]]
+            ];
+            toPlant.forEach(treeTypePos => land.plant(
+                treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]
+            ));
+        }
 
         // Start world.
         let landGrid = getLandTreesToRender();
         setLandGrid(landGrid);
+        isInitialized = true;
     }
 
     const resetWorld = () => {
         stop();
         timeStep = 0;
-        time = {year: TIME_RANGE[0].year, month: TIME_RANGE[0].month};
+        time = {year: GlobalConfig.time_range[0].year, month: GlobalConfig.time_range[0].month};
         actionIdNext = 0;
         actionIdAvailable = [];
         treeIdNext = 0;
         treeIdAvailable = [];
-        funds = START_FUNDS;
-        land = new Land(LAND_DIM, LAND_DIM);
+        funds = GlobalConfig.start_funds;
+        land = new Land(GlobalConfig.land_dim, GlobalConfig.land_dim);
         environment = new Environment();
-        plan = new Plan();
-        co2Emission = START_CO2_EMISSION;
+        GlobalConfig.plan = new Plan();
+        co2Emission = GlobalConfig.start_co2_emission;
         trees = {};
-        cost_planting = START_COST_PLANTING;
-        cost_felling = START_COST_FELLING;
-        rotationPeriod = START_ROTATION_PERIOD;
+        cost_planting = GlobalConfig.start_cost_planting;
+        cost_felling = GlobalConfig.start_cost_felling;
         timberDemand = new TimberDemand(
-            START_PRICE_TIMBER, START_TIMBER_DEMAND, 
-            CHANGE_PERCENT_CO2, TIMBER_USAGE_PERCENT['energy'], 
-            TIMBER_USAGE_PERCENT['lumber']
+            GlobalConfig.start_price_timber, GlobalConfig.start_timber_demand, 
+            GlobalConfig.co2_change_percent, GlobalConfig.timber_use_percent['energy'], 
+            GlobalConfig.timber_use_percent['lumber']
         )
 
         setLandGrid([]);
-        setStateTimeStep(`0 / ${TIME_STEPS}`);
+        setStateTimeStep(`0 / ${GlobalConfig.time_steps}`);
         setStateCo2(environment.getCo2());
         setStateTemperature(environment.getTemperature());
         setStateFunds(funds);
@@ -1671,7 +1269,8 @@ const World = () => {
         setStateTreeCount(Object.keys(trees).length);
         setStateTime(time);
         setIsPaused(true);
-
+        
+        isInitialized = false;
         initializeWorld();
     }
 
@@ -1708,7 +1307,7 @@ const World = () => {
                             .join('g')
                             .attr('class', 'group-y-axis');
         const domain = [];
-        for (let i=1; i<=LAND_DIM; i++) domain.push(i);
+        for (let i=1; i<=GlobalConfig.land_dim; i++) domain.push(i);
         const scaleX = d3.scaleBand()
                         .domain(domain)
                         .range([0, widthPlot]);
@@ -1803,7 +1402,7 @@ const World = () => {
                 .attr('id', 'y-axis-year')
                 .attr('transform', `translate(${widthPlot}, ${0})`);
         const scaleYYear = d3.scaleBand()
-                            .domain(d3.range(TIME_RANGE[0].year, TIME_RANGE[1].year+1))
+                            .domain(d3.range(GlobalConfig.time_range[0].year, GlobalConfig.time_range[1].year+1))
                             .range([0, heightPlot])
                             .paddingInner(1);
         gYAxisYear.call(d3.axisRight(scaleYYear));
@@ -1880,7 +1479,7 @@ const World = () => {
                 });
         
         const scaleYYear = d3.scaleBand()
-            .domain(d3.range(TIME_RANGE[0].year, TIME_RANGE[1].year+1))
+            .domain(d3.range(GlobalConfig.time_range[0].year, GlobalConfig.time_range[1].year+1))
             .range([0, heightPlot])
             .paddingInner(1);
         
@@ -1948,13 +1547,17 @@ const World = () => {
                             colorBg={"grey"}
                             colorFg="white"
                         > RESET </Button>
+                        <Button 
+                            colorBg={"green"}
+                            colorFg="white"
+                        ><Link href="/planner">PLAN</Link></Button>
                     {/* </div> */}
                     <div className='flex items-center'>
                         Time Step: &nbsp;<b>{stateTimeStep}</b>
                     </div>
                 </div>
             </div>
-            <div className='w-full'>
+            {/* <div className='w-full'>
                 <span>Time Step = {stateTimeStep}    |    </span>
                 <span>Time = Month {stateTime.month} , Year {stateTime.year}    |    </span>
                 <span>CO2 = {stateCo2} Kg    |    </span>
@@ -1963,7 +1566,7 @@ const World = () => {
                 <span>Timber Demand = {stateTimberDemand} Kg    |    </span>
                 <span>Biodiversity Score = {stateBiodiversity}    |    </span>
                 <span># Trees = {stateTreeCount}    |    </span>
-            </div>
+            </div> */}
         </div>
     )
 }
