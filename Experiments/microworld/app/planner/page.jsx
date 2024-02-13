@@ -6,7 +6,7 @@ import GlobalConfig from '../app.config.js'
 import { useEffect, useState } from 'react';
 
 export default function Planner() {
-
+    
     useEffect(() => {
         console.log(GlobalConfig.plan.getAllActions());
     }, [])

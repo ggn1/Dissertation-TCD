@@ -1,5 +1,61 @@
 const linearInterpolator = require('linear-interpolator');
 
+const checkIndexOutOfRange = (
+    idxX, rangeMinX, rangeMaxX,
+    idxY, rangeMinY, rangeMaxY
+) => {
+    /** Checks if given x and y indices are within given range
+     *  and raises an error if they are not. */
+    if (idxX < rangeMinX || idxX > rangeMaxX) {
+        throw new Error(`X index out of range [${rangeMinX}, ${rangeMaxX}]`);
+    }
+    if (idxY < rangeMinY || idxY > rangeMaxY) {
+        throw new Error(`Y index out of range [${rangeMinY}, ${rangeMaxY}]`);
+    }
+}
+
+const getNewId = (next, available) => {
+    /** Gets a new ID. */
+    let id;
+    if (available.length > 0) {
+        id = available.pop();
+    } else {
+        id = next;
+        next += 1;
+    }
+    return {id: id, next: next, available: available};
+}
+
+const getRandomInt = (min, max) => {
+    /** Returns a random integer within given inclusive range. */
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const shuffle = (array) => {
+    /** Shuffles an array using the Fisher-Yates Shuffle 
+     *  and returns this array. */
+    let currentIndex = array.length,  randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex > 0) {
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
+}
+
+const roundToNPlaces = (num, n) => {
+    // Rounds the given number to n decimal places.
+    return Math.round((num + Number.EPSILON) * (10^n)) / (10^n);
+}
+
 const createInterpolationFunction = (xyPoints) => {
     // Create the interpolation function.
     const interpolationFunction = linearInterpolator(xyPoints);
@@ -11,6 +67,41 @@ const createInterpolationFunction = (xyPoints) => {
     }
 
     return interpolatedFunction;
+}
+
+const timeDelta = (from, months) => {
+    const fromMonth = (from.year * 12) + (from.month - 1);
+    let toMonth = fromMonth + months;
+    if (toMonth < 0) throw new Error('Time out of range.');
+    const toYear = Math.floor(toMonth / 12);
+    toMonth = (toMonth - (toYear * 12)) + 1;
+    return {year: toYear, month: toMonth};
+}
+
+const timeCompare = (time1, time2) => {
+    /** Compare the 2 given times and return 1 if 
+     *  time2 > time1, 0 if time2 = time1 and -1 if
+     *  time2 < time1. Both times much be of the format 
+     *  {day:d, month:m, year:y}.
+     */
+    if (time2.year > time1.year) return 1;
+    else if (time2.year < time1.year) return -1;
+    else { // time2.year == time1.year
+        if (time2.month > time1.month) return 1;
+        else if (time2.month < time1.month) return -1;
+        else return 0; // time2.month == time1.month
+    }
+}
+
+const validateTimeInRange = (t) => {
+    if (
+        timeCompare(t, TIME_RANGE[0]) > 0 ||
+        timeCompare(t, TIME_RANGE[1]) < 0
+    ) throw new Error (
+        `Time "${t.month} ${t.year}" not in range [`
+        + `${TIME_RANGE[0].month} ${TIME_RANGE[0].year},`
+        + `${TIME_RANGE[1].month} ${TIME_RANGE[1].year}].`
+    );
 }
 
 const CO2_STRESS = {
@@ -247,4 +338,12 @@ module.exports = {
         + (TIME_RANGE[1].month - TIME_RANGE[0].month)
     ),
     plan: null,
+    checkIndexOutOfRange:checkIndexOutOfRange,
+    getNewId:getNewId,
+    getRandomInt:getRandomInt,
+    shuffle:shuffle,
+    roundToNPlaces:roundToNPlaces,
+    timeDelta:timeDelta,
+    timeCompare:timeCompare,
+    validateTimeInRange:validateTimeInRange
 }

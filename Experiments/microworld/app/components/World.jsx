@@ -7,36 +7,6 @@ import Button from './Button';
 import GlobalConfig from '../app.config.js'
 
 // Utility Functions
-const checkIndexOutOfRange = (
-    idxX, rangeMinX, rangeMaxX,
-    idxY, rangeMinY, rangeMaxY
-) => {
-    /** Checks if given x and y indices are within given range
-     *  and raises an error if they are not. */
-    if (idxX < rangeMinX || idxX > rangeMaxX) {
-        throw new Error(`X index out of range [${rangeMinX}, ${rangeMaxX}]`);
-    }
-    if (idxY < rangeMinY || idxY > rangeMaxY) {
-        throw new Error(`Y index out of range [${rangeMinY}, ${rangeMaxY}]`);
-    }
-}
-
-const getNewId = (next, available) => {
-    /** Gets a new ID. */
-    let id;
-    if (available.length > 0) {
-        id = available.pop();
-    } else {
-        id = next;
-        next += 1;
-    }
-    return {id: id, next: next, available: available};
-}
-
-const getRandomInt = (min, max) => {
-    /** Returns a random integer within given inclusive range. */
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 const validateQuadrantEncoding = (enc) => {
     /** Check if given one hot encoding if land quadrants is
@@ -61,66 +31,6 @@ const validateQuadrantEncoding = (enc) => {
     if (invalid_quadrant) {
         throw new Error(`Invalid quadrant encoding ${enc}.`);
     }
-}
-
-const shuffle = (array) => {
-    /** Shuffles an array using the Fisher-Yates Shuffle 
-     *  and returns this array. */
-    let currentIndex = array.length,  randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-}
-
-const timeDelta = (from, months) => {
-    const fromMonth = (from.year * 12) + (from.month - 1);
-    let toMonth = fromMonth + months;
-    if (toMonth < 0) throw new Error('Time out of range.');
-    const toYear = Math.floor(toMonth / 12);
-    toMonth = (toMonth - (toYear * 12)) + 1;
-    return {year: toYear, month: toMonth};
-}
-
-const timeCompare = (time1, time2) => {
-    /** Compare the 2 given times and return 1 if 
-     *  time2 > time1, 0 if time2 = time1 and -1 if
-     *  time2 < time1. Both times much be of the format 
-     *  {day:d, month:m, year:y}.
-     */
-    if (time2.year > time1.year) return 1;
-    else if (time2.year < time1.year) return -1;
-    else { // time2.year == time1.year
-        if (time2.month > time1.month) return 1;
-        else if (time2.month < time1.month) return -1;
-        else return 0; // time2.month == time1.month
-    }
-}
-
-const validateTimeInRange = (t) => {
-    if (
-        timeCompare(t, GlobalConfig.time_range[0]) > 0 ||
-        timeCompare(t, GlobalConfig.time_range[1]) < 0
-    ) throw new Error (
-        `Time "${t.month} ${t.year}" not in range [`
-        + `${GlobalConfig.time_range[0].month} ${GlobalConfig.time_range[0].year},`
-        + `${GlobalConfig.time_range[1].month} ${GlobalConfig.time_range[1].year}].`
-    );
-}
-
-const roundToNPlaces = (num, n) => {
-    // Rounds the given number to n decimal places.
-    return Math.round((num + Number.EPSILON) * (10^n)) / (10^n);
 }
 
 // Components.
@@ -191,7 +101,7 @@ class Land {
     getQuadrant(rowIdx, columnIdx) {
         /** Returns quadrant number of given x, y position position on land
          *  where x is the row index and y is the column index. */
-        checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
+        GlobalConfig.checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
         const numRowsHalf = Math.round(this.#numRows / 2);
         const numColumnsHalf = Math.round(this.#numColumns / 2);
         if (rowIdx < numRowsHalf && columnIdx < numColumnsHalf) return 1;
@@ -202,7 +112,7 @@ class Land {
 
     getLandContent(rowIdx, columnIdx) {
       /** Returns land position content at given xy coordinates. */
-      checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
+      GlobalConfig.checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
       return this.#positions[rowIdx][columnIdx];
     }
 
@@ -321,7 +231,7 @@ class Land {
         // older than the sapling stage.
 
         // Check if given position is valid.
-        checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns); 
+        GlobalConfig.checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns); 
 
         // Check if given position already has a tree. If 
         // so, then it is not possible to plant another one here.
@@ -382,7 +292,7 @@ class Land {
       }
       // Loop through valid adjacent positions and return a random one.
       if (validAdjacentPositions.length == 0) return -1;
-      return validAdjacentPositions[getRandomInt(0, validAdjacentPositions.length-1)];
+      return validAdjacentPositions[GlobalConfig.getRandomInt(0, validAdjacentPositions.length-1)];
     }
 
     getPositions() {
@@ -414,7 +324,7 @@ class Environment {
     updateTemperature(temperature=null) {
       // Always runs after update CO2.
       if (temperature == null) {
-        const timePast = timeDelta(time, -1);
+        const timePast = GlobalConfig.timeDelta(time, -1);
         const tempChange = 0.01 * this.#co2ChangePercent;
         const month_past = timePast.month;
         const month_now = time.month;
@@ -469,7 +379,7 @@ class Plan {
       if (actionName == 'fell' && !treeLifeStage) {
         throw new Error ('Fell action required tree life stage.');
       }
-      validateTimeInRange({'month':month, 'year':year});
+      GlobalConfig.validateTimeInRange({'month':month, 'year':year});
 
       // create action.
       let action;
@@ -486,8 +396,8 @@ class Plan {
           this.#actions[`${t.month}-${t.year}`] = {};
         }
         this.#actions[`${t.month}-${t.year}`][action.getId()] = action;
-        t = timeDelta(t, GlobalConfig.plan.rotationPeriod);
-      } while (repeat && timeCompare(t, GlobalConfig.time_range[1]) > 0);
+        t = GlobalConfig.timeDelta(t, GlobalConfig.plan.rotationPeriod);
+      } while (repeat && GlobalConfig.timeCompare(t, GlobalConfig.time_range[1]) > 0);
     }
 
     executeTimeActions(month, year) {
@@ -519,7 +429,7 @@ class Action {
         }
         
         // Initialize properties.
-        const idObj = getNewId(actionIdNext, actionIdAvailable);  // Give the action a unique id.
+        const idObj = GlobalConfig.getNewId(actionIdNext, actionIdAvailable);  // Give the action a unique id.
         this.#id = idObj.id;
         actionIdNext = idObj.next;
         actionIdAvailable = idObj.available;
@@ -602,7 +512,7 @@ class Plant extends Action {
             if (tree == -1) freeSpaces.push([x, y]);
         }
         }
-        freeSpaces = shuffle(freeSpaces);
+        freeSpaces = GlobalConfig.shuffle(freeSpaces);
         freeSpaces = freeSpaces.slice(0, this.maxNumAffected);
         freeSpaces.forEach(xy => {
         land.plant(this.treeType, xy[0], xy[1]);
@@ -634,11 +544,11 @@ class Tree {
             throw new Error(`Invalid position = ${position}.`);
         }
         const landSize = land.getLandSize();
-        checkIndexOutOfRange(position[0], 0, landSize[0], position[1], 0, landSize[1]);
+        GlobalConfig.checkIndexOutOfRange(position[0], 0, landSize[0], position[1], 0, landSize[1]);
         this.#position = position; // [x, y]
 
         // Set ID.
-        const idObj = getNewId(treeIdNext, treeIdAvailable);
+        const idObj = GlobalConfig.getNewId(treeIdNext, treeIdAvailable);
         this.#id = idObj.id;
         treeIdNext = idObj.next;
         treeIdAvailable = idObj.available;
@@ -647,7 +557,7 @@ class Tree {
         this.age = 0;
 
         // Set senescent time to live.
-        this.#ttlSenescent = getRandomInt(5, 10);
+        this.#ttlSenescent = GlobalConfig.getRandomInt(5, 10);
 
         // Set reproduction related parameter.
         this.last_reproduced = 0;
@@ -755,7 +665,7 @@ class Tree {
 class Coniferous extends Tree {
     #reproductionInterval;
     #maxAge = 90 + this.getTtlSenescent();
-    #maxDiameter = getRandomInt(12, 24);
+    #maxDiameter = GlobalConfig.getRandomInt(12, 24);
     #maxHeight= 82;
     #woodDensity = 2;
 
@@ -856,7 +766,7 @@ class Coniferous extends Tree {
 class Deciduous extends Tree {
     #reproductionInterval;
     #maxAge = 70 + this.getTtlSenescent();
-    #maxDiameter = getRandomInt(8, 16);
+    #maxDiameter = GlobalConfig.getRandomInt(8, 16);
     #maxHeight= 65;
     #woodDensity = 3;
 
@@ -1039,7 +949,7 @@ const takeTimeStep = () => {
     /** Updates time by 1 week. */
 
     // Turn the wheel of time.
-    time = timeDelta(time, 1);
+    time = GlobalConfig.timeDelta(time, 1);
 
     // Update the land's biodiversity.
     land.updateBiodiversity();
@@ -1051,7 +961,7 @@ const takeTimeStep = () => {
     environment.updateTemperature();
 
     // Loop through all trees and make them age.
-    const treeOrder = shuffle(Object.keys(trees));
+    const treeOrder = GlobalConfig.shuffle(Object.keys(trees));
     treeOrder.forEach(treeId => {
         const treePosition = trees[treeId];
         const tree = land.getLandContent(treePosition[0], treePosition[1]);
@@ -1210,7 +1120,7 @@ const World = () => {
             if (tree == -1) row = row.concat("_|");
             else row = row.concat(`${
             tree.getLifeStage().substring(0,3)
-            }(${roundToNPlaces(tree.stress, 2)})|`);
+            }(${GlobalConfig.roundToNPlaces(tree.stress, 2)})|`);
         }
         console.log(row);
         }
