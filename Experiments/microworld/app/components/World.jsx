@@ -393,9 +393,9 @@ class Plan {
           throw new Error(`Invalid action name ${actionName}.`);
         }
         if (!this.#actions.hasOwnProperty(`${t.month}-${t.year}`)) {
-          this.#actions[`${t.month}-${t.year}`] = {};
+          this.#actions[`${t.month}-${t.year}`] = [];
         }
-        this.#actions[`${t.month}-${t.year}`][action.getId()] = action;
+        this.#actions[`${t.month}-${t.year}`].push(action);
         t = GlobalConfig.timeDelta(t, GlobalConfig.plan.rotationPeriod);
       } while (repeat && GlobalConfig.timeCompare(t, GlobalConfig.time_range[1]) > 0);
     }
@@ -403,48 +403,48 @@ class Plan {
     executeTimeActions(month, year) {
       /** Execute all actions at a particular time. */
       if (this.#actions.hasOwnProperty(`${month}-${year}`)) {
-        const actions = this.#actions[`${month}-${year}`];
-        let idsToRemove = [];
-        Object.keys(actions).forEach(actionId => {
-          actions[actionId].execute();
-          actionIdAvailable.push(actionId);
-          idsToRemove.push(actionId);
-        });
-        idsToRemove.forEach(actionId => delete actions[actionId]);
-        if (Object.keys(actions).length == 0) {
-          delete this.#actions[`${month}-${year}`];
+            const actions = this.#actions[`${month}-${year}`];
+            actions.forEach(a => a.execute());
+            // let idsToRemove = [];
+            // let a = null;
+            // while(actions.length > 0) {
+            //     a = actions.pop();
+            //     a.execute();
+            //     actionIdAvailable.push(a.id);
+            //     idsToRemove.push(a.id);
+            // }
+            // delete this.#actions[`${month}-${year}`];
         }
-      }
     }
 }
 
 class Action {
-    #id
     #quadrantRange
 
     constructor(quadrant, maxNumAffected) {
         // Sanity checks.
-        if (quadrant < 1 || quadrant > 4) {
-            throw new Error(`Invalid quadrant number ${quadrant}.`);
-        }
+        if (quadrant < 1 || quadrant > 4) throw new Error(`Invalid quadrant number ${quadrant}.`);
         
         // Initialize properties.
         const idObj = GlobalConfig.getNewId(actionIdNext, actionIdAvailable);  // Give the action a unique id.
-        this.#id = idObj.id;
+        this.id = idObj.id;
         actionIdNext = idObj.next;
         actionIdAvailable = idObj.available;
         this.quadrant = quadrant;
         this.maxNumAffected = maxNumAffected;
         this.#quadrantRange = land.getQuadrantRange(quadrant);
-    }
-
-    getId() {
-        /** Returns ID of this action. */
-        return this.#id;
+        this.status = 0; // 0 => to do, 1 => success, -1 => failure, 0.5 => half successful
     }
 
     getQuadrantRange() {
         return this.#quadrantRange;
+    }
+
+    updateStatus(numAffected, maxNumAffected) {
+        if (numAffected == this.maxNumAffected) this.status = 1;
+        else if (numAffected > 0) this.status = 0.5;
+        else if (numAffected == 0) this.status = -1;
+        else this.status = 0;
     }
 }
 
@@ -452,17 +452,15 @@ class Fell extends Action {
     constructor(quadrant, maxNumAffected, treeType, treeLifeStage) {
         // Check if age filters are valid.
         if (!['coniferous', 'deciduous'].includes(treeType)) {
-        throw new Error(`Invalid tree type ${treeType}.`);
+            throw new Error(`Invalid tree type ${treeType}.`);
         }
-        if (![
-        'seedling', 'sapling', 'mature', 
-        'old_growth', 'senescent'
-        ].includes(treeLifeStage)) {
-        throw new Error(`Invalid tree life stage filter ${treeLifeStage}.`);
+        if (!['mature', 'old_growth', 'senescent'].includes(treeLifeStage)) {
+            throw new Error(`Invalid tree life stage filter ${treeLifeStage}.`);
         }
         super(quadrant, maxNumAffected);
         this.treeType = treeType;
         this.treeLifeStage = treeLifeStage;
+        this.action = 'fell';
     }
 
     execute() {
@@ -470,25 +468,26 @@ class Fell extends Action {
         let numAffected = 0;
         let tree;
         for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
-        for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
-            if (numAffected >= this.maxNumAffected) break;
-            tree = land.getLandContent(x, y);
-            if (tree != -1) {
-            if (tree.getLifeStage() == this.treeLifeStage) {
-                tree = land.clear(x, y);
-                funds -= cost_felling;
-                timberDemand.meetDemand(tree.computeVolume() * tree.getWoodDensity());
-                numAffected += 1;
+            for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
+                if (numAffected >= this.maxNumAffected) break;
+                    tree = land.getLandContent(x, y);
+                if (tree != -1) {
+                    if (tree.getLifeStage() == this.treeLifeStage) {
+                        tree = land.clear(x, y);
+                        funds -= cost_felling;
+                        timberDemand.meetDemand(tree.computeVolume() * tree.getWoodDensity());
+                        numAffected += 1;
+                    }
+                };
             }
-            };
-        }
-        if (numAffected >= this.maxNumAffected) break;
+            if (numAffected >= this.maxNumAffected) break;
         }
         console.log(
-        `\nExecuted action ${this.getId()}. Fell ${numAffected}`,
-        `${this.treeLifeStage} ${this.treeType} trees in`,
-        `quadrant ${this.quadrant}.`
-        )
+            `\nExecuted action ${this.id}. Fell ${numAffected}`,
+            `${this.treeLifeStage} ${this.treeType} trees in`,
+            `quadrant ${this.quadrant}.`
+        );
+        this.updateStatus(numAffected, this.maxNumAffected);
     }
 }
 
@@ -500,28 +499,33 @@ class Plant extends Action {
         }
         super(quadrant, maxNumAffected);
         this.treeType = treeType;
+        this.action = 'plant';
+        this.treeLifeStage = 'seedling';
     }
 
     execute() {
         // Find free spaces in the specified quadrant to plant a tree to.
         const quadrantRange = this.getQuadrantRange();
         let freeSpaces = [];
+        let numAffected = 0;
         for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
-        for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
-            let tree = land.getLandContent(x, y);
-            if (tree == -1) freeSpaces.push([x, y]);
-        }
+            for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
+                let tree = land.getLandContent(x, y);
+                if (tree == -1) freeSpaces.push([x, y]);
+            }
         }
         freeSpaces = GlobalConfig.shuffle(freeSpaces);
         freeSpaces = freeSpaces.slice(0, this.maxNumAffected);
         freeSpaces.forEach(xy => {
-        land.plant(this.treeType, xy[0], xy[1]);
-        funds -= cost_planting;
+            numAffected += 1;
+            land.plant(this.treeType, xy[0], xy[1]);
+            funds -= cost_planting;
         });
         console.log(
-        `\nExecuted action ${this.getId()}. Planted ${freeSpaces.length}`,
-        `${this.treeType} seedling(s) in quadrant ${this.quadrant}.`
+            `\nExecuted action ${this.id}. Planted ${numAffected}`,
+            `${this.treeType} seedling(s) in quadrant ${this.quadrant}.`
         );
+        this.updateStatus(numAffected, this.maxNumAffected);
     }
 }
 
@@ -987,18 +991,18 @@ const getLandTreesToRender = () => {
             if (['seedling', 'sapling', 'dead'].includes(lifeStage)) {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': GlobalConfig.TreeImgs[lifeStage]
+                    'treeImg': GlobalConfig.treeImgs[lifeStage]
                 });
             } else {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': GlobalConfig.TreeImgs[lifeStage][tree.getTreeType()]
+                    'treeImg': GlobalConfig.treeImgs[lifeStage][tree.getTreeType()]
                 });
             }
             } else {
                 landGrid.push({
                     'position': [x, y],
-                    'treeImg': GlobalConfig.TreeImgs['none']
+                    'treeImg': GlobalConfig.treeImgs['none']
                 });
             }
         }
@@ -1045,13 +1049,6 @@ const World = () => {
         /** Start the simulation. */
         // const timeSteps = 100;
         const timeSteps = GlobalConfig.time_steps;
-
-        // add planned actions
-        // rotationPeriod = 10;
-        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 1, 'deciduous', 3, 'mature');
-        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 2, 'deciduous', 3, 'mature');
-        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 3, 'deciduous', 3, 'mature');
-        // GlobalConfig.plan.addAction(1, 2, true, 'fell', 4, 'deciduous', 3, 'mature');
 
         // Take time steps.
         const loopFun = () => {
@@ -1132,6 +1129,7 @@ const World = () => {
         
         // Plant starter trees.
         if (!isInitialized) {
+            // Plants initially on the land.
             const toPlant = [
                 ['deciduous', [3, 2]],
                 ['coniferous', [2, 3]]
@@ -1139,6 +1137,11 @@ const World = () => {
             toPlant.forEach(treeTypePos => land.plant(
                 treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]
             ));
+
+            // Added some actions.
+            GlobalConfig.plan.addAction(5, 0, true, 'fell', 1, 'deciduous', 2, 'mature');
+            GlobalConfig.plan.addAction(1, 1, false, 'plant', 1, 'deciduous', 2);
+            GlobalConfig.plan.addAction(1, 1, false, 'fell', 1, 'coniferous', 2, 'old_growth');
         }
 
         // Start world.
@@ -1158,7 +1161,6 @@ const World = () => {
         funds = GlobalConfig.start_funds;
         land = new Land(GlobalConfig.land_dim, GlobalConfig.land_dim);
         environment = new Environment();
-        GlobalConfig.plan = new Plan();
         co2Emission = GlobalConfig.start_co2_emission;
         trees = {};
         cost_planting = GlobalConfig.start_cost_planting;
@@ -1442,41 +1444,40 @@ const World = () => {
                         rounded-xl min-h-96 rounded-xl 
                         border-4
                     ' ref={refSvgLand}></svg>
+                    <div className="ml-5 flex flex-col justify-between" style={{width:"200px"}}>
+                        <div>
+                            <p><font color="green">CO2</font> = {stateCo2} Kg</p>
+                            <p><font color="green">Temperature</font> = {stateTemperature} °C</p>
+                            <p><font color="green">Biodiversity Score</font> = {stateBiodiversity}</p>
+                        </div>
+                        <div>
+                            <p><font color="brown">Funds</font> = {stateFunds} Bc</p>
+                            <p><font color="brown">Timber Demand</font> = {stateTimberDemand} Kg</p>
+                        </div>
+                    </div>
                 </div>
                 <div className='px-0 py-3 flex justify-center gap-x-5'>
-                    {/* <div className='flex gap-x-2'> */}
-                        <Button 
-                            onClick={() => {setIsPaused(prevVal => !prevVal)}} 
-                            colorBg={isPaused ? "#8888ff" : "#ff8888"}
-                            colorFg="white"
-                        >
-                            {isPaused ? "PLAY" : "PAUSE"}
-                        </Button>
-                        <Button 
-                            onClick={resetWorld} 
-                            colorBg={"grey"}
-                            colorFg="white"
-                        > RESET </Button>
-                        <Button 
-                            colorBg={"green"}
-                            colorFg="white"
-                        ><Link href="/planner">PLAN</Link></Button>
-                    {/* </div> */}
+                    <Button 
+                        onClick={() => {setIsPaused(prevVal => !prevVal)}} 
+                        colorBg={isPaused ? "#8888ff" : "#ff8888"}
+                        colorFg="white"
+                    >
+                        {isPaused ? "PLAY" : "PAUSE"}
+                    </Button>
+                    <Button 
+                        onClick={resetWorld} 
+                        colorBg={"grey"}
+                        colorFg="white"
+                    > RESET </Button>
+                    <Button 
+                        colorBg={"green"}
+                        colorFg="white"
+                    ><Link href="/planner">PLAN</Link></Button>
                     <div className='flex items-center'>
                         Time Step: &nbsp;<b>{stateTimeStep}</b>
                     </div>
                 </div>
             </div>
-            {/* <div className='w-full'>
-                <span>Time Step = {stateTimeStep}    |    </span>
-                <span>Time = Month {stateTime.month} , Year {stateTime.year}    |    </span>
-                <span>CO2 = {stateCo2} Kg    |    </span>
-                <span>Temperature = {stateTemperature} °C    |    </span>
-                <span>Funds = {stateFunds} Bc    |    </span>
-                <span>Timber Demand = {stateTimberDemand} Kg    |    </span>
-                <span>Biodiversity Score = {stateBiodiversity}    |    </span>
-                <span># Trees = {stateTreeCount}    |    </span>
-            </div> */}
         </div>
     )
 }
