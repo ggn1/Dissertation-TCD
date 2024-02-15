@@ -416,6 +416,18 @@ class Plan {
             // delete this.#actions[`${month}-${year}`];
         }
     }
+
+    resetActionStates() {
+        let actionList;
+        Object.keys(this.#actions).forEach(key => {
+            actionList = [];
+            this.#actions[key].forEach(action => {
+                action.status = 0;
+                actionList.push(action);
+            })
+            this.#actions[key] = actionList;
+        })
+    }
 }
 
 class Action {
@@ -1171,6 +1183,7 @@ const World = () => {
             GlobalConfig.co2_change_percent, GlobalConfig.timber_use_percent['energy'], 
             GlobalConfig.timber_use_percent['lumber']
         )
+        GlobalConfig.plan.resetActionStates();
 
         setLandGrid([]);
         setStateTimeStep(`0 / ${GlobalConfig.time_steps}`);
