@@ -954,6 +954,8 @@ const takeTimeStep = () => {
 
     // Turn the wheel of time.
     time = GlobalConfig.timeDelta(time, 1);
+    if ((timeStep % GlobalConfig.plan.rotationPeriod) == 0) rotation += 1;
+    timeStep += 1;
 
     // Update the land's biodiversity.
     land.updateBiodiversity();
@@ -1013,6 +1015,7 @@ const getLandTreesToRender = () => {
 // Global world properties.
 GlobalConfig.plan = new Plan();
 let timeStep = 0;
+let rotation = 1;
 let time = {year: GlobalConfig.time_range[0].year, month: GlobalConfig.time_range[0].month};
 let funds = GlobalConfig.start_funds;
 let land = new Land(GlobalConfig.land_dim, GlobalConfig.land_dim);
@@ -1033,6 +1036,11 @@ let treeIdNext = 0;
 let treeIdAvailable = [];
 let isInitialized = false;
 
+// Actions set up.
+GlobalConfig.plan.addAction(5, 0, true, 'fell', 1, 'deciduous', 2, 'mature');
+GlobalConfig.plan.addAction(1, 1, false, 'plant', 1, 'deciduous', 2);
+GlobalConfig.plan.addAction(1, 1, false, 'fell', 1, 'coniferous', 2, 'old_growth');
+
 const World = () => {
     const [landGrid, setLandGrid] = useState([]);
     const [stateTime, setStateTime] = useState(time);
@@ -1047,7 +1055,6 @@ const World = () => {
 
     const play = () => {
         /** Start the simulation. */
-        // const timeSteps = 100;
         const timeSteps = GlobalConfig.time_steps;
 
         // Take time steps.
@@ -1063,7 +1070,6 @@ const World = () => {
             setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
             setStateFunds(Math.round(funds, 2));
             setStateTreeCount(Object.keys(trees).length);
-            timeStep = timeStep + 1;
         }
         playLoopInterval = setInterval(loopFun, 1000/GlobalConfig.fps);
     }
@@ -1074,7 +1080,6 @@ const World = () => {
         const timeSteps = (year * 12) + month;
         while (timeStep < timeSteps-1) {
             takeTimeStep(); // timeStep gets updated here.
-            timeStep = timeStep + 1;
         }   
         stop();
         setLandGrid(getLandTreesToRender());
@@ -1137,11 +1142,6 @@ const World = () => {
             toPlant.forEach(treeTypePos => land.plant(
                 treeTypePos[0], treeTypePos[1][0], treeTypePos[1][1]
             ));
-
-            // Added some actions.
-            GlobalConfig.plan.addAction(5, 0, true, 'fell', 1, 'deciduous', 2, 'mature');
-            GlobalConfig.plan.addAction(1, 1, false, 'plant', 1, 'deciduous', 2);
-            GlobalConfig.plan.addAction(1, 1, false, 'fell', 1, 'coniferous', 2, 'old_growth');
         }
 
         // Start world.
@@ -1154,6 +1154,7 @@ const World = () => {
         stop();
         timeStep = 0;
         time = {year: GlobalConfig.time_range[0].year, month: GlobalConfig.time_range[0].month};
+        rotation = 1;
         actionIdNext = 0;
         actionIdAvailable = [];
         treeIdNext = 0;
@@ -1444,22 +1445,24 @@ const World = () => {
                         rounded-xl min-h-96 rounded-xl 
                         border-4
                     ' ref={refSvgLand}></svg>
-                    <div className="ml-5 flex flex-col justify-between" style={{width:"200px"}}>
-                        <div>
-                            <p><font color="green">CO2</font> = {stateCo2} Kg</p>
-                            <p><font color="green">Temperature</font> = {stateTemperature} °C</p>
-                            <p><font color="green">Biodiversity Score</font> = {stateBiodiversity}</p>
-                        </div>
-                        <div>
-                            <p><font color="brown">Funds</font> = {stateFunds} Bc</p>
-                            <p><font color="brown">Timber Demand</font> = {stateTimberDemand} Kg</p>
-                        </div>
+                    <div className="ml-5" style={{width:"230px"}}>
+                        <p><font color="green">CO2</font> = {stateCo2} Kg</p>
+                        <p><font color="green">Temperature</font> = {stateTemperature} °C</p>
+                        <p><font color="green">Biodiversity Score</font> = {stateBiodiversity}</p>
+                        <p><font color="brown">Funds</font> = {stateFunds} Bc</p>
+                        <p><font color="brown">Timber Target</font> = {stateTimberDemand} Kg</p>
                     </div>
                 </div>
-                <div className='px-0 py-3 flex justify-center gap-x-5'>
+                <div className='px-0 py-3 flex justify-between gap-x-5'>
+                    <div className='flex items-center'>
+                        Time Step: &nbsp;<b>{stateTimeStep}</b>
+                    </div>
+                    <div className='flex items-center'>
+                        Rotation: &nbsp;<b>{rotation}</b>
+                    </div>
                     <Button 
                         onClick={() => {setIsPaused(prevVal => !prevVal)}} 
-                        colorBg={isPaused ? "#8888ff" : "#ff8888"}
+                        colorBg={isPaused ? "royalblue" : "tomato"}
                         colorFg="white"
                     >
                         {isPaused ? "PLAY" : "PAUSE"}
@@ -1470,12 +1473,9 @@ const World = () => {
                         colorFg="white"
                     > RESET </Button>
                     <Button 
-                        colorBg={"green"}
+                        colorBg={"ForestGreen"}
                         colorFg="white"
                     ><Link href="/planner">PLAN</Link></Button>
-                    <div className='flex items-center'>
-                        Time Step: &nbsp;<b>{stateTimeStep}</b>
-                    </div>
                 </div>
             </div>
         </div>

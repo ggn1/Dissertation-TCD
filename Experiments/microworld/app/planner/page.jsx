@@ -24,12 +24,17 @@ export default function Planner() {
 
     const addAction = () => {
         // TO DO ...
-        console.log('Add Action');
+        console.log('Add new action.');
     }
 
     const deleteRepeatingAction = () => {
         // TO DO ...
         console.log('Delete all instances of an action.');
+    }
+
+    const filterActionView = () => {
+        // TO DO ...
+        console.log('Filter action view.');
     }
 
     useEffect(() => {
@@ -76,6 +81,7 @@ export default function Planner() {
                 <div className='flex gap-5 justify-center mt-5'>
                     <Button onClick={addAction} colorBg="RoyalBlue" colorFg="white">ADD</Button>
                     <Button onClick={deleteRepeatingAction} colorBg="Tomato" colorFg="white">DELETE ALL</Button>
+                    <Button onClick={filterActionView} colorBg="gray" colorFg="white">FILTER</Button>
                 </div>
             </div>
         </main>

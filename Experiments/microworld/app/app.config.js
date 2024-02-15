@@ -320,7 +320,7 @@ module.exports = {
     start_price_timber: 100.0,
     start_temperature: -3,
     start_rotation_period: 50,
-    start_timber_demand: 10,
+    start_timber_demand: 1000,
     start_co2_emission: 320,
     start_cost_planting: 200,
     start_cost_felling: 500,
