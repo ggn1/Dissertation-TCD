@@ -56,7 +56,7 @@ class Land {
         
         this.#numRows = rows;
         this.#numColumns = columns;
-        this.#quadrantRangeBiodiversity = [0, 2 * (this.#numRows/2) * (this.#numColumns/2) * 3]
+        this.#quadrantRangeBiodiversity = [0, (this.#numRows/2) * (this.#numColumns/2) * 3]
 
         // Initialize positions with all 0s.
         // Each position can have either 0 or a tree ID.
@@ -144,25 +144,18 @@ class Land {
 
         const treeCounts = this.#countTrees(q);
 
-        // Rule 1 = Mixed forests with more trees => more biodiversity.
+        // Rule = Mixed forests with more trees => more biodiversity.
         // MIN = 0
         // MAX = (num_rows/2) * (num_columns/2) * 3
-        if (treeCounts.coniferous == treeCounts.deciduous) {
-            biodiversity += 3*(treeCounts.coniferous + treeCounts.deciduous);
-        } else {
-            const more = Math.max(treeCounts.coniferous, treeCounts.deciduous);
-            const less = Math.min(treeCounts.coniferous, treeCounts.deciduous);
-            const diff = more - less;
-            const sim = more - diff;
-            biodiversity += 3 * (sim * 2);
-            if (diff == 1) biodiversity += 1;
-            else {
-                if (diff/2 > 0) biodiversity += 2 * diff;
-                else biodiversity += (2 * (diff - 1)) + 1;
-            }
-        }
+        const more = Math.max(treeCounts.coniferous, treeCounts.deciduous);
+        const less = Math.min(treeCounts.coniferous, treeCounts.deciduous);
+        const diff = more - less;
+        const sim = less;
+        biodiversity += 3 * (sim * 2);
+        if (diff%2 == 0) biodiversity += 2 * diff;
+        else biodiversity += (2 * (diff - 1)) + 1;
 
-        // Rule 2 = Mixed forests with more trees => more biodiversity.
+        // Rule = More old growth => more biodiversity.
         // MIN = 0
         // MAX = (num_rows/2) * (num_columns/2) * 3
         biodiversity += 0.5 * treeCounts.seedling;
@@ -206,14 +199,14 @@ class Land {
             this.#quadrantRangeBiodiversity[0]*num_quadrants, 
             this.#quadrantRangeBiodiversity[1]*num_quadrants
         ]
-        const biodiversityRatio = (
+        const biodiversityPc = (
             biodiversity /
             (rangeBiodiversity[1] - rangeBiodiversity[0])
         ); // [0, 1]
 
-        if (biodiversityRatio < 0.25) return "unforested";
-        else if (biodiversityRatio < 0.5) return "plantation";
-        else if (biodiversityRatio < 0.75) return "forest";
+        if (biodiversityPc < 0.25) return "unforested";
+        else if (biodiversityPc < 0.5) return "plantation";
+        else if (biodiversityPc < 0.75) return "forest";
         else return "ecosystem";
     }
 
@@ -301,43 +294,46 @@ class Land {
 }
 
 class Environment {
-    #co2ChangePercent;
     #co2;
     #temperature;
 
     constructor() {
         this.#temperature = GlobalConfig.start_temperature;
         this.#co2 = GlobalConfig.start_co2;
-        this.#co2ChangePercent = 0;
     }
 
     updateCo2(co2 = null) {
-      if (co2 == null) {
-        const co2Old = this.#co2;
-        co2Emission *= 1 + GlobalConfig.co2_change_percent;
-        this.#co2 += co2Emission;
-        const co2New = this.#co2;
-        this.#co2ChangePercent = ((co2New - co2Old) / co2Old);
-      } else this.#co2 = co2;
+        if (co2 == null) {
+            co2Emission *= 1 + GlobalConfig.co2_change_percent;
+            this.#co2 += co2Emission;
+        } else {
+            this.#co2 = co2;
+        }
     }
 
     updateTemperature(temperature=null) {
-      // Always runs after update CO2.
-      if (temperature == null) {
-        const timePast = GlobalConfig.timeDelta(time, -1);
-        const tempChange = 0.01 * this.#co2ChangePercent;
-        const month_past = timePast.month;
-        const month_now = time.month;
-        const tempChangeMonthly = (
-          (month_now == month_past) ? 0 : GlobalConfig.temperature_monthly_change[
-            `${month_past}-${month_now}`
-          ]
-        );
-        this.#temperature += tempChangeMonthly;
-        this.#temperature += (this.#temperature * tempChange);
-      } else {
-        this.#temperature = temperature;
-      }
+        // Always runs after update CO2.
+        if (temperature == null) {
+            // Temperature change due to CO2 levels.
+            const changePcCo2FromStart = (
+                (environment.getCo2() - GlobalConfig.start_co2) 
+                / GlobalConfig.start_co2
+            ) // By what % has CO2 levels changed from start of the simulation.
+            const tempChangeCo2 = 0.01 * changePcCo2FromStart;
+            // Monthly temperature changes.
+            const timePast = GlobalConfig.timeDelta(time, -1);
+            let tempChangeMonthly = 0 
+            if (time.month != timePast.month) { // current month == previous one?
+                tempChangeMonthly = GlobalConfig.temperature_monthly_change[
+                    `${timePast.month}-${time.month}`
+                ]
+            }
+            // Temperature change = how much it would change under normal 
+            // circumstances + effect of current co2 levels.
+            this.#temperature += tempChangeMonthly + tempChangeCo2;
+        } else {
+            this.#temperature = temperature;
+        }
     }
 
     getCo2() {
@@ -624,7 +620,8 @@ class Tree {
         }
 
         // Basic needs availability related stress.
-        let stress_env = basic_needs_stress.co2(environment.getCo2());
+        let stress_env = 0;
+        stress_env += basic_needs_stress.co2(environment.getCo2());
         stress_env += basic_needs_stress.temperature(environment.getTemperature());
         if (stress_env == 0 && this.stress > 0){
             this.stress = Math.max(0, this.stress - ((1 - this.stress) * 0.1))
@@ -645,10 +642,10 @@ class Tree {
     grow(maxDiameter, maxHeight) {
         const growthRate = this.#computeGrowthRate();
         if (this.diameter < maxDiameter) {
-        this.diameter = Math.min(maxDiameter, this.diameter + (1 * growthRate * this.diameter));
+            this.diameter = Math.min(maxDiameter, this.diameter + (1 * growthRate * this.diameter));
         }
         if (this.height < maxHeight) {
-        this.height = Math.min(maxHeight, this.height + (10 * growthRate * this.diameter));
+            this.height = Math.min(maxHeight, this.height + (10 * growthRate * this.diameter));
         }
     }
 
@@ -656,25 +653,10 @@ class Tree {
         const growthRate = this.#computeGrowthRate();
         const mass = this.computeVolume() * woodDensity
         let co2_removed = (
-        (mass * 0.2) // CO2 to maintain existing mass.
-        + (0.5 * growthRate * mass) // CO2 to make new mass.
-        ) / 12 / 30; // monthly
+            (mass * 0.2) // CO2 to maintain existing mass.
+            + (0.5 * growthRate * mass) // CO2 to make new mass.
+        ) / 12; // monthly
         environment.updateCo2(environment.getCo2() - co2_removed);
-    }
-
-    decay(woodDensity) {
-        /** Mechanism that models decaying of the tree over time. */
-        const decayed_diameter = this.diameter * 0.01;
-        const decayed_height = decayed_diameter * 5;
-        const decayed_volume = this.computeVolume(decayed_diameter, decayed_height)/200;
-        this.height = Math.max(0, this.height - decayed_height);
-        this.diameter = Math.max(0, this.diameter - decayed_volume);
-        const decayed_mass = decayed_volume * woodDensity;
-        environment.updateCo2(environment.getCo2() - (decayed_mass * 0.1));
-        if (this.height == 0 || this.diameter == 0) {
-        const position_self = this.getPosition();
-        land.clear(position_self[0], position_self[1]);
-        }
     }
 }
 
@@ -702,10 +684,12 @@ class Coniferous extends Tree {
 
     growOlder() {
         /** Tree ages by one time unit. */
-        // Still alive?
-        this.age += 1;
-        if (this.getLifeStage() == 'dead') this.decay(this.#woodDensity);
-        else this.#live();
+        this.age += 1; // Increment age by 1 time step.
+        if (this.getLifeStage() == 'dead') {
+            this.#decay(); // If dead decays, 
+        } else {
+            this.#live(); // else lives.
+        }
     }
 
     getLifeStage() {
@@ -745,6 +729,22 @@ class Coniferous extends Tree {
         // Reproduce if possible.
         this.last_reproduced += 1;
         this.reproduce(this.#reproductionInterval);
+    }
+
+    #decay() {
+        /** Mechanism that models decaying of the tree over time. */
+        const decayed_diameter = this.diameter * 0.01;
+        const decayed_height = this.height * 0.05; // 0.01 * 5
+        const decayed_volume = this.computeVolume(decayed_diameter, decayed_height);
+        this.height = Math.max(0, this.height - decayed_height);
+        this.diameter = Math.max(0, this.diameter - decayed_diameter);
+        const decayed_mass = decayed_volume * this.#woodDensity;
+        const co2released = decayed_mass * 0.7;
+        environment.updateCo2(environment.getCo2() + co2released);
+        if (decayed_mass <= 0) {
+            const position_self = this.getPosition();
+            land.clear(position_self[0], position_self[1]);
+        }
     }
 
     reproduce() {
@@ -803,10 +803,28 @@ class Deciduous extends Tree {
 
     growOlder() {
         /** Tree ages by one time unit. */
-        // Still alive?
-        this.age += 1;
-        if (this.getLifeStage() == 'dead') this.decay(this.#woodDensity);
-        else this.#live();
+        this.age += 1; // Increment age by 1 time step.
+        if (this.getLifeStage() == 'dead') {
+            this.#decay(); // If dead decays, 
+        } else {
+            this.#live(); // else lives.
+        }
+    }
+
+    #decay() {
+        /** Mechanism that models decaying of the tree over time. */
+        const decayed_diameter = this.diameter * 0.01;
+        const decayed_height = this.height * 0.05; // 0.01 * 5
+        const decayed_volume = this.computeVolume(decayed_diameter, decayed_height);
+        this.height = Math.max(0, this.height - decayed_height);
+        this.diameter = Math.max(0, this.diameter - decayed_diameter);
+        const decayed_mass = decayed_volume * this.#woodDensity;
+        const co2released = decayed_mass * 0.7;
+        environment.updateCo2(environment.getCo2() + co2released);
+        if (decayed_mass <= 0) {
+            const position_self = this.getPosition();
+            land.clear(position_self[0], position_self[1]);
+        }
     }
 
     getLifeStage() {
@@ -898,13 +916,13 @@ class TimberDemand {
         this.#baseDemand = baseDemand;
     }
 
-    #useTimber(timberWeightEnergy, timberWeightLumber) {
+    #useTimber(timberMassEnergy, timberMassLumber) {
         /** Adds differing amounts of CO2 into the environment 
          *  based on what received wood was used for. */
         environment.updateCo2(
-        environment.getCo2() 
-        + (1.0 * timberWeightEnergy) 
-        + (0.3 * timberWeightLumber)
+            environment.getCo2() 
+            + (1.0 * timberMassEnergy) 
+            + (0.3 * timberMassLumber)
         )
     }
 
@@ -951,18 +969,18 @@ class TimberDemand {
         return this.#currentPrice;
     }
 
-    meetDemand(suppliedWeight) {
+    meetDemand(suppliedMass) {
         this.#useTimber(
-        (suppliedWeight*this.timberUsage['energy']*1),
-        (suppliedWeight*this.timberUsage['lumber']*0.3)
+        (suppliedMass*this.timberUsage['energy']*1),
+        (suppliedMass*this.timberUsage['lumber']*0.3)
         )
-        this.#demand -= suppliedWeight;
-        funds += this.getCurrentPrice() * suppliedWeight * 0.01;
+        this.#demand -= suppliedMass;
+        funds += this.getCurrentPrice() * suppliedMass * 0.01;
     }
 }
 
 const takeTimeStep = () => {
-    /** Updates time by 1 week. */
+    /** Updates time by 1 month. */
 
     // Turn the wheel of time.
     time = GlobalConfig.timeDelta(time, 1);
@@ -1203,6 +1221,7 @@ const World = () => {
     const refSvgLand = useRef();
     const refSvgTimeline = useRef();
 
+    // START
     useEffect(() => {
         initializeWorld();
     }, []);

@@ -328,7 +328,7 @@ module.exports = {
     reproduction_interval_coniferous: 20,
     reproduction_interval_deciduous: 10,
     co2_stress: CO2_STRESS,
-    co2_change_percent: 0.0019/12, // monthly
+    co2_change_percent: 0.01/12, // monthly
     temperature_stress: TEMPERATURE_STRESS,
     temperature_monthly_change: {
         '12-1': -5, '1-2': 2, '2-3': 6,
