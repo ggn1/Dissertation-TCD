@@ -40,7 +40,7 @@ class Land {
     #numColumns;
     #positions = [];
     #biodiversity = [0, 0, 0, 0];
-    #quadrantRangeBiodiversity;
+    #maxBiodiversity;
     
     constructor(rows, columns) {
         if (!(rows > 1 && columns > 1)) {
@@ -56,7 +56,7 @@ class Land {
         
         this.#numRows = rows;
         this.#numColumns = columns;
-        this.#quadrantRangeBiodiversity = [0, (this.#numRows/2) * (this.#numColumns/2) * 3]
+        this.#maxBiodiversity = (this.#numRows/2) * (this.#numColumns/2) * 3 // one quadrant
 
         // Initialize positions with all 0s.
         // Each position can have either 0 or a tree ID.
@@ -114,6 +114,15 @@ class Land {
       /** Returns land position content at given xy coordinates. */
       GlobalConfig.checkIndexOutOfRange(rowIdx, 0, this.#numRows, columnIdx, 0, this.#numColumns);
       return this.#positions[rowIdx][columnIdx];
+    }
+
+    countTrees() {
+        /** Returns count of all trees currently on land. */
+        let tree_count = 0
+        this.#positions.flat().forEach(d => {
+            if (d != -1) tree_count += 1
+        });
+        return tree_count;
     }
 
     #countTrees(q) {
@@ -188,20 +197,9 @@ class Land {
          *  values are: unforested, plantation, forest, ecosystem. */
         validateQuadrantEncoding(q);
         let num_quadrants = 0;
-        let biodiversity = 0;
-        q.forEach(qNum => {
-            if (qNum == 1) {
-                num_quadrants += 1;
-                biodiversity == this.getBiodiversity(q);
-            }
-        });
-        const rangeBiodiversity = [
-            this.#quadrantRangeBiodiversity[0]*num_quadrants, 
-            this.#quadrantRangeBiodiversity[1]*num_quadrants
-        ]
+        q.forEach(qNum => {if (qNum == 1) num_quadrants += 1});
         const biodiversityPc = (
-            biodiversity /
-            (rangeBiodiversity[1] - rangeBiodiversity[0])
+            this.getBiodiversity(q)/(this.#maxBiodiversity*num_quadrants)
         ); // [0, 1]
 
         if (biodiversityPc < 0.25) return "unforested";
@@ -401,15 +399,6 @@ class Plan {
       if (this.#actions.hasOwnProperty(`${month}-${year}`)) {
             const actions = this.#actions[`${month}-${year}`];
             actions.forEach(a => a.execute());
-            // let idsToRemove = [];
-            // let a = null;
-            // while(actions.length > 0) {
-            //     a = actions.pop();
-            //     a.execute();
-            //     actionIdAvailable.push(a.id);
-            //     idsToRemove.push(a.id);
-            // }
-            // delete this.#actions[`${month}-${year}`];
         }
     }
 
@@ -475,12 +464,14 @@ class Fell extends Action {
         const quadrantRange = this.getQuadrantRange();
         let numAffected = 0;
         let tree;
+        console.log(land.countTrees())
         for (let x = quadrantRange[0][0]; x <= quadrantRange[0][1]; x++) {
             for (let y = quadrantRange[1][0]; y <= quadrantRange[1][1]; y++) {
                 if (numAffected >= this.maxNumAffected) break;
                     tree = land.getLandContent(x, y);
                 if (tree != -1) {
                     if (tree.getLifeStage() == this.treeLifeStage) {
+                        tree.stress = 1;
                         tree = land.clear(x, y);
                         funds -= cost_felling;
                         timberDemand.meetDemand(tree.computeVolume() * tree.getWoodDensity());
@@ -621,12 +612,14 @@ class Tree {
 
         // Basic needs availability related stress.
         let stress_env = 0;
+        // Add effects of stress.
         stress_env += basic_needs_stress.co2(environment.getCo2());
         stress_env += basic_needs_stress.temperature(environment.getTemperature());
-        if (stress_env == 0 && this.stress > 0){
+        // If environment is ideal, recover.
+        if (stress_env == 0 && this.stress > 0){ 
             this.stress = Math.max(0, this.stress - ((1 - this.stress) * 0.1))
         } else {
-            this.stress += stress_env
+            this.stress += stress_env;
         }
     }
 
@@ -906,7 +899,7 @@ class TimberDemand {
 
     constructor(basePrice, baseDemand, changePercent, energyPercent, lumberPercent) {
         if (energyPercent + lumberPercent != 1) {
-        throw new Error('Lumber and energy timber usage percentages must add up to 1.')
+            throw new Error('Lumber and energy timber usage percentages must add up to 1.')
         }
         this.#basePrice = basePrice;
         this.#currentPrice = basePrice;
@@ -971,8 +964,8 @@ class TimberDemand {
 
     meetDemand(suppliedMass) {
         this.#useTimber(
-        (suppliedMass*this.timberUsage['energy']*1),
-        (suppliedMass*this.timberUsage['lumber']*0.3)
+            (suppliedMass*this.timberUsage['energy']*1),
+            (suppliedMass*this.timberUsage['lumber']*0.3)
         )
         this.#demand -= suppliedMass;
         funds += this.getCurrentPrice() * suppliedMass * 0.01;
@@ -1067,11 +1060,10 @@ let treeIdAvailable = [];
 let isInitialized = false;
 
 // Actions set up.
-GlobalConfig.plan.addAction(5, 0, true, 'fell', 1, 'deciduous', 2, 'mature');
-GlobalConfig.plan.addAction(1, 1, false, 'plant', 1, 'deciduous', 2);
-GlobalConfig.plan.addAction(1, 1, false, 'fell', 1, 'coniferous', 2, 'old_growth');
+// GlobalConfig.plan.addAction(5, 5, true, 'fell', 1, 'deciduous', 1, 'mature');
+GlobalConfig.plan.addAction(7, 2, true, 'fell', 1, 'coniferous', 1, 'mature');
 
-const World = () => {
+const World = () => {   
     const [landGrid, setLandGrid] = useState([]);
     const [stateTime, setStateTime] = useState(time);
     const [stateTimeStep, setStateTimeStep] = useState(`0 / ${GlobalConfig.time_steps}`);
@@ -1080,7 +1072,6 @@ const World = () => {
     const [stateFunds, setStateFunds] = useState(funds);
     const [stateTimberDemand, setStateTimberDemand] = useState(timberDemand.getDemand());
     const [stateBiodiversity, setStateBiodiversity] = useState(land.getBiodiversity());
-    const [stateTreeCount, setStateTreeCount] = useState(Object.keys(trees).length);
     const [isPaused, setIsPaused] = useState(true);
 
     const play = () => {
@@ -1099,7 +1090,6 @@ const World = () => {
             setStateTimeStep(`${timeStep+1}/${timeSteps}`);
             setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
             setStateFunds(Math.round(funds, 2));
-            setStateTreeCount(Object.keys(trees).length);
         }
         playLoopInterval = setInterval(loopFun, 1000/GlobalConfig.fps);
     }
@@ -1119,7 +1109,6 @@ const World = () => {
         setStateTimeStep(`${timeStep+1}/${GlobalConfig.time_steps}`);
         setStateTimberDemand(Math.round(timberDemand.getDemand(), 2));
         setStateFunds(Math.round(funds, 2));
-        setStateTreeCount(Object.keys(trees).length);
         setStateTime(time);
     }
 
@@ -1210,7 +1199,6 @@ const World = () => {
         setStateFunds(funds);
         setStateTimberDemand(timberDemand.getDemand());
         setStateBiodiversity(land.getBiodiversity());
-        setStateTreeCount(Object.keys(trees).length);
         setStateTime(time);
         setIsPaused(true);
         
@@ -1482,7 +1470,7 @@ const World = () => {
                         <p><font color="green">Temperature</font> = {stateTemperature} °C</p>
                         <p><font color="green">Biodiversity Score</font> = {stateBiodiversity}</p>
                         <p><font color="brown">Funds</font> = {stateFunds} Bc</p>
-                        <p><font color="brown">Timber Target</font> = {stateTimberDemand} Kg</p>
+                        {/*<p><font color="brown">Timber Target</font> = {stateTimberDemand} Kg</p>*/}
                     </div>
                 </div>
                 <div className='px-0 py-3 flex justify-between gap-x-5'>
