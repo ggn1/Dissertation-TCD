@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>354</x>
+      <y>288</y>
+      <w>132</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Environment
+-
++ co2 = { 
+  available: &lt;&lt;Integer&gt;&gt; # (100-x)%, 
+  bound: &lt;&lt;Integer&gt;&gt; # x% 
+}
++ land: &lt;&lt;Land&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>252</x>
+      <y>114</y>
+      <w>180</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>Simulation
+-
++ time: &lt;&lt;Integer&gt;&gt; # x years
++ funds: &lt;&lt;Float&gt;&gt; # x barcons
++ resources_services: {
+  timber: &lt;&lt;Timber&gt;&gt;,
+  ntfp: &lt;&lt;NTFP&gt;&gt;,
+  hunting_fishing: &lt;&lt;HuntingFishing&gt;&gt;,
+  ecosystem_services: &lt;&lt;EcosystemServices&gt;&gt;
+}
+- env: &lt;&lt;Environment&gt;&gt;
+- planner: &lt;&lt;Planner&gt;&gt;
+-
++ play()
++ pause()
++ reset()
++ goto()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>174</x>
+      <y>288</y>
+      <w>162</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>Planner
+-
++ rotation_period: &lt;&lt;Integer&gt;&gt; # x seasons 
++ targets = { 
+  co2: &lt;&lt;Float&gt;&gt; # x%, 
+  income: &lt;&lt;Float&gt;&gt; # y Bc 
+}
++ income_dependency = { 
+ timber: &lt;&lt;Float&gt;&gt; # x%, 
+ other: &lt;&lt;Float&gt;&gt; # (100 - x)% 
+}
++ plan: &lt;&lt;List&lt;&lt;MgmtAction&gt;&gt;&gt;&gt;
+-
++ getPlan()
++ addAction()
++ deleteAction()
++ editAction()
++ updateIncomeDep()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>216</x>
+      <y>216</y>
+      <w>48</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>60.0;10.0;10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>216</y>
+      <w>54</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;10.0;60.0;10.0;60.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>288</y>
+      <w>96</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>MgmtAction
+-
++ time: &lt;&lt;Integer&gt;&gt;
++ treeType: &lt;&lt;String&gt;&gt;
++ treeCount: &lt;&lt;Interger&gt;&gt;
++ costPerTree: &lt;&lt;Float&gt;&gt;
+-
++ execute()
+group=group-0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>0</x>
+      <y>396</y>
+      <w>54</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Plant
+-
+
+-
++ execute()
+group=group-0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>18</x>
+      <y>354</y>
+      <w>72</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-0</panel_attributes>
+    <additional_attributes>100.0;10.0;100.0;40.0;10.0;40.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>72</x>
+      <y>396</y>
+      <w>84</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Fell
+-
++ treeAge: &lt;&lt;String&gt;&gt;
+-
++ execute()
+group=group-0</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>72</x>
+      <y>354</y>
+      <w>72</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-0</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;100.0;40.0;100.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>72</x>
+      <y>228</y>
+      <w>138</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+*..1</panel_attributes>
+    <additional_attributes>210.0;100.0;210.0;20.0;10.0;20.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>504</x>
+      <y>288</y>
+      <w>162</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>Tree
+-
++ position: &lt;&lt;List&lt;&lt;Integer&gt;&gt;&gt;&gt; # = ID
++ height: &lt;&lt;Float&gt;&gt;
++ diameter: &lt;&lt;Float&gt;&gt;
++ stress: &lt;&lt;Float&gt;&gt;
++ age: &lt;&lt;Integer&gt;&gt;
++ reproductionInterval: &lt;&lt;Integer&gt;&gt;
++ biodiversityReductionFactor = { 
+  unforested: &lt;&lt;Float&gt;&gt;, plantation: &lt;&lt;Float&gt;&gt;,
+  forest: &lt;&lt;Float&gt;&gt;, ecosystem: &lt;&lt;Float&gt;&gt;
+}
+-
++ computeBiodiversityReduction()
++ computeVolume()
++ updateStress()
++ computeGrowthRate()
++ grow()
++ absorbCo2()
++ growOlder()
++ getLifeStage()
++ live()
++ decay()
++ reproduce()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>354</x>
+      <y>414</y>
+      <w>120</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Land
+-
++ biodiverityScore: &lt;&lt;Integer&gt;&gt;
++ content: &lt;&lt;List&lt;&lt;Tree|null&gt;&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>408</x>
+      <y>354</y>
+      <w>24</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;100.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>708</x>
+      <y>270</y>
+      <w>252</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Coniferous
+-
++ maxHeight: &lt;&lt;Float&gt;&gt;
++ maxDiameter: &lt;&lt;Float&gt;&gt;
++ reproductionInterval: &lt;&lt;Integer&gt;&gt;
++ woodDensity: &lt;&lt;Float&gt;&gt;
++ maxAge: &lt;&lt;Integer&gt;&gt;
++ stressors: {
+  temperature: { premature: &lt;&lt;Tolerance&gt;&gt;, matrure: &lt;&lt;Tolerance&gt;&gt; }, 
+  co2: { premature: &lt;&lt;Tolerance&gt;&gt;, matrure: &lt;&lt;Tolerance&gt;&gt; },
+}
+-
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>708</x>
+      <y>408</y>
+      <w>252</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>Deciduous
+-
++ maxHeight: &lt;&lt;Float&gt;&gt;
++ maxDiameter: &lt;&lt;Float&gt;&gt;
++ reproductionInterval: &lt;&lt;Integer&gt;&gt;
++ woodDensity: &lt;&lt;Float&gt;&gt;
++ maxAge: &lt;&lt;Integer&gt;&gt;
++ stressors: {
+  temperature: { premature: &lt;&lt;Tolerance&gt;&gt;, matrure: &lt;&lt;Tolerance&gt;&gt; }, 
+  co2: { premature: &lt;&lt;Tolerance&gt;&gt;, matrure: &lt;&lt;Tolerance&gt;&gt; },
+}
+-
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>408</x>
+      <y>450</y>
+      <w>192</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1..*</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0;300.0;170.0;300.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>660</x>
+      <y>324</y>
+      <w>60</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+</panel_attributes>
+    <additional_attributes>10.0;150.0;50.0;150.0;50.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>660</x>
+      <y>408</y>
+      <w>60</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;110.0;80.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1002</x>
+      <y>378</y>
+      <w>132</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Tolerance
+-
++ curve:&lt;&lt;List&lt;&lt;List&lt;&lt;Float&gt;&gt;&gt;&gt;&gt;&gt;
+-
++ interpolate()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>954</x>
+      <y>336</y>
+      <w>60</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1..4</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;110.0;80.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>954</x>
+      <y>396</y>
+      <w>60</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1..4</panel_attributes>
+    <additional_attributes>10.0;120.0;50.0;120.0;50.0;10.0;80.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>588</x>
+      <y>0</y>
+      <w>126</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>IncomeSource
+-
++ demandPerRotation: &lt;&lt;Float&gt;&gt;
++ available: &lt;&lt;Float&gt;&gt;
++ unit: &lt;&lt;String&gt;&gt;
++ pricePerUnit: &lt;&lt;Float&gt;&gt;
+-
++ encash()
++ supply()
+group=group-4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>492</x>
+      <y>120</y>
+      <w>42</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>Timber
+-
+
+-
+
+
+group=group-4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>552</x>
+      <y>120</y>
+      <w>66</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>NTFP
+-
+
+-
++ getSupply()
+
+group=group-4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>636</x>
+      <y>120</y>
+      <w>66</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>HuntingFishing
+-
+
+-
++ getSupply()
+
+group=group-4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>720</x>
+      <y>120</y>
+      <w>84</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>EcosystemServices
+-
+
+-
++ getSupply()
+
+group=group-4</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>504</x>
+      <y>78</y>
+      <w>162</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-4</panel_attributes>
+    <additional_attributes>250.0;10.0;250.0;40.0;10.0;40.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>576</x>
+      <y>78</y>
+      <w>90</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-4</panel_attributes>
+    <additional_attributes>130.0;10.0;130.0;40.0;10.0;40.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>648</x>
+      <y>78</y>
+      <w>36</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-4</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;40.0;40.0;40.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>648</x>
+      <y>78</y>
+      <w>132</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+group=group-4</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;200.0;40.0;200.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>162</y>
+      <w>96</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;40.0;140.0;40.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>162</y>
+      <w>168</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;40.0;260.0;40.0;260.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>162</y>
+      <w>258</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;40.0;410.0;40.0;410.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>426</x>
+      <y>162</y>
+      <w>354</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+bg=black
+1</panel_attributes>
+    <additional_attributes>10.0;40.0;570.0;40.0;570.0;10.0</additional_attributes>
+  </element>
+</diagram>
