@@ -1,0 +1,7 @@
+Explain the design/implementation issue.
+
+Explain the options you considered to tackle the issue.
+
+List the criteria you used to decide which approach to follow.
+
+Describe the approach you adopted.
