@@ -4,59 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "b56eed6236dccef2",
+        "id": "d48409970da8c108",
         "type": "tabs",
         "children": [
           {
-            "id": "23e5a27d07e92779",
+            "id": "78d45de7adc3d907",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Challenges.md",
+                "file": "World Rules.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "ca6712903b2e18ad",
+            "id": "19c256c37a1daaf1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Writeup Idea Flow.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "5f2650a2b47e4c03",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Key Mechanisms.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "eb73dc493b2063e5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Learning Outcomes.md",
+                "file": "Facts.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -106,7 +82,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "bc135e17a536bc6e",
@@ -122,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Learning Outcomes.md",
+                "file": "Facts.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -139,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Learning Outcomes.md",
+                "file": "Facts.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -162,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Learning Outcomes.md"
+                "file": "Facts.md"
               }
             }
           }
@@ -183,15 +159,24 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "eb73dc493b2063e5",
+  "active": "19c256c37a1daaf1",
   "lastOpenFiles": [
+    "World Rules.md",
+    "images/co2_levels.png",
+    "Questions.md",
+    "Facts.md",
+    "images/co2_concentration.png",
+    "images",
+    "Estimate of the Relationship between CO2 Concentration and Global Temperature.md",
+    "World Parameters.md",
+    "Untitled 1.md",
+    "[.md",
     "Challenges.md",
+    "Writeup Idea Flow.md",
     "Key Mechanisms.md",
     "Learning Outcomes.md",
-    "Writeup Idea Flow.md",
     "Application",
     "Writing",
-    "Microworld.md",
-    "Untitled 1.md"
+    "Microworld.md"
   ]
 }
