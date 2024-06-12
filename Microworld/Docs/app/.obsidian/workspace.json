@@ -4,23 +4,23 @@
     "type": "split",
     "children": [
       {
-        "id": "d48409970da8c108",
+        "id": "075df893a740aca2",
         "type": "tabs",
         "children": [
           {
-            "id": "78d45de7adc3d907",
+            "id": "7a85a4c00c7d7d11",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "World Rules.md",
+                "file": "Problems.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "19c256c37a1daaf1",
+            "id": "806648805a55db06",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -30,9 +30,20 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "1c04d2ccaa92e0d6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "World Rules.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -82,7 +93,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "bc135e17a536bc6e",
@@ -98,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Facts.md",
+                "file": "Problems.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Facts.md",
+                "file": "Problems.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Facts.md"
+                "file": "Problems.md"
               }
             }
           }
@@ -159,22 +171,31 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "19c256c37a1daaf1",
+  "active": "7a85a4c00c7d7d11",
   "lastOpenFiles": [
-    "World Rules.md",
-    "images/co2_levels.png",
-    "Questions.md",
     "Facts.md",
+    "World Rules.md",
+    "Challenges.md",
+    "Questions.md",
+    "Problems.md",
+    "Key Mechanisms.md",
+    "Conversion Of Scale.md",
+    "CO2 Concentration from Carbon Weight.md",
+    "Income Challenge Experiments.md",
+    "Untitled",
+    "World Rules.pdf",
+    "images/co2_levels.png",
+    "images/old_growth_forest_composition.png",
+    "images/carbon_cycle.jpg",
+    "C From CO2.md",
+    "Learning Outcomes.md",
+    "Writeup Idea Flow.md",
     "images/co2_concentration.png",
     "images",
     "Estimate of the Relationship between CO2 Concentration and Global Temperature.md",
     "World Parameters.md",
     "Untitled 1.md",
     "[.md",
-    "Challenges.md",
-    "Writeup Idea Flow.md",
-    "Key Mechanisms.md",
-    "Learning Outcomes.md",
     "Application",
     "Writing",
     "Microworld.md"
