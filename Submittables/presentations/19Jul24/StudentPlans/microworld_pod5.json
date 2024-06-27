@@ -1,0 +1,927 @@
+{
+  "plan": {
+    "1": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "21": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "40": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "43": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "61": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "80": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "83": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "100": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "101": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "120": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "121": {
+      "plant": [],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "123": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "140": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "141": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "160": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "161": {
+      "plant": [],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "163": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "180": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "181": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "200": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "201": {
+      "plant": [],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "203": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "220": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "221": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "240": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "241": {
+      "plant": [],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "243": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "260": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "261": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "deciduous",
+          "count": 12,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "280": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 8,
+          "stage": "senescent",
+          "success": -1
+        }
+      ]
+    },
+    "281": {
+      "plant": [],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 4,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    },
+    "283": {
+      "plant": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "mature",
+          "success": -1
+        }
+      ],
+      "fell": [
+        {
+          "type": "coniferous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        },
+        {
+          "type": "deciduous",
+          "count": 10,
+          "stage": "old_growth",
+          "success": -1
+        }
+      ]
+    }
+  },
+  "targetSettings": {
+    "co2": 1200,
+    "income": "1000000",
+    "funds": "1"
+  },
+  "initSowPositions": [
+    [
+      5,
+      0
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      1
+    ]
+  ],
+  "timeStepOrder": [
+    [
+      5,
+      0
+    ],
+    [
+      0,
+      3
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      3,
+      3
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      3,
+      2
+    ],
+    [
+      5,
+      2
+    ],
+    [
+      3,
+      5
+    ],
+    [
+      4,
+      1
+    ],
+    [
+      3,
+      1
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      5,
+      5
+    ],
+    [
+      2,
+      5
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      4,
+      3
+    ],
+    [
+      5,
+      1
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      4,
+      0
+    ],
+    [
+      4,
+      4
+    ],
+    [
+      4,
+      2
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      5,
+      4
+    ],
+    [
+      3,
+      0
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      5,
+      3
+    ]
+  ],
+  "incomeDependency": {
+    "timber": 1,
+    "ntfp": 0,
+    "recreation": 0
+  },
+  "rotationPeriod": 40,
+  "fossilFuelEmission": "0"
+}

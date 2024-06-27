@@ -11,16 +11,17 @@ The only reliable indicator in this world that signals if a tree is dead or aliv
 * Let a tree have grown in volume by $\Delta V_t \text{ m}^3$. 
 * Let density of the biomass of the tree be $D_t \text{ g/m}^3$.
 * Then, the tree's weight should have increased by $\Delta W_t = D_t \times \Delta V_t$.
-* Of the total weight of the tree, 57.5% is dry weight. Thus, $\Delta W_t^{dry} = 0.575 \times \Delta W_t$
-* The amount of carbon in the new volume of the tree is about half it's dry weight $C_t^a = 0.5 \times \Delta W_t^{dry}$.
-* This absorbed carbon will get added to the total amount of carbon in the tree and subtracted from the air. Thus, $C_t = C_t + C_t^a$ and $C_a = C_a - C_t^a$.
-* All the while the tree grows, it would also need to replace biomass lost due to damage or natural shedding. Let this increase in volume for maintenance equal 1 % of its total volume $\Delta V_t^m = 0.01 \times V_t$.  Just as before, $\Delta W_t^m = D_t \times \Delta V_t$, $\Delta W_t^{mDry} = 0.575 \times \Delta W_t^m$, $C_t^m = 0.5 \times \Delta W_t^{mDry}$.
-* This amount of maintenance carbon is subtracted from the air and added to the soil to emulate  the amount of biomass lost being added into the soil's carbon store. This, $C_a = C_a - C_t^m$ and $C_s = C_s + C_t^m$.
+* Of the total weight of the tree, around 50% is dry weight [(Ecotree)](https://ecotree.green/en/how-much-co2-does-a-tree-absorb). Thus, $\Delta W_t^{dry} = 0.5 \times \Delta W_t$
+* The amount of carbon in the new volume of the tree is about 47.5% of it's dry weight [(Ecotree)](https://ecotree.green/en/how-much-co2-does-a-tree-absorb) $C_t^a = 0.475 \times \Delta W_t^{dry}$.
+* This absorbed carbon will get added to the total amount of carbon in the vegetation reservoir and subtracted from the air reservoir. Thus, $C_{vegetation} = C_{vegetation} + C_t^a$ and $C_{air} = C_{air} - C_t^a$.
+* All the while the tree grows, it would also need to replace biomass lost due to damage or natural shedding. Let this increase in volume for maintenance equal 1 % of its total volume $\Delta V_t^m = 0.01 \times V_t$.  Just as before, $\Delta W_t^m = D_t \times \Delta V_t$, $\Delta W_t^{mDry} = 0.5 \times \Delta W_t^m$, $C_t^m = 0.475 \times \Delta W_t^{mDry}$.
+* This amount of maintenance carbon is subtracted from the air and added to the soil to emulate  the amount of biomass lost being added into the soil's carbon store. This, $C_{air} = C_{air} - C_t^m$ and $C_{soil} = C_{soil} + C_t^m$.
 *Decay*
-* Once a tree has died and remains on the land, 15% of the carbon stored is released into the atmosphere and soil per year. [(World Economic Forum)](https://www.weforum.org/agenda/2021/09/decaying-forest-wood-carbon-climate-change-co2/) So, let amount of carbon that is lost during decay each year be fixed at $C_t^d = 0.15 \times C_t$ where $t=$ time right before the tree died. Thus, weight of the dead tree lost to decay would be $W_t^d = 2C_t^d$ and consequently, volume would be $V_t^d = \frac{W_t^d}{D_t^d}$. That is, after each year, volume of a dead tree that remains in soil, changes as $V_t = V_t - V_t^d$.
-* Of the amount of carbon decayed each year, 35% end up in the soil and 65% is released back into the atmosphere. So, $C_s = C_s \times (0.35 \times C_t^d)$ and $C_a = C_a \times (0.65 \times C_t^d)$. [(~ reddit, 2021)](https://www.reddit.com/r/askscience/comments/phvr8h/where_does_the_co2_absorbed_by_trees_end_up/)
+* Once a tree has died and remains on land, 15% of the carbon stored in it is released into the atmosphere and soil per year. [(World Economic Forum)](https://www.weforum.org/agenda/2021/09/decaying-forest-wood-carbon-climate-change-co2/) So, let amount of carbon that is lost during decay each year be fixed at $C_t^d = 0.15 \times C_t$ where $t=$ time right before the tree died. Thus, weight of the dead tree lost to decay would be $W_t^d = 2C_t^d$ and consequently, volume would be $V_t^d = \frac{W_t^d}{D_t^d}$. That is, after each year, volume of a dead tree that remains in soil, changes as $V_t = V_t - V_t^d$.  Amount of volume decayed each time step is set to equal 15% of the volume of the tree at the time of death.
+* Of the amount of carbon decayed each year, 35% ends up in the soil and 65% is released back into the atmosphere. So, $C_{soil} = C_{soil} \times (0.35 \times C_t^d)$ and $C_{air} = C_{air} \times (0.65 \times C_t^d)$. [(~ reddit, 2021)](https://www.reddit.com/r/askscience/comments/phvr8h/where_does_the_co2_absorbed_by_trees_end_up/)
 *Soil Release*
-* The amount of carbon that the soil releases back into the atmosphere each year is 4.2% of the carbon in the soil $C^r_s = 0.042 \times C_s$. Thus, $C_s = C_s - C_s^r$ and $C_a = C_a + C_s^r$.
+* Soils can contain between 30 to 90 tonnes of carbon/ha at 30cm depth. Cultivated soils can lose approximately 3 tonnes of soil carbon/ha/year. [(Farm Carbon Toolkit)](https://farmcarbontoolkit.org.uk/toolkit-page/emissions-from-soil/soil-carbon-emissions/)
+* Thus, in the microworld, the amount of carbon that the soil releases back into the atmosphere each year is set to $\frac{3}{(90+30)/2} - 1 = 5 - 1 = 4\%$ of the carbon in the soil $C^r_s = 0.05 \times C_s$. Here 1 was subtracted because this is not cultivated soil. Thus, $C_{soil} = C_{soil} - C_{soil}^r$ and $C_{air} = C_{air} + C_s^r$.
 *Lumber*
 * Trees harvested and used as lumber, lock away the carbon in them.
 
@@ -44,6 +45,16 @@ Cutting down a tree immediately inflicts maximum stress (1.0) on the tree, causi
 
 Forests with more biodiversity, grow faster and can better cope with stress.
 
+In Summary:
+$$
+S_t = min(1, S_t + S_t^{co2} + S_t^{age})
+$$
+$$
+\text{if } S_t^{co2} <= S_{threshold}^{env} \text{ then } S_t = max(0, S_t - (R_t \times H_t)) \text{ where } H_t = (1 - S_t)
+$$
+$$
+dead \Rightarrow S_t = -0.01 
+$$
 ### Biodiversity
 
 Larger more mixed forests boast higher biodiversity 𝑏.
@@ -74,6 +85,7 @@ Forests with more biodiversity, grow faster and can better cope with stress.
 
 ### Reproduction
 Trees may reproduce every $R_t$ no. of years only if there is a free space adjacent to the tree and the tree is mature/old growth with $S_t \leq 0.5$.
+Once the tree reaches reproductive age, it leaves a seed at the spot where it currently grows. Upon the death of a tree, if there is a seed, it germinates into the same type of tree on that same position on land.
 
 ### Volume
 For simplicity, the volume of a tree here is assumed to be same as that of a cylinder with the tree's height and diameter. When decaying, it is assumed that only height decreases until 0, after which the tree no longer exists.
@@ -95,17 +107,13 @@ There are two main types of income sources.
 		* W.r.t biodiversity percent, the mean of the normal distribution is highest when biodiversity score = 1.0. Thus, $availability_{bd} = Max(0, availability_{max} -  (availability_{max} \times (1 - BD\%)))$
 		* Concerning deadwood percent $DW\% =$ no. of spots on land with deadwood / total no. of spots on land, $availability_{dw} = Max(0, availability_{max} -  (availability_{max} \times (1 - DW\%)))$.
 		* Final availability shall be $availablity = \frac{availability_{BD} + availability_{DW}}{2}$.
-	2. **Recreational Activities**
+	2. **Recreation**
 		* Recreational activities, here shall refer to all activities like forest walking trails, picnicking, biking, horse riding, etc, together.
 		* If dependence on this stream is set to a value greater than 0, a minimum amount of fixed capital must be paid to establish this service. 
 		* Then, based on the amount of dependence, there shall be annual maintenance costs (greater dependence = greater maintenance cost).
 		* The entrance fee per person shall be fixed. 
-		* A normal curve shall determine no. of people that visit each year. The mean of this distribution shall be directly dependent on biodiversity score.
+		* A normal curve shall determine no. of people that visit each year. The mean of this distribution shall be directly dependent on the biodiversity score.
 		* Income = no. of people that visit $\times$ fee per person.
-3. **Ecosystem Services**
-	* Income comes from aids/grants allotted to encourage maintenance of forests for the natural services (water/air purification, flood control, etc.) that they provide or for cater towards conservation objectives.
-	* This shall be a fixed amount that may be received when a forest's category drops below "forest" classification. If the classification does not change to forest or ecosystem, or drops, in some fixed no. of years after a grant has been received, then this aid is stopped. 
-	* This aid is temporary and is intended as support rather than income.
 *Outflux*
 * Executing management actions (plant/fell) costs a certain amount ($F_{plant}, F_{fell}$). 
 * The "recreational activities" income stream has associated initial fixed and annual maintenance costs.
@@ -116,7 +124,7 @@ There are two main types of income sources.
 Felling a tree sparks the following events.
 * Felling a tree costs a certain amount of money $F_{fell}$.
 * Let 25% (roots (21.3% - [(H. He et. al, 2018)](https://www.researchgate.net/publication/344244004_Allometric_biomass_equations_for_12_tree_species_in_coniferous_and_broadleaved_mixed_forests_Northeastern_China)) + the stump and some foliage + branches) of that tree remains on land while the rest of it is harvested.
-* The tree that is harvested, is used.
+* The tree that is harvested, is sold and used.
 	* 50% of the tree is used to generate energy. All the carbon in this portion of the tree is immediately released back into the environment.
 	* The remaining portion of the harvested tree is used as lumber. The carbon in this portion of the tree is locked away and removed from the world.
 ### Planting
@@ -125,6 +133,8 @@ Planting a tree involves the following.
 * Tree is added to the land if a free spot is available.
 ## Constants
 
+### Land 
+* Size $=$ 6 rows, 6 columns
 ### Age
 In the simulated world, the maximum life expectancy of a conifer tree is 100 years while that of a deciduous tree is slightly lower at 80 years. On average conifer trees are more long lived than deciduous ones. [(F. Biondi et. al., 2023)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10011738/)
 
@@ -174,41 +184,44 @@ There are currently 3 streams of income.
 #### Timber
 * $\text{starting dependency} = 0.6 \text{, unit} = \text{kg, price per unit} = \text{Bc } 0.3$ [(B. Korchinski, 2020)](https://www.quora.com/How-much-does-a-ton-of-wood-cost) 
 #### Non Timber Forest Products (NTFP)
-Assuming forest is of size $8\text{ ha}$.
-* ${\text{starting dependency}=0.3\text{, unit}=\text{kg, price per unit}=\text{Bc }14.0}$ [(Tesco Ireland)](https://www.tesco.ie/groceries/en-IE/search?query=honey) (Mean of average store prices for mushrooms, berries and honey.)
+[(Tesco Ireland)](https://www.tesco.ie/groceries/en-IE/search?query=honey) (Mean of average store prices for mushrooms, berries and honey.)
+* Starting dependency = 0.3.
+* unit = kg
+* price per unit = 14 coins.
+**Availability**
 * Mushrooms
-	* $\mu = 40\text{ kg/ha/year} \times 8 = 320 \text{ kg/year}$
+	* $\mu = 40\text{ kg/ha/year} \times 8 = 320 \text{ kg/year}$ (8 ha forest)
+	* $\mu = 7\text{ kg/year}$ (1740.15 $m^2$ forest)
 	* $\sigma = 1$
 	* Depend on biodiversity.
 	* Depends on amount of deadwood in the forest.
 * Honey
-	* $\mu = 0.0026 \text{ bee colonies/ha/year} \times 8 \text { ha} \times 20 \text{ kg / hive} = 0.416 \text{ kg/year}$.
+	* $\mu = 0.0026 \text{ bee colonies/ha/year} \times 8 \text { ha} \times 20 \text{ kg / hive} = 0.416 \text{ kg/year}$. (8 ha forest)
+	* $\mu = 0.009\text{ kg/year}$ (1740.15 $m^2$ forest)
 	* Depends on biodiversity.
 * Berries
-	* $\mu = 5\text{ kg/year}$
+	* $\mu = 5\text{ kg/year}$ (8 ha forest)
+	* $\mu = 0.12\text{ kg/year}$ (1740.15 $m^2$ forest)
 	* Depends on biodiversity.
-* $\mu = 325.5\text{ kg/year}$
-* $\sigma = 2.5$
-* Annual Cost:
+* $\mu = 7.129\text{ kg/year}$ which say, is rounded up to 8 kg/year.
+* Annual Cost.
 	* It takes a person a little over 20 hours to cover one acre by foot [(V. Liu, Quora, 2021)](https://www.quora.com/How-long-does-it-take-a-person-to-walk-an-acre). A hectare is 2.5 acres. 
-	* Let an employee take 50 hours to harvest (forage & gather) products (mushrooms, honey, berries) from one acre of forest. Then, to cover one hectare, they would need to work for 125 hours. 
-	* If the employee is expected to work for 40 hours a week [(A. Meehan, Aisling Meehan Agriculture Solicitors, Teagasc)](https://www.teagasc.ie/media/website/animals/dairy/2-aisling-meehan-presentation-v2.pdf), then no. of work hours possible in a year is $40 \times 52 = 2080 \text{ hrs}$.
-	* If the forest spans 8 ha [(SWS Forestry)](https://swsforestry.ie/why-plant/forestry-facts/) and a worker needs to cover the equivalent of the whole forest 3 times a year for harvests, then they would need to work for $125 \times 8 \times 3 = 3000 \text{ hrs}$. This is more than how much 1 person can work in a year. 
-	* So, a pair of people working for 1500 hours a year can cover a 8 ha forest 3 times a year for foraging. 
-	* Let there be 20 such pairs of people employed. So, the work force would contain 40 people. This is close to the average no. of people working in forestry in the EU as of numbers from 2021 $\approx 50$ people per ha of forest [(Eurostat, 2023)](https://ec.europa.eu/eurostat/web/products-eurostat-news/w/edn-20230321-1).
-	* Thus, amount to be paid to employees per year to harvest NTFPs $= \boxed{\text{Bc }600,000}$.
+	* So, to cover a forest of 1740.15 $m^2$, it would take a person around 2 hrs.
+	* Let the employee take 10 hours to harvest (forage & gather) products (mushrooms, honey, berries) from 1740.15 $m^2$ of forest. 
+	* Say, the worker needs to cover the equivalent of the whole forest 3 times a year for harvests, then they would need to work for 30 hrs/year. 
+	* Say there are 3 workers, one to gather berries, one to gather mushrooms and one to harvest honey.
+	* Thus, at a wage of 18 coins per hour [(Salary Expert, June 2024)][https://www.salaryexpert.com/salary/job/forest-worker/ireland], maintenance cost per year = $3 \times 30 \times 18 = \boxed{1620}$ coins.
 #### Recreational Activities
-* $\text{starting dependency} = 0.1, \text{unit} = \text{people}, \text{price per unit}=\text{Bc 5}$ [(K. Mayor et. al., 2007)](https://www.esri.ie/system/files?file=media/file-uploads/2015-07/WP190.pdf), [(Loughkey)](https://loughkey.ie/admission-prices/) [(Donadea Forest Park)](https://www.coillte.ie/site/donadea-forest-park/)
+* $\text{starting dependency} = 0.1$
+* $\text{unit} = \text{visitor}$
+* $\text{price per unit}=\text{Bc 5}$ [(K. Mayor et. al., 2007)](https://www.esri.ie/system/files?file=media/file-uploads/2015-07/WP190.pdf), [(Loughkey)](https://loughkey.ie/admission-prices/) [(Donadea Forest Park)](https://www.coillte.ie/site/donadea-forest-park/)
 * Availability of people per year:
-	* $\mu = 300$ people/year (close to $\frac{29000000}{808848} \times 8\text{ ha}$) [(Department of Agriculture, Food and the Marine, 2022, Ireland National Forest Inventory)](file:///C:/Users/g_gna/Downloads/246991_0b1fafb5-9475-4955-bbbc-26bd9effb509-3.pdf), [(Department of Agriculture Food and the Marine, 2022, Ireland Forest Statistics)](https://www.teagasc.ie/media/website/crops/forestry/advice/Forest-Statistics-Ireland-2022.pdf)
+	* For $8 \text{ ha}$ of forest, $\mu = 300$ people/year (close to $\frac{29000000}{808848} \times 8\text{ ha}$) [(Department of Agriculture, Food and the Marine, 2022, Ireland National Forest Inventory)](file:///C:/Users/g_gna/Downloads/246991_0b1fafb5-9475-4955-bbbc-26bd9effb509-3.pdf), [(Department of Agriculture Food and the Marine, 2022, Ireland Forest Statistics)](https://www.teagasc.ie/media/website/crops/forestry/advice/Forest-Statistics-Ireland-2022.pdf)
+	* Thus, for $1740.15 \text{ m}^2$ of forest, no. of visitors may be around 7 people/year = $\mu$.
 	* $\sigma=2$
 * Costs:
-	* One time payment $= \boxed{\text{Bc }240,000}$. (In 2006, restoration of a forest (around 44 has) took about € 8,000,000 [(W. Murphy)](http://www.coford.ie/media/coford/content/publications/projectreports/small-scaleforestryconference/Murphy.pdf). Adjusting for inflation, today (€ 1 in 2006 $\approx$ € 1.3 in 2024), that around € 10,400,000 [(Central Statistics Office, Ireland)](https://visual.cso.ie/?body=entity/cpicalculator). Thus, restoring and establishing recreation facilities in an 8 ha forest today, might cost around $\frac{10.4}{44} \times 1,000,000 =$ € 240,000.)
-	* Let no. of people hired to maintain the facility be 30 such that they work for 2000 $hrs$ per week for a pay of $\text{Bc }10$. Then, amount paid for maintenance each year could be around Bc 624,000 (amount paid to employees + amount paid for physical resources  (say 10% of initial fixed investment)). So, maintenance cost per year $= \boxed{\text{Bc } 624,000}$ per year.
-#### Ecosystem Services
-* $\text{ecosystem services}={\text{starting dependency}=0.1\text{, unit}=\text{ha, price per unit}=\text{Bc 150}}$ [(Teagasc)](https://www.teagasc.ie/crops/forestry/grants/native-woodland-conservation-scheme-2023-2027/)
-### Land 
-* Size $=$ 6 rows, 6 columns
+	* One time payment $= \boxed{5220.5 \text{ coins}}$. (In 2006, restoration of a forest (around 44 has) took about € 8,000,000 [(W. Murphy)](http://www.coford.ie/media/coford/content/publications/projectreports/small-scaleforestryconference/Murphy.pdf). Adjusting for inflation, today (€ 1 in 2006 $\approx$ € 1.3 in 2024), that around € 10,400,000 [(Central Statistics Office, Ireland)](https://visual.cso.ie/?body=entity/cpicalculator). Thus, restoring and establishing recreation facilities in an 8 ha forest today, might cost around $\frac{10.4}{44} \times 1,000,000 =$ € 240,000.) Meaning that the same for a 1740.15 $m^2$ forest would be $5220.45 \approx 5220.5$ coins.
+	* Let no. of employees be 2, to maintain recreational facilities if forest area was only $1740.15 \text{ m}^2$. Let them work for 40 hrs per week for 52 days a year for a total of 2080 hrs a year, earning 13 coins [(Citizens Information Ireland, 2024)](https://www.citizensinformation.ie/en/employment/employment-rights-and-conditions/pay-and-employment/minimum-wage/) per hour.  Then, total maintenance amount every year (wages + maintaining infrastructure = 10% of initial investment) $\approx \boxed{54602}$ coins per year.
 
 ### Rotation 
 * Starting no. of Years $=40$ [(H. V. Hensbergen, K. Shono and J. Cedergren, 2023)](https://openknowledge.fao.org/items/930b98d1-9172-4582-aeb3-0b65be35a5a2)

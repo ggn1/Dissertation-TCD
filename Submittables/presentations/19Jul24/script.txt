@@ -1,0 +1,56 @@
+[S1]
+
+Hi. Welcome to Mycroforest.
+
+Let's take a look at everything you can do here.
+
+To begin, hit Enter.
+
+Complete the introduction and jump into the world.
+
+[S2] 
+
+Your forest land contains trees of various ages, belonging to one of 2 kinds; coniferous or deciduous. The youngest trees are seedlings and saplings. These cannot be chopped. The oldest live trees are in the senescent stage. Trees reach their maximum size once they enter the old growth life stage. New seedlings sprout on empty land either naturally from a parent, or when you plant them.
+
+[S3]
+
+Press play to see the forest grow for a maximum of 300 years. Pause anytime. Step forward or backwards one step at a time. Skip to specific years. Reset to year 0.
+
+Anywhere you see the ? icon, click to receive help.
+
+[S4]
+Now, lets create a forest management plan. Click on the PLAN button and go to the planner page. To add an action, come down here to the plan picker and choose the action type. Plant or fell. Now select a tree type. Set the year, no. of trees affected and whether or not this is to be repeated every rotation? Click ADD. Your action will appear in the viewer above. You may add multiple actions.
+
+Select one or more actions. Delete selected actions. Delete all actions. Change the rotation period.
+
+Go back to the home page and see your plan in action.
+
+[S5]
+
+As the simulation runs, view the no. of coins you've got in the bank. Check out overall total income throughout the entire simulation, coins earned per rotation and income per year. 
+
+Similarly, view your overall, per-rotation, and yearly expenses. Felling or planting a tree costs some coins. 
+
+The symbol "M" stands for million and "k" stands for thousand.
+
+[S6]
+
+Notice status indicators on each action tag. Actions that are yet to be run, are marked using a grey spot. Actions that were successful for exactly as many trees as intended, is marked green. Actions that could not be executed at all, are marked red. This can happen if there were no trees of the planned type and age on land at the time. Actions that were executed for as many trees as were available, although not as many as planned, is marked with a yellow status.
+
+[S7]
+
+Finally, you may set the limit for CO2 concentration in the air. View current levels on the scale. 
+
+Switch on the target to see whether it is satisfied and green. 
+
+Play and check if it stays green, or turns red on levels rising above the set target.
+
+[S8]
+
+And that's it for now. 
+
+Tweak your plan and target, reset, and play again!
+
+Anytime you're stuck, click on ? icons, or press the H key to go to the help page.
+
+Explore away!

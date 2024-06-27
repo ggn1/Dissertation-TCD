@@ -1,0 +1,25 @@
+INCOME CHALLENGE
+================
+
+STRATEGY 1: Chop as many trees as possible. 
+OUTCOME: 
+# With rotation at 40, made decent money 102.3M. Achieved rotation target was 69k.
+# With rotation at 20, made more money 103.2M. Achieved rotation target 1k.
+# With rotation at 10, made more money 102.5M. Achieved rotation target 0k.
+# With rotation at 20, also plant deciduous trees in addition to chopping. Not much difference. Still 102.5M.
+# Chop fewer trees every 20 years + plant deciduous trees only and every 40 years, chop bigger trees. Not much better.
+# Chop fewer mature trees but all old growth and senescent ones every 10 years. Made more money, but land was mostly empty at times towards the end, leading to multiple rotations with no income.
+# Try same as previous but with planting half and half deciduous and coniferous trees. Made good money at 103.7M. Per rotation target 34k. [BEST]
+
+INCOME + C02 CHALLENGE
+======================
+# With the income strategy 1, target CO2 was 629.
+# No management = CO2 Target of 390. [BEST]
+# Keeping rotation 20 years while chopping down only trees >= old growth led to CO2 target of 475.
+
+FOSSIL FUELS + C02 CHALLENGE
+============================
+# With the income strategy 1, target CO2 was > 700.
+# No cutting trees brings CO2 target down to 620 but no income.
+# Keeping income very difficult with timber only.
+ANSWER = Rely on more sources of income.

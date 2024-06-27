@@ -1,5 +1,0 @@
-Key concepts that this application strives to teach are as follows.
-1. Forests capture carbon and help regulate global temperatures and hence must be protected.
-2. Biodiversity $\propto$ a forest's health, resilience and as a result it's ability to capture carbon.
-3. Forests present more income streams than just timber such as non-timber forest products, ecosystem services and hunting and fishing. These alternate sources of income from forests are, however, less dependable than timber. Thus, a balance must be struck between dependence of timber based and non timber based income from forests.
-4. Some uses of timber such as burning it for energy immediately releases carbon into the atmosphere whereas other uses that preserve its form (like construction, or for furniture) results in less carbon being released immediately.

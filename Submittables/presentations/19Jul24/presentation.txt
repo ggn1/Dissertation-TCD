@@ -1,0 +1,6 @@
+PRESENTATION
+============
+
+This application is essentially a very simple Static Web App. Its static because content does not change for specific users. Every one of us here worked with the same view of the app. You did not need to sign up or log in. It's not like say, Youtube where your recommendations are different from mine. You did not have to sign up or log in. That's what makes myccroforest a "static" web app.
+
+It doesn't matter if your app is simple or complex, you will step through some version of the software development life cycle. Very broadly, it'll have at least 5 steps.

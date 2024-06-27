@@ -4,46 +4,47 @@
     "type": "split",
     "children": [
       {
-        "id": "075df893a740aca2",
+        "id": "82e6dd7c03df6334",
         "type": "tabs",
         "children": [
           {
-            "id": "7a85a4c00c7d7d11",
+            "id": "e935505edced46cd",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Problems.md",
+                "file": "Model/Environment.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "806648805a55db06",
+            "id": "f91fa8cd46766f59",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Facts.md",
+                "file": "Model/Carbon Cycle.md",
                 "mode": "source",
                 "source": false
               }
             }
           },
           {
-            "id": "1c04d2ccaa92e0d6",
+            "id": "42deee8cbdb3be73",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "World Rules.md",
+                "file": "Model/Partial Pressure of CO2.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -110,7 +111,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Problems.md",
+                "file": "Model/Carbon Cycle.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +128,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Problems.md",
+                "file": "Model/Carbon Cycle.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +151,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Problems.md"
+                "file": "Model/Carbon Cycle.md"
               }
             }
           }
@@ -171,33 +172,47 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7a85a4c00c7d7d11",
+  "active": "f91fa8cd46766f59",
   "lastOpenFiles": [
+    "Model/Partial Pressure of CO2.md",
+    "Model/Carbon Cycle.md",
+    "Model/Environment.md",
+    "Model/CO2 Scale.md",
+    "Model/Forest Recreation.md",
     "Facts.md",
+    "Model/CO2 Concentration.md",
+    "Model/Partial Pressure of CO2 in Water.md",
+    "Model/Partial Pressure of CO2 in Air.md",
+    "Model/Atmosphere.md",
     "World Rules.md",
-    "Challenges.md",
-    "Questions.md",
-    "Problems.md",
-    "Key Mechanisms.md",
+    "Pasted image 20240623105133.png",
+    "Model/Non Timber Forest Products.md",
+    "Model/Biodiversity.md",
+    "Model/Land.md",
+    "Model/Plan.md",
+    "Model/Simulation.md",
     "Conversion Of Scale.md",
-    "CO2 Concentration from Carbon Weight.md",
-    "Income Challenge Experiments.md",
-    "Untitled",
-    "World Rules.pdf",
-    "images/co2_levels.png",
+    "Challenges.md",
     "images/old_growth_forest_composition.png",
+    "images/co2_scale.png",
     "images/carbon_cycle.jpg",
-    "C From CO2.md",
+    "images/co2_levels.png",
+    "images/co2_scale.emf",
+    "Problems.md",
+    "Model/Money.md",
+    "Model",
+    "Model/Timber.md",
+    "Income Dependency.md",
+    "Timber",
     "Learning Outcomes.md",
-    "Writeup Idea Flow.md",
+    "Questions.md",
+    "Key Mechanisms.md",
+    "Pasted image 20240620153433.png",
+    "Design Decisions.md",
+    "World Rules.pdf",
     "images/co2_concentration.png",
     "images",
-    "Estimate of the Relationship between CO2 Concentration and Global Temperature.md",
-    "World Parameters.md",
-    "Untitled 1.md",
-    "[.md",
     "Application",
-    "Writing",
-    "Microworld.md"
+    "Writing"
   ]
 }
