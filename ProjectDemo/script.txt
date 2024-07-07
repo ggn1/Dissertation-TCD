@@ -1,0 +1,109 @@
+1. [SLIDE 1]
+This project is about exploring the use of a microworld to teach about economic viability of climate aware forest management.
+
+2. [SLIDE 2]
+Climate change, the role of forests as carbon sinks, and spreading awareness about challenges around combating climate change while maintaining economic viability comprise the premise of this project.
+
+3. [SLIDE 3]
+This has been a year of unprecedented heat in many parts of the world. In addition to extreme weather and a negative impact on health of most living things, rapid climate change and global warming also disrupt our key industries. 
+
+As many of us are aware, carbon dioxide levels in the atmosphere is a key driver of global warming. CO2 is an important greenhouse gas. It helps keep the planet warm enough to make life possible. But in a very short time since the industrial revolution, human activities have released a very large amount of carbon into the air, and this has led to current atmospheric CO2 concentration being higher than ever before in over 800,000 years. In 2023, the concentration was 419.3 parts per million (ppm). On 22 June 2024, this was 427 ppm. It was predicted that if CO2 levels rise to 430 ppm, then we would experience widespread dangerous weather conditions and this year seems to reenforce this.
+
+So, there is an urgent need for action against climate change. Forests are crucial to fighting climate change because they currently absorb around 30% of global emissions. But they are fragile. If enough of a forest is cleared, they begin to release more carbon than they absorb. Given our high demand for wood, this is already beginning to happen.
+
+Thus, once again, spreading awareness about the importance of forests as carbon sinks is crucial to ensuring a sustainable future and is therefore in alliance with goal 4 "Quality Education" of the SDG set by the UN.
+
+4. [SLIDE 9]
+Mycroforest is the application that this project presents. There are multiple existing similar tools as listed along the top of the table here. Along the side of the table, are qualities that these other tools and Mycroforest is scored against. Many apps are very scientifically accurate decision-making tools like foster forest aimed at experts or adults. Mycroforest is not like this because the underlying conceptual model for teaching about forest management, need not capture plant growth and the carbon cycle in extreme detail. It is a simple, yet reflective model of the real world as is the case with others like mine set and about that forest. Mycroforest meets all intended criteria w.r.t this project. It is an engaging, easily accessible web-based application aimed at the youth. Although the app itself is not multiplayer, it allows for team learning activities in addition to individual ones. Unlike many existing tools that try to do multiple things at once, Mycroforest focuses exclusively on forest management, it's effect on atmospheric CO2 levels and the impact of financial motives. This app is built to be easy to get into and use with lots of built-in help. There is a slide for each of the 4 other apps which we can take a look at after this presentation, if you’d like that.
+
+5. [SLIDE 10]
+Mycroforest is a microworld to promote learner engagement and constructivist thinking which have both been shown to improve learning. It's graphical feedback with short explanations should also improve learning effectiveness. Since microworlds have only been effective when some structure or guidance is provided, it's intended for this app to be used by students in the presence of a knowledgeable facilitator. The app allows for setting of targets around which structured learning activities may be developed via challenges that teams of students can race to overcome in a motivating, game like manner and can discuss about afterwards.
+
+6. [SLIDE 11]
+Now, let’s explore what’s possible with the MycroForest app. 
+
+To begin with, you receive your own forest with 2 species of trees at different stages in their lives. 
+
+You may create forest management plans by deciding when and how often to plant or fell a tree. 
+
+You can move across time using the timeline and view your plan in action. 
+
+Chopped trees are sold for timber and this fetches income in coins. You can also earn through other income streams like by selling non-timber forest products or by opening the forest up for public recreational use. 
+
+You can also introduce emissions due to fossil fuel usage. 
+
+You may view your back balance, expenses and income as well as atmospheric CO2 levels that change over time. 
+
+Finally, the target setter allows for you to set CO2 and income targets and shows whether you’ve met them.
+
+7. [SLIDE 12] 
+Under the hood, the app can be thought of as being composed of a simulation, UI components, and input variables along with some utility functions that are accessible from all project files. 
+
+Currently, the app contains 4 pages. 
+
+The landing page is the first thing the learner sees. It's got a short introduction that the user can click through which provides information regarding what the tool is about.
+
+Pressing H will reveal a help page with all the components of the world, what they mean and how to use them. 
+
+Pressing the W key will take the learner to the main world page where, 
+
+the plan button can be used to view the planner page through which management plans can be created.
+
+8. [SLIDE 13]
+From conception to fulfilment, the design and idea for this app have been though multiple changes. This is an example of some of the changes that it's been through which you will be able to read about in the writeup. The next 3 slides will show 3 designs along the way before we got to the final version that we just saw in the previous slide.
+
+9. [SLIDE 14]
+This was the first power point mockup of the app. It was much more cluttered compared to the current app and had a less intuitive way of capturing amount of wood harvested.
+
+10. [SLIDE 15] 
+This was the first working web version of the app. It was built to experiment with graphical representation of tree growth and to judge feasibility of use of selected technology.
+
+11. [SLIDE 16]
+This was the last animated prototype with all features built using the Figma platform. It was based on this, that the final app was built.
+
+12. [SLIDE 17]
+Here we move on to how the app was built. 
+
+MycroForest was built using the NextJS framework. Next.js is a React framework that enables optimized server-side rendering, static site generation, and simplified routing for building web applications fast. Vercel is a cloud platform where web apps can be deployed. It was created by the creators of NextJS and hence the two are very compatible. Mycroforest is currently hosted on Vercel.
+
+Moving a layer deeper, ReactJS is a JavaScript library for building user interfaces. It allows creation of reusable UI components and easy state management via efficient virtual DOM manipulation. This framework is especially suitable for applications with heavy user interaction as is the case here.
+
+At the core is HTML, CSS and JavaScipt. The trinity that the web is built upon with HTML providing structure, CSS adding style and JavaScipt bringing dynamics. Everything else exists to make development using these primary languages easier. 
+
+Towards the side, are listed libraries/frameworks that further enhance or simplify development. D3.js is a graphics library that allows for custom plots. In the app this was used to create the piece of land where trees grow and change shape. This is essentially a fancy scatter plot. Tailwind CSS is a framework that integrates CSS into HTML for ease. The file-saver.js library was used to allow user plans to be saved or loaded. The Big.js library helped overcome the challenge of precision loss when working with astronomically large numbers and the react-tooltip library provides a ready-made tooltip component that is otherwise cumbersome to create.
+
+13. [SLIDE 18]
+Bad code has the following 4 defining characteristics. It is difficult to change, prone to breaking, difficult to reuse, and contains hacks instead of appropriate fixes. While developing Mycroforest, measures have been taken to prevent such consequences of bad design. The code adheres to the model view controller design pattern and the underlying model is organized in an object oriented way in classes. Every new feature was well tested before integration. Web pages are composed of reusable React components and temporary fixes were largely avoided.
+
+This is a glimpse of the Model View Controller separation in code. The model captures simulation logic and rules while the view is what the user sees. In react, this would be the JavaScript XML that is returned. The code above the return statement in each component can be considered as the controller, which is the intermediary between the model and the view.
+
+This is a quick look at the UML class diagram that captures the simulation model in an object oriented way.
+
+14. [SLIDE 19]
+The development itself followed an Agile management strategy. It was an iterative process comprising 3 broad stages namely planning, building and deployment with research conducted as and where required. 
+
+Typically, an iteration would involve a whiteboarding phase followed by more concrete visualization and then coding.
+
+This allowed for frequent delivery of features. Features to be implemented were broken down into small parts and added to a list somewhat like a product backlog and was checked off after implementation and testing.
+
+GitHub was used for version control and it was linked to Vercel to set up the continuous integration and continuous development pipeline. Every time a new feature is pushed to GitHub, it a new version of the app incorporating this change is deployed.
+
+15. [SLIDE 20]
+This slide presents some problems faced and solutions identified. Once again, you may find details in the writeup. But, for example, a simple, but important problem was that of organizing all data and rules that make up the simulation model. A good solution to deal with confusing interconnected ideas, is to adopt network-based file management for which a Software called Obsidian was used. Each node in this image representing a key component or idea within the model, is a file and the connections show how these elements fit in with others.
+
+16. [SLIDE 21]
+Now, let's check out the deployed app. The best way to get a feel for it is to go over a quick challenge as students would.
+	
+17. [SLIDE 22]
+As for evaluation, the Mycroforest teaching tool was used for a 2-hour session with 10 Transition Year students on the TAP Bridge2College Programme. The session began with a quick introduction followed by 2 challenges, each challenge was followed by a discussion. At the end of all activities, the students filled in a feedback form with questions on user experience, educational value, and attitude towards climate change.
+
+18. [SLIDE 23]
+Most students had positive comments. They appreciate the ease of use and information presented. They suggest that more scenarios be included and that help be more clear. The Botany professor present at the event, a domain expert pointed out how the students had discovered for themselves, two existing forest management strategies, "clear felling" and "thinning".
+
+Overall, from what the students reported, they left the experience with greater awareness and appreciation regarding the need to reduce CO2 in the air, manage forests sustainably, and the need to find a middle ground between economic gains and health of the planet.
+
+19. [SLIDE 24]
+Throughout this project. I have also learned a lot about forestry and what goes into creating an effective learning application. I've also furthered my web development skills and got to employ concepts learned in my Advanced Software Engineering module during development. It was most exciting to have real users use and evaluate the application.
+
+20. [SLIDE 25]
+Overall, I am satisfied about how this project has led to the development of a functional teaching tool that students and teachers valued. I am happy to have furthered my research and web development skills and am grateful for the opportunity to help impart knowledge. A key limitation of the evaluation was that it was only possible to have 10 students try the app so far. An extension of this work could involve further stabilizing the simulation and to investigate the value of making it more accurate. Also, a built-in interactive tutorial may be developed to help users get a feel for the tool quicker. The tool may also be extended to include more income streams like agroforestry and management actions around disease prevention, fertilization, watering, etc.

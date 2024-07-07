@@ -8,10 +8,10 @@
   "collapse-color-groups": true,
   "colorGroups": [
     {
-      "query": "path:Model ",
+      "query": "path:Model",
       "color": {
         "a": 1,
-        "rgb": 6384639
+        "rgb": 5832959
       }
     }
   ],
@@ -20,11 +20,11 @@
   "textFadeMultiplier": -3,
   "nodeSizeMultiplier": 1.56274074074074,
   "lineSizeMultiplier": 3.00007407407407,
-  "collapse-forces": false,
+  "collapse-forces": true,
   "centerStrength": 0.592638888888889,
   "repelStrength": 14.9935185185185,
   "linkStrength": 1,
   "linkDistance": 129,
-  "scale": 1,
+  "scale": 0.7709178628445688,
   "close": true
 }

@@ -11,7 +11,7 @@ Land content determines the [[Biodiversity]] of the land which influences tree g
 
 In this microworld A spot on land is considered free and available for new growth if any one of the following is true.
 * There are no trees in the spot.
-* There is a only one dead tree in the spot such that it has decayed to the point where $Height_{tree} \leq 0.5 \times Height_{tree}^{max}$. This emulates how in nature, new growth may arise from the remains of a dead tree even as it is still decaying.
+* There is a only one dead tree in the spot such that it has decayed to the point where $Height \leq 0.5 \times Height_{max}$. This emulates how in nature, new growth may arise from the remains of a dead tree even as it is still decaying.
 
 Thus, each  spot on land can have at most one live tree. 
 

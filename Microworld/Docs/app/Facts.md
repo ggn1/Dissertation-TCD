@@ -30,7 +30,7 @@ Mixed forests are more biodiverse. [(X. Wang et. al., 2019)](https://onlinelibra
 * <font color="#88dd99">Of all the CO2 locked in the earth, around 5 to 10000 Gt is present as fossil fuels.</font> 
 * <font color="#88dd99">Soil carbon content is roughly 30 to 90 tC / ha of which cultivated soil can lose approximately 3 tC / ha / year.</font>
 [(H. Ritchie and M. Roser, 2024)](https://ourworldindata.org/co2-emissions)
-* In 2023 $36.8 \text{ GtCO2} = 9.95 \text{ GtC}$ was added into the atmosphere year by humans. [(Earth Observatory, NASA)](https://earthobservatory.nasa.gov/images/152519/emissions-from-fossil-fuels-continue-to-rise)
+* In 2023 $36.8 \text{ GtCO2} \approx 10 \text{ GtC}$ was added into the atmosphere year by humans. [(Earth Observatory, NASA)](https://earthobservatory.nasa.gov/images/152519/emissions-from-fossil-fuels-continue-to-rise)
 * 3.7 Gt carbon dioxide will give 1 GtC. [(Earthguide, University of California San Diego)](http://earthguide.ucsd.edu/virtualmuseum/Glossary_Climate/massunits.html) 
 [(T.A. Ontl et al., 2012)](https://www.nature.com/scitable/knowledge/library/soil-carbon-storage-84223790/) 
 * Carbon inputs from photosynthesis by terrestrial vegetation fixes more carbon than carbon loss through soil respiration, resulting in a soil storage rate of about 3 GTC per year.

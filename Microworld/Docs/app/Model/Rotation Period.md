@@ -1,0 +1,3 @@
+Trees may be felled or planted every X no. of years. This X is the ROTATION PERIOD. It exists to allow for management actions such as FELL and PLANT to be scheduled at the beginning of each rotation. This type of planning in rotations mimics real world practices. 
+
+In agriculture and forestry harvests are often planned in rotations. A rotation is thus defined as “the number of years between the formation or regeneration of a crop and its harvest” [(S. Higginbottom, 2023)](https://www.studocu.com/in/document/sam-higginbottom-university-of-agriculture-technology-and-sciences/agroforestry-management/rotation/27330074).

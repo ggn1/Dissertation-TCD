@@ -1,13 +1,16 @@
 ## Vegetation
 
-Carbon is pulled from the air by trees in the microworld.
+Carbon is pulled from the air by trees in the microworld during plant **GROWTH** and **LIFE**.
 
+**GROWTH**
 Let a tree have grown in volume by $\Delta V_t \text{ m}^3$.  Let density of the biomass of the tree be $D_t \text{ g/m}^3$. Then, the tree's weight should have increased by $\Delta W_t = D_t \times \Delta V_t$.  Of the total weight of the tree, around 50% is dry weight [(Ecotree)](https://ecotree.green/en/how-much-co2-does-a-tree-absorb). Thus, $\Delta W_t^{dry} = 0.5 \times \Delta W_t$ The amount of carbon in the new volume of the tree is about 47.5% of it's dry weight [(Ecotree)](https://ecotree.green/en/how-much-co2-does-a-tree-absorb) $C_t^a = 0.475 \times \Delta W_t^{dry}$. This absorbed carbon will get added to the total amount of carbon in the vegetation reservoir and subtracted from the air reservoir. Thus, $C_{vegetation} = C_{vegetation} + C_t^a$ and $C_{air} = C_{air} - C_t^a$.
 
+**MAINTENANCE**
 All the while the tree grows, it would also need to replace biomass lost due to damage or natural shedding. Let this increase in volume for maintenance equal 1 % of its total volume $\Delta V_t^m = 0.01 \times V_t$.  Just as before, $\Delta W_t^m = D_t \times \Delta V_t$, $\Delta W_t^{mDry} = 0.5 \times \Delta W_t^m$, $C_t^m = 0.475 \times \Delta W_t^{mDry}$. This amount of maintenance carbon is subtracted from the air and added to the soil to emulate  the amount of biomass lost being added into the soil's carbon store. This, $C_{air} = C_{air} - C_t^m$ and $C_{soil} = C_{soil} + C_t^m$.
 
 As plants ***DECAY***, some amount of stored carbon re-enters the air and soil reservoirs from the vegetation reservoir.
 
+**DECAY**
 Once a tree has died and remains on land, 15% of the carbon stored in it is released into the atmosphere and soil per year. [(World Economic Forum)](https://www.weforum.org/agenda/2021/09/decaying-forest-wood-carbon-climate-change-co2/) So, let amount of carbon that is lost during decay each year be fixed at $C_t^d = 0.15 \times C_t$ where $t=$ time right before the tree died. Thus, weight of the dead tree lost to decay would be $W_t^d = 2C_t^d$ and consequently, volume would be $V_t^d = \frac{W_t^d}{D_t^d}$. That is, after each year, volume of a dead tree that remains in soil, changes as $V_t = V_t - V_t^d$.  Amount of volume decayed each time step is set to equal 15% of the volume of the tree at the time of death.
 
 Of the amount of carbon decayed each year, 35% ends up in the soil and 65% is released back into the atmosphere. So, $C_{soil} = C_{soil} \times (0.35 \times C_t^d)$ and $C_{air} = C_{air} \times (0.65 \times C_t^d)$. [(~ reddit, 2021)](https://www.reddit.com/r/askscience/comments/phvr8h/where_does_the_co2_absorbed_by_trees_end_up/)
@@ -33,12 +36,22 @@ The ocean both absorbs and releases CO2. The ocean can be thought of as a carbon
 
 Since the amount of $CO_2$ transferred between air and water is dependent on the difference in  partial pressures of the gas in the two reservoirs, both the [[Partial Pressure of CO2]] in air and water must be computed. 
 
+Once CO2 partial pressures are available for both the water and air reservoirs, the amount of carbon to be transferred from one reservoir to another and the direction of transfer must be computed. This may be done as follows.
+1. Compute the equilibrium pressure of $CO2$ in water based on the water's solubility constant (k) and the air's pCO2 would need to be computed as $P_{CO2}^{water,eq} = \frac{P_{CO2}^{air}}{k_H}$ where $k_H$ is the solubility constant of CO2 in water as per Henry's Law at 20.5°C.
+2. If $P_{CO2}^{water} < P_{CO2}^{water,eq}$ then source = air and sink = water. Similarly if $P_{CO2}^{water} > P_{CO2}^{water,eq}$, then source = water and sink = air.
+3. Once direction of flow is computed. The magnitude is to be computed. This is based on the the difference between pressures $\Delta P_{CO2} = |P_{CO2}^{water} - P_{CO2}^{water,eq}| \text{ atm}$.
+4. Let the rate of transfer between the reservoirs be defined by a coefficient $k_{water}^{air}$.
+5. Flux may then be computed as $F_{CO2} = k_{water}^{air} \times \Delta P_{CO2} \text{ atm}$. Since we've now introduced a transfer coefficient $k_{water}^{air}$, we need to set a good value for this. It is known that "Roughly 10 billion tonnes of carbon are being released into the atmosphere each year, but the ocean quickly absorbs about 3 billion tonnes of these emissions. [(E. Shadwick et. al., 2023)](https://www.csiro.au/en/news/all/articles/2023/june/oceans-absorb-emissions)". Based on this, a good value for $k_{water}^{air} = 0.3$. But, this may also be some other small value as seen fit within the microworld.
+6. Now, using Henry's law, we can obtain the moles of  CO2 associated with the flux as $n_{CO2} = \frac{\Delta P_{CO2} \times V_{water}}{R \times T_{water}}$.
+7. Now, moles of CO2 can be converted to moles of C. One mole of CO2 has one mole of C. Thus, $n_{CO2} = n_{C}$.
+8. Finally moles of C may be converted into grams as $\Delta C = n_C \times 12$ since molar mass of C is 12. This is the amount of carbon that will be subtracted from the source reservoir and added to the sink reservoir.
+
 <font color="yellow"><b>Note:</b> Chat GPT 3.5, Gemini AI, and Perplexity AI were used to help arrive at the following quicker. Correctness of suggestions were examined manually. Tweaks were made as and where necessary.</font>
 
 Once CO2 partial pressures are available for both the water and air reservoirs, their difference can be obtained. Now, the amount of carbon to be transferred from the source to sink reservoir needs to be computed based on this pressure difference. This may be done as follows.
-1. Compute the equilibrium pCO2 in water based on the water's solubility constant (k) and the air's pCO2 would need to be computed as $P_{CO2}^{equilibrium} = \frac{P_{CO2}^{air}}{k_H}$ where $k_H$ is the solubility constant of CO2 in water as per Henry's Law at 20.5°C.
-2. Given $P_{CO2}^{air}$, $P_{CO2}^{water}$ and $P_{CO2}^{equilibrium}$, if $P_{CO2}^{air} < P_{CO2}^{equilibrium}$ and $P_{CO2}^{water} > P_{CO2}^{equilibrium}$ then CO2 flows from water (source) to air (sink). Similarly, if $P_{CO2}^{water} < P_{CO2}^{equilibrium}$ and $P_{CO2}^{air} > P_{CO2}^{equilibrium}$ then it flows from air (source) to water (sink).
-3. Once direction of flow is computed. The magnitude is to be computed. This is based on the the difference between pressures $\Delta P_{CO2} = P_{CO2}^{air} - P_{CO2}^{equilibrium} \text{ atm}$.
+1. Compute the equilibrium pCO2 in water based on the water's solubility constant (k) and the air's pCO2 would need to be computed as $P_{CO2}^{water,eq} = \frac{P_{CO2}^{air}}{k_H}$ where $k_H$ is the solubility constant of CO2 in water as per Henry's Law at 20.5°C.
+2. Given $P_{CO2}^{air}$, $P_{CO2}^{water}$ and $P_{CO2}^{water,eq}$, if $P_{CO2}^{air} < P_{CO2}^{water,eq}$ and $P_{CO2}^{water} > P_{CO2}^{water,eq}$ then CO2 flows from water (source) to air (sink). Similarly, if $P_{CO2}^{water} < P_{CO2}^{water,eq}$ and $P_{CO2}^{air} > P_{CO2}^{water,eq}$ then it flows from air (source) to water (sink).
+3. Once direction of flow is computed. The magnitude is to be computed. This is based on the the difference between pressures $\Delta P_{CO2} = P_{CO2}^{air} - P_{CO2}^{water,eq} \text{ atm}$.
 4. Let the rate of transfer between the reservoirs be defined by a coefficient $k_{water}^{air}$.
 5. Flux may then be computed as $F_{CO2} = k_{water}^{air} \times \Delta P_{CO2} \text{ atm}$. Since we've now introduced a transfer coefficient $k_{water}^{air}$, we need to set a good value for this. It is known that "Roughly 10 billion tonnes of carbon are being released into the atmosphere each year, but the ocean quickly absorbs about 3 billion tonnes of these emissions. [(E. Shadwick et. al., 2023)](https://www.csiro.au/en/news/all/articles/2023/june/oceans-absorb-emissions)". Based on this, a good value for $k_{water}^{air} = 0.3$. But, this may also be some other small value as seen fit within the microworld.
 6. Now, using Henry's law, we can obtain the concentration of CO2 associated with the flux as $C_{CO2} = k_H \times F_{CO2} \text{ mol/L}$.
@@ -46,9 +59,9 @@ Once CO2 partial pressures are available for both the water and air reservoirs, 
 8. Now, moles of CO2 can be converted to moles of C. One mole of CO2 has one mole of C. Thus, $n_{CO2} = n_{C}$.
 9. Finally moles of C may be converted into grams as $\Delta C = n_C \times 12$ since molar mass of C is 12. This is the amount of carbon that will be subtracted from the source reservoir and added to the sink reservoir.
 
-Here, it is necessary to use the correct value of the solubility constant $k$ in mol/L for CO2 in water at 20.5 °C  = 294.65 K. This can be arrived at, as follows.
-* $k(T) = k^{\degree}e^{([\frac{1}{T}-\frac{1}{298.15\text{ K}}] \times d[\frac{log(k)}{d(1/T)}])}$ where $k^\degree = 0.034 \text{ mol/(kg·bar)}$ when T = 25 °C  = 298.15 K. Also here, the temperature dependence constant, $d[\frac{log(k)}{d(1/T)}] = 2400 \text{ K}$.
-* Thus, $k(293.65) = 0.038 \text{ (mol/kg)bar}$.
+Here, it is necessary to use the correct value of the solubility constant $k_H$ in mol/L for CO2 in water at 20.5 °C  = 294.65 K. This can be arrived at, as follows.
+* $k_H(T) = k_H^{\degree}e^{([\frac{1}{T}-\frac{1}{298.15\text{ K}}] \times d[\frac{log(k)}{d(1/T)}])}$ where $k_H^\degree = 0.034 \text{ mol/(kg·bar)}$ when T = 25 °C  = 298.15 K. Also here, the temperature dependence constant, $d[\frac{log(k_H)}{d(1/T)}] = 2400 \text{ K}$.
+* Thus, $k_H(293.65) = 0.038 \text{ (mol/kg)bar}$.
 * The surface ocean extends from 0 to roughly 100 meters [(Woods Hole Oceanographic Institution)](https://www.whoi.edu/know-your-ocean/). For every 10.06 meters one goes down in the ocean, pressure increases by about 1 atmosphere. [(NOAA)](https://oceanservice.noaa.gov/facts/pressure.html). Thus, average pressure for the surface ocean may be considered as 5 atm.
-* At 5 atm, 20.5 °C, and 3.5% salinity [(NOAA)](https://oceanservice.noaa.gov/facts/whysalty.html), the density of water is 1.00119 kg/L [(Water Density Calculator, W. Sas, 2024)](https://www.omnicalculator.com/physics/water-density). Given this and 1 bar = 0.987 atm, 1 mol/L.atm = 1.014 mol/L.atm.
-* Thus, $k(293.65) = 0.03755 \text{ mol/L.atm}$
+* At 5 atm, 20.5 °C, and 3.5% salinity [(NOAA)](https://oceanservice.noaa.gov/facts/whysalty.html), the density of water is 1.00119 kg/L [(Water Density Calculator, W. Sas, 2024)](https://www.omnicalculator.com/physics/water-density). Given this and knowledge that 1 bar = 0.987 atm we can determine that 1 (mol/kg)bar = 1.014 (mol/L)atm.
+* Thus, $k_H(293.65) = 0.03755 \text{ (mol/L)atm}$.

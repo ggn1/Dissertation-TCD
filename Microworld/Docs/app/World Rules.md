@@ -1,4 +1,5 @@
 All updates happen per timestep = 1 year.
+
 ## Rules
 
 The only reliable indicator in this world that signals if a tree is dead or alive is `stress`. If `stress >= 1` then and only then is a tree dead.
@@ -53,7 +54,7 @@ $$
 \text{if } S_t^{co2} <= S_{threshold}^{env} \text{ then } S_t = max(0, S_t - (R_t \times H_t)) \text{ where } H_t = (1 - S_t)
 $$
 $$
-dead \Rightarrow S_t = -0.01 
+dead \Rightarrow S_t = 0 
 $$
 ### Biodiversity
 
@@ -85,14 +86,13 @@ Forests with more biodiversity, grow faster and can better cope with stress.
 
 ### Reproduction
 Trees may reproduce every $R_t$ no. of years only if there is a free space adjacent to the tree and the tree is mature/old growth with $S_t \leq 0.5$.
-Once the tree reaches reproductive age, it leaves a seed at the spot where it currently grows. Upon the death of a tree, if there is a seed, it germinates into the same type of tree on that same position on land.
 
 ### Volume
 For simplicity, the volume of a tree here is assumed to be same as that of a cylinder with the tree's height and diameter. When decaying, it is assumed that only height decreases until 0, after which the tree no longer exists.
 
 ### Funds
 *Influx*
-There are two main types of income sources.
+There are 3 income sources.
 1. **Timber:** Income from timber is obtained as a result of felling trees. User's generate this income by including the "fell action" in their plans.
 2. **Non-Timber:** There is more than one type of income from the forest that does not come from timber. This includes the following.
 	1. **Non-Timber Forest Products**

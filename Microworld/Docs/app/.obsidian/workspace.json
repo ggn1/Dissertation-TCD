@@ -4,11 +4,23 @@
     "type": "split",
     "children": [
       {
-        "id": "82e6dd7c03df6334",
+        "id": "575c67ddf4f7ca8d",
         "type": "tabs",
         "children": [
           {
-            "id": "e935505edced46cd",
+            "id": "fb7a3b2c547b7501",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Facts.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "89440332edf93d74",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -20,31 +32,19 @@
             }
           },
           {
-            "id": "f91fa8cd46766f59",
+            "id": "a6323083ed17c586",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Model/Carbon Cycle.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "42deee8cbdb3be73",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Model/Partial Pressure of CO2.md",
+                "file": "Model/Forest Recreation.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -111,7 +111,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Model/Carbon Cycle.md",
+                "file": "Model/Forest Recreation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -128,7 +128,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Model/Carbon Cycle.md",
+                "file": "Model/Forest Recreation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -151,7 +151,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Model/Carbon Cycle.md"
+                "file": "Model/Forest Recreation.md"
               }
             }
           }
@@ -172,24 +172,30 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f91fa8cd46766f59",
+  "active": "a6323083ed17c586",
   "lastOpenFiles": [
-    "Model/Partial Pressure of CO2.md",
-    "Model/Carbon Cycle.md",
     "Model/Environment.md",
+    "Model/Non Timber Forest Products.md",
+    "Facts.md",
+    "Model/Biodiversity.md",
+    "Model/Tree.md",
+    "Model/Carbon Cycle.md",
+    "World Rules.md",
+    "Model/Planner.md",
+    "Model/Rotation Period.md",
+    "Target.md",
+    "Model/Management Action.md",
+    "Model/Land.md",
+    "Model/Plan.md",
+    "images/adjacent_positions.png",
+    "Partial Pressure of CO2.md",
     "Model/CO2 Scale.md",
     "Model/Forest Recreation.md",
-    "Facts.md",
     "Model/CO2 Concentration.md",
     "Model/Partial Pressure of CO2 in Water.md",
     "Model/Partial Pressure of CO2 in Air.md",
     "Model/Atmosphere.md",
-    "World Rules.md",
     "Pasted image 20240623105133.png",
-    "Model/Non Timber Forest Products.md",
-    "Model/Biodiversity.md",
-    "Model/Land.md",
-    "Model/Plan.md",
     "Model/Simulation.md",
     "Conversion Of Scale.md",
     "Challenges.md",
@@ -202,13 +208,8 @@
     "Model/Money.md",
     "Model",
     "Model/Timber.md",
-    "Income Dependency.md",
     "Timber",
-    "Learning Outcomes.md",
-    "Questions.md",
-    "Key Mechanisms.md",
     "Pasted image 20240620153433.png",
-    "Design Decisions.md",
     "World Rules.pdf",
     "images/co2_concentration.png",
     "images",

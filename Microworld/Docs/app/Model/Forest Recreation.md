@@ -25,7 +25,7 @@ Assuming 1 of all visits to be guided tours, another 1 to be a special activity 
 Opening up a forest for public recreation can involve establishment and maintenance of infrastructure.
 
 Establishment of infrastructure would have associated one time expenses. In 2006, restoration of around 44 hectares = 440000 $m^2$ of forest land cost about €8000000 [(W. Murphy)](http://www.coford.ie/media/coford/content/publications/projectreports/small-scaleforestryconference/Murphy.pdf). Adjusting for change in currency value, in January 2024, that's around €10114114  [(CPI Inflation Calculator, Central Statistics Office Ireland)](https://visual.cso.ie/?body=entity/cpicalculator). Thus, in this microworld, the initial one-time cost to make forest land suitable for recreational activities can be considered to be around $\frac{10114114}{440000} \approx 23 \text{ coins}$ per $m^2$. 
-Thus, for a 1740 $m^2$ forest, this would be around $\boxed{40020 \text{ coins/year/m}^2}$. If dependence on this stream is set to a value greater than 0, then this initial fixed amount will have to be paid in expenses.
+Thus, for a 1740 $m^2$ forest, this would be around $\boxed{40020 \text{ coins}}$. If dependence on this stream is set to a value greater than 0, then this initial fixed amount will have to be paid in expenses.
 
 Established infrastructure would also need to be maintained. Maintenance would require employees and also resources, both of which cost money. 
 
