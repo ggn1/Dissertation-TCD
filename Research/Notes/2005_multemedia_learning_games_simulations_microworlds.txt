@@ -1,0 +1,34 @@
+2005 Multimedia Learning in Games, Simulations, and Microworlds
+===============================================================
+
+Rieber in 2005, over several studies both directly (based on results of own work) and indirectly (based on literature review) investigated how different representations of content influenced learning from simulations, games, and microworlds. Following are observations w.r.t best design practices.
+# Simluations
+  * Graphical feedback accompanied by short embedded multimedia explanations were found to result in better understanding of ideas by students compared to when only graphical or textual feedback was provided instead. Providing the short explanations intermittently, also boosts understanding as this makes it easier for learners to link their thoughts to experiences. The alternative of a tutorial is less effective because it separates explanation from experience.
+  * Learners consistently reported lesser frustration while using the learning tool when feedback was graphical rather than textual.  
+  * Instructional support is best provided while students use the simulation as opposed to before because the latter can lead to students forming early hypotheses that are generally hard to displace later even if evidence points against it.
+  * Students significantly benefit from simulations that build up complexity in stages allowing enough time for developing a good grasp on easier tool mechanics and ideas before moving on to more complex ones.
+# Microworlds
+  * Most students learn from microworlds only when exploration occurs within context of some carefully designed learning activity that provides structure.
+# Games
+  * Students who engaged in content related discussions demonstrated increased learning.
+  * Three game characteristics most favoured by children in a study wherein student designed games were evaluated by other students were (i) storyline quality, (ii) competition, and (iii) appropriate challenge.
+
+All microworlds aim to achieve the following 3 goals.
+1. Make principles related to complex systems accessible to a larger and younger audience.
+2. Leverage the practice of building concrete models to encourage qualitative understanding.
+3. Blur the line between learning and doing science.
+
+Structurally, all microworlds comprise the following 4 elements.
+1. A set of computational objects that learners can interact with.
+2. Different ways to access or view the same underlying model.
+3. Various ways of combining computational objects.
+4. Exercises or challenges that learners can attempt or try to overcome as part of learning activities.
+
+The goal of a microworld is that students learn about the modelled domain through its exploration. 
+
+Microworlds should be designed such that students have some intuition about how to use it and want to use it.
+
+Although simulations, microworlds, and games, are all commonly adapted to be interactive educational tools, the best approach seems to be to combine relevant ideas from 3 to optimize specific learning experiences. It is difficult to learn from simulations through exploration alone. Also, based on explored work, it may be concluded that although educational simulations present a great deal of information through visualization of dynamic complex systems, they also present the disadvantage that the mental model that learners develop is can be difficult to evaluate for correctness. This is why, in tools like MycroForest wherein an underlying simulation model is imperative to correct emergent behaviour of the system, a simulation-as-microworld approach can be beneficial as the constructionist nature of microworlds produce tangible external artifacts in the form of learner creations that are representative of the internal mental model of learners. 
+
+Tastefully visualized simulations provide an informative representation of a real-world system or idea that learners may readily relate to. Microworlds present users with multiple avenues to manipulate characteristics of the underlying model and thus interact with it. Exploration of a microworld that provides timely and appropriate types of feedback can command and keep attention of learners, thereby owing for an absorbing experience. Ability to build custom virtual constructs in the microworld invokes a sense of control in learners. Gamification of this experience through incorporation of challenges in to the simulation-as-microworld with the option for model progression and varying challenge intensities, can grant users a challenge at an appropriate difficulty level so as not to overwhelm or bore such that they find trying to overcome it stimulating and enjoyable. Finally, a narrative can be built into the teaching tool to add an element of fantasy or role-play and present a storyline within which learners may be mentally freed of other worries and can opt to imagine themselves operating in, free of self-consciousness. Thus, it can be concluded that combining elements from simulations, microworlds, and games likely better caters towards self regulated learning than does any of these approaches alone. This is what MycroForest strives to do.
+

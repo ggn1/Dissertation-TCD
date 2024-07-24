@@ -1,7 +1,7 @@
-The simulation comprises the microworld's [[Environment]]. 
+The simulation is the master component from which all other components may be reached. It may be considered as the "microworld" itself. Its primary purpose is to coordinate all world elements and initialize the microworld.
 
-It also contains the forest management [[Planner]] that users develop and handles its execution.
+The simulation contains the microworld's [[Environment]], and a [[Planner]] to keep track of user generated forest management plans.
 
-The simulation triggers update of the state of all world components in accordance with passage of time and prompts update of the UI to reflect model changes. he smallest unit of time here is "year".
+The simulation triggers update of the state of all world components in accordance with passage of time and prompts update of the UI to reflect model changes. The smallest unit of time here is "year".
 
- Furthermore, the simulation manages influx and outflux of [[Money]].
+Furthermore, the simulation keeps track of forest resources and manages influx and outflux of [[Money]].

@@ -8,9 +8,9 @@ Availability of this resource depends on how much wood was chopped each timestep
 
 At the end of each simulation timestep, the amount (in kg) of wood that was harvested in that step is sold and used.
 
-Different types of wood have differing prices. On average, the price of wood can be considered as being $1.53 per lb = $3.37 per kg = €3.15 per kg.
+In the real world, different types of wood have varying prices. On average, the price of wood can be assumed as being $1.5 per lb = $3.3 per kg $\approx$ €3.03 per kg. [(Lost Art Press, 2021)](https://blog.lostartpress.com/2021/03/21/buying-wood-by-the-pound/)
 
-Thus, in the microworld, price fetched for wood shall be $\boxed{\text{3.15 coins / kg}}$.
+Thus, in the microworld, price fetched for wood shall be $\boxed{\text{3 coins / kg}}$.
 
 ## Expenditure
 

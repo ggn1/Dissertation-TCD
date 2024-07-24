@@ -4,23 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "575c67ddf4f7ca8d",
+        "id": "7d2d99a4ac74e109",
         "type": "tabs",
         "children": [
           {
-            "id": "fb7a3b2c547b7501",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Facts.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "89440332edf93d74",
+            "id": "07b8a1ae81edc9b8",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -30,21 +18,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "a6323083ed17c586",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Model/Forest Recreation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -111,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Model/Forest Recreation.md",
+                "file": "Model/Environment.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -128,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Model/Forest Recreation.md",
+                "file": "Model/Environment.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -151,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Model/Forest Recreation.md"
+                "file": "Model/Environment.md"
               }
             }
           }
@@ -172,46 +147,48 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "a6323083ed17c586",
+  "active": "07b8a1ae81edc9b8",
   "lastOpenFiles": [
-    "Model/Environment.md",
+    "Model/Simulation.md",
+    "Model/Forest Recreation.md",
+    "[.md",
     "Model/Non Timber Forest Products.md",
-    "Facts.md",
-    "Model/Biodiversity.md",
     "Model/Tree.md",
-    "Model/Carbon Cycle.md",
     "World Rules.md",
-    "Model/Planner.md",
+    "Assumptions.md",
+    "Model/Timber.md",
+    "Facts.md",
+    "Model/Money.md",
     "Model/Rotation Period.md",
-    "Target.md",
-    "Model/Management Action.md",
+    "Model/Target.md",
+    "Model/Management Actions.md",
+    "Model/Planner.md",
+    "Model/Biodiversity.md",
+    "Conversion Of Scale.md",
     "Model/Land.md",
+    "Model/Carbon Cycle.md",
+    "Model/CO2 Scale.md",
+    "Model/Environment.md",
+    "CO2 Concentration.md",
+    "Biodiversity Age Mix.md",
+    "images/tree_age_comp_dead.png",
+    "images/tree_age_comp_seed_sap.png",
+    "images/tree_age_prop.png",
+    "images/tree_age_comp_mature.png",
+    "images/tree_age_comp.png",
+    "images/tree_age_map.png",
+    "images/co2_tolerance.png",
+    "images/photosynthetic_efficiency_scale.png",
+    "Partial Pressure of CO2.md",
+    "C From CO2.md",
+    "Pasted image 20240623105133.png",
+    "Challenges.md",
     "Model/Plan.md",
     "images/adjacent_positions.png",
-    "Partial Pressure of CO2.md",
-    "Model/CO2 Scale.md",
-    "Model/Forest Recreation.md",
-    "Model/CO2 Concentration.md",
-    "Model/Partial Pressure of CO2 in Water.md",
-    "Model/Partial Pressure of CO2 in Air.md",
-    "Model/Atmosphere.md",
-    "Pasted image 20240623105133.png",
-    "Model/Simulation.md",
-    "Conversion Of Scale.md",
-    "Challenges.md",
-    "images/old_growth_forest_composition.png",
-    "images/co2_scale.png",
-    "images/carbon_cycle.jpg",
-    "images/co2_levels.png",
     "images/co2_scale.emf",
-    "Problems.md",
-    "Model/Money.md",
     "Model",
-    "Model/Timber.md",
     "Timber",
-    "Pasted image 20240620153433.png",
     "World Rules.pdf",
-    "images/co2_concentration.png",
     "images",
     "Application",
     "Writing"

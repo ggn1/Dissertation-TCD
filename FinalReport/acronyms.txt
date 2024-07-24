@@ -1,0 +1,29 @@
+ACRONYMS
+========
+
+[A]
+ABM = Agent Based Model
+ABS = Agent Based Simulation
+
+[D]
+DEM = Discrete Event Model
+DES = Discrete Event Simulation
+
+[F]
+FTOE = Flow Theory of Optimal Experience
+
+[O]
+OO = Object Oriented
+OOS = Object Oriented Simulation
+
+[P]
+PLT = Piagetian Learning Theory 
+PPM = Parts Per Million
+
+[R]
+
+
+[S]
+SD = System Dynamics
+SRL = Self Regulated Learning
+

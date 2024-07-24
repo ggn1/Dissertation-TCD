@@ -1,0 +1,31 @@
+Seriously Considering Play
+==========================
+
+
+Play can be defined as an activity that is intrinsically motivating, demands active engagement and has a fantasy element to it. Play is often seen as an activity embraced by children and off-limits to adults. It is frequently seen as nothing more than entertainment. However, play is crucial to learning and psychological development. There are in fact, 4 theories regarding the purpose of play as follows.
+(i) Play as Progress: Purpose of play is "to learn something useful".
+(ii) Play as Power: Playing is a means for competition to determine a winner and a loser.
+(iii) Play as Fantasy: Purpose of playing is to encourage imaginative thinking and creativity.
+(iv) Play as Self: Purpose of playing is to "achive optimal life experiences".
+In mainstream education, play is often only seriously considered for short time periods merely as a means of motivation. It is soon replaced by instructional pedagogy with rigid predefined learning outcomes and explicit assessment methods. One reason for this may be that most benefits of play such as intellectual and social growth are long term. Only short term benefits of it may be enjoyment or motivation.
+
+John Dewey put forth the notion that knowledge is only useful to someone when they find it personally meaningful. Experimentalism is an education theory that is based on this idea. Here the view is that education serves to enable experimentation with a system or environment that leads to its improvement. This approach is also known as pragmatic constructivism.
+
+Microworlds are small, but complete, versions of some domain of interest. They may be natural (child's sand box) or artificial (computer based). Microworlds can incorporate a teacher to provide intentional structure to increase the likelihood of learners discovering underlying principles. 
+
+Computer based microworlds are similar to simulations, but with 2 distinguishing features. (i) Microworlds are simplified versions of a more complex target system. (ii) Microworlds are built to match a learner's mental faculties. They are easy to get started with. Simulations on the other hand are usually more complex and detailed representations of a domain. They are more often than not used by domain experts. Microworlds and simulations, as well as games are all, still paradigms that can accommodate constructionist principles and serve as educational tools.
+
+At the heart of any microworld, is its ability to facilitate self-regulated learning (SRL) wherein the learner takes initiative in managing their own learning. Self regulated learners are (i) intrinsically motivated, (ii) metacognitively active, and (iii) behaviourally active.   
+
+Learning environments may be designed to support SRL by incorporating following characteristics.
+(i) The learning environment is intrinsically motivating.
+(ii) It allows learners to create plans and set goals as well as monitor and evaluate their own progress.
+(iii) It grants learners control over the environment such that they may alter it to suit individual learning styles. 
+
+Flow Theory.
+Why simulation?
+Why games?
+
+Special considerations for simulations and games. (multimedia paper)
+
+Why simulation + game + microworld? = MycroForest. What theory aiming to hit?

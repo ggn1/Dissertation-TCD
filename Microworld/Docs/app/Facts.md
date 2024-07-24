@@ -103,7 +103,7 @@ Forests in Ireland as per NFI, 2022, is composed of 61.2% conifers and 27.0% bro
 
 * Total no. of trees = 725.
 * 450 Coniferous + 155 Deciduous = 605 trees.
-* Max age of trees in the real old growth forest is different from that in the microworld. In the real world, the oldest coniferous tree was 525 years old while the oldest deciduous tree was 162 years old. In the microworld, the oldest coniferous tree would be 100 years old and the oldest deciduous tree would be 80 years old. So, to be able to map the composition of the real forest to the microworld, there is a need for [[Conversion Of Scale]].|
+* Max age of trees in the real old growth forest is different from that in the microworld. In the real world, the oldest coniferous tree was 525 years old while the oldest deciduous tree was 162 years old. In the microworld, the oldest coniferous tree would be 100 years old and the oldest deciduous tree would be 80 years old. So, to be able to map the composition of the real forest to the microworld, there is a need for [[Conversion Of Scale]].
 
 For every 1 pound of wet, living wood, about 55 to 60 percent is dry wood (that is, cells) and 40 to 45 percent is water. [(E. M. Wengert, 1998)](https://woodweb.com/knowledge_base/Water_and_Wood.html)
 
@@ -116,7 +116,7 @@ For every 1 pound of wet, living wood, about 55 to 60 percent is dry wood (that 
 * Ireland Forestry Programme 2023-2027 [(Irish Farmers Association)](https://www.ifa.ie/forestry-programme-2023-2027/)
 
 ## Timber
-* Cost of wood can be around $325 = €300 per cord, each weighing around 1 ton = 1e+6 grams. Thus, selling price per g = €0.0003 and consequently, that per kg = €0.3.
+* In 2020, cost of wood could be around $325 = €300 per cord, each weighing around 1 ton = 1e+6 grams. Thus, selling price per g = €0.0003 and consequently, that per kg = €0.3. [(Blair Korchinski Quora, 2020)](https://www.quora.com/How-much-does-a-ton-of-wood-cost)
 * Cost of felling a tree is dependent on various factors such as size, location and species. Here, let us only consider size. On average, in a city like Dublin, the average cost of felling a tree can range from €400 to €3000. [(Grasshopper Services)](https://www.grasshopperservices.ie/tree-removal-cost/)
 * The average cost for planting a tree is between $150 and $1,850, with a national average cost of $300. [(A. Nita, 2023)](https://lawnlove.com/blog/cost-to-plant-tree/)
 ## Forest Recreation
