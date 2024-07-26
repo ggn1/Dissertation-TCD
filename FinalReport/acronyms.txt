@@ -5,6 +5,9 @@ ACRONYMS
 ABM = Agent Based Model
 ABS = Agent Based Simulation
 
+[C]
+ComMod = Community Modelling
+
 [D]
 DEM = Discrete Event Model
 DES = Discrete Event Simulation
@@ -21,7 +24,7 @@ PLT = Piagetian Learning Theory
 PPM = Parts Per Million
 
 [R]
-
+RPG = Role Playing Game
 
 [S]
 SD = System Dynamics

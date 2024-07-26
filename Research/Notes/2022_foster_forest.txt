@@ -1,0 +1,51 @@
+Foster Forest
+=============
+
+Description
+-----------
+
+Foster forest, embracing the companion modelling (ComMod) approach, is a participatory simulation adapted to be a Role Playing Game (RPG) catered towards domain experts like real-life forest managers, members of community forest federations, etc., wherein 5 participants assume the role of a mayor who's responsible for a communal forest, a public forester, a protected area manager, and 2 private landowners respectively, and collectively make decisions regarding social, economic, and ecological processes to manage availability of forest ecosystem services. 
+
+Every role has some objective with some being more exclusive, such as the mayor being required to maintain water quality and uphold aesthetic value of forests, the public forester needing to focus on timber harvests and the protected area manager being expected to promote conservation of old growth forests and share information about carbon storage. Commonly, all participants must manage their budget and avoid negative impacts of ecological factors like overgrazing.
+
+In addition to the 5 participants, this RPG experience requires 1 facilitator who is an expert in the application, and 1 observer to note down observations and emerging strategies as well as participant feedback and reactions. A facilitator is required to computerise decisions of participants. He/she also needs to be knowledgeable enough to be able to reach into and adapt source code to implement some creative strategies.
+
+The simulation is built upon an Agent Based Model (ABM) composed of spatial entities (land plots owned by participants), semi-autonomous entities (participant roles), and physical entities (trees). The participatory experience comprises 5 steps starting with all players filling in a pre-simulation questionnaire that tries to understand existing views on climate change, followed by a detailed briefing session that informs participants about how to use the application. Then, the main activity composed of multiple simulation rounds is conducted before ending with a post-simulation questionnaire and a collective debriefing session.
+
+The simulation progresses in 10 year timesteps with each step being a round composed of an action period and a computerized update period. The action period involves the facilitator sharing information regarding climate projections for the decade as well as expected timber and carbon prices followed by players discussing and presenting their forest management strategy comprised of actions related to planting or removing trees, hunting, trading plots, and engaging in sustainable forest management programs like protecting old growth forests. The computerized update phase begins with the facilitator assimilating player decisions into the tool which responds by computing successive stages of ABM entities. Thus, income and expenses related to silviculture activities like timber harvesting as well as social and ecological parameters (plot carbon storage, plot soil fertility, plot soil compaction) get updated and tree growth is simulated. This phase ends with the facilitator giving an overview of latest parameter values and resulting climate changes.
+
+Evaluation
+----------
+
++ Tool is very flexible and supports a rich variety of scenarios. Participants can come up with creative strategies not severely limited by tool capabilities.
++ Tool is realistic with well a designed ABM despite some simplifying assumptions.
++ Participants appreciated being able to test strategies in a risk free environment.
++ Participants enjoyed the ComMod wherein decisions followed group discussions.
+- Participants must be familiar with the domain. Not for the lay-man.
+- Participants found the UI too mathematical and hard to relate to.
+- Participants cannot interact with the tool directly. They must rely on the facilitator.
+- Tool requires extensive introductory training and user guides.
+- Guide material (2 usage videos, 6 booklets one for each role + facilitator) provided was overwhelming for some participants. Thus, learning curve is very high.
+- This tool requires an elaborate set up with 2 projectors and a facilitator. It was built using software that needs to be downloaded and installed along with associated user guide materials. This makes this tool less accessible.
+
+Platform
+--------
+
+PC application.
+
+Technology
+----------
+
+CORMAS
+
+Interesting Points
+------------------
+
+# Participants relied on carbon contracts to diversity income from the forest.
+# Participants are willing to actively participate in management practices that mitigate climate change only if they can still earn significantly from the forest land.
+# Despite climate projections and change results reported at the beginning and end of each simulation round, participants were more focussed on resource availability, particularly timber production, than climate change. Participants explain this as likely being due to a lack of visualization and of rapidly changing climate change indicators.
+# Main sources of revenue was timber and hunting.
+# Pages 10 to 13 have some ABM specific design decisions.
+
+Implications for MycroForest
+----------------------------
