@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>5</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>225</x>
+      <y>110</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Simulation
+bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>330</x>
+      <y>110</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Environment
+bg=#ffaaaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>440</x>
+      <y>110</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Land
+bg=#aaffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>545</x>
+      <y>110</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=white
+transparency=0
+Tree
+bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>550</x>
+      <y>105</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=white
+transparency=0
+bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>555</x>
+      <y>100</y>
+      <w>50</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=white
+transparency=0
+bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>245</x>
+      <y>120</y>
+      <w>15</w>
+      <h>305</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;590.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>350</x>
+      <y>120</y>
+      <w>15</w>
+      <h>305</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;590.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>460</x>
+      <y>120</y>
+      <w>15</w>
+      <h>305</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;590.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>565</x>
+      <y>120</y>
+      <w>15</w>
+      <h>305</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;590.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>130</y>
+      <w>10</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>275</x>
+      <y>260</y>
+      <w>70</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>land.takeTimeStep()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>160</y>
+      <w>10</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>160</y>
+      <w>130</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>Computes latest rotation number based
+on current time and set rotation period.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>190</y>
+      <w>10</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>190</y>
+      <w>130</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>Executes planned forest management
+actions for this year if available.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>220</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>220</y>
+      <w>130</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Increment simluation time.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>245</x>
+      <y>240</y>
+      <w>115</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>210.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>240</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>240</y>
+      <w>130</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>env.takeTimeStep()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>260</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>110</x>
+      <y>260</y>
+      <w>130</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Updates how much of each resource 
+is available.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>285</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>85</x>
+      <y>285</y>
+      <w>155</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Updates overall and per rotation expenditure
+after accounting for this year's expenses.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>310</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>85</x>
+      <y>310</y>
+      <w>155</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Sells resources available at the end of this time 
+step and updates income generated from them.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>335</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>85</x>
+      <y>335</y>
+      <w>155</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Prompt react component to check if targets
+have been met.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>245</x>
+      <y>360</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>85</x>
+      <y>360</y>
+      <w>155</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Record data for analysis in development
+mode.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>350</x>
+      <y>235</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffaaaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>145</x>
+      <y>130</y>
+      <w>95</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>Set expenditure for the year 
+back to 0 for each resource.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>350</x>
+      <y>260</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#ffaaaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>355</x>
+      <y>265</y>
+      <w>115</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>210.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>385</x>
+      <y>235</y>
+      <w>70</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>For each tree,
+tree.getOlder()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>275</x>
+      <y>195</y>
+      <w>70</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>Update carbon
+reservoirs to 
+account for fossil 
+fuel emissions. </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>460</x>
+      <y>260</y>
+      <w>10</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>bg=#aaffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>460</x>
+      <y>285</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#aaffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>385</x>
+      <y>285</y>
+      <w>70</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Soil carbon release.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>460</x>
+      <y>305</y>
+      <w>10</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>bg=#aaffaa</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>385</x>
+      <y>305</y>
+      <w>70</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>Update biodiveristy
+score and category.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>465</x>
+      <y>265</y>
+      <w>110</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>200.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>580</x>
+      <y>260</y>
+      <w>85</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>Update stress due to
+environmental conditions.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>565</x>
+      <y>260</y>
+      <w>10</w>
+      <h>25</h>
+    </coordinates>
+    <panel_attributes>bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLFrame</id>
+    <coordinates>
+      <x>530</x>
+      <y>225</y>
+      <w>145</w>
+      <h>165</h>
+    </coordinates>
+    <panel_attributes>isAlive()
+--
+true
+
+
+
+
+
+
+
+
+
+
+
+
+
+-.
+false
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>565</x>
+      <y>290</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>580</x>
+      <y>290</y>
+      <w>85</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Increment age.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>565</x>
+      <y>310</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>580</x>
+      <y>310</y>
+      <w>85</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Update stress due to age.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>565</x>
+      <y>330</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>580</x>
+      <y>330</y>
+      <w>85</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Perform life activities.</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>565</x>
+      <y>365</y>
+      <w>10</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>bg=#aaaaff</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>580</x>
+      <y>365</y>
+      <w>85</w>
+      <h>15</h>
+    </coordinates>
+    <panel_attributes>Decay.
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

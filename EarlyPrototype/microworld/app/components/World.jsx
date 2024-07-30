@@ -33,7 +33,7 @@ const validateQuadrantEncoding = (enc) => {
     }
 }
 
-// Components.
+// Simulation model.
 
 class Land {
     #numRows;
@@ -1063,6 +1063,7 @@ let isInitialized = false;
 // GlobalConfig.plan.addAction(5, 5, true, 'fell', 1, 'deciduous', 1, 'mature');
 GlobalConfig.plan.addAction(7, 2, true, 'fell', 1, 'coniferous', 1, 'mature');
 
+// Home page with UI components.
 const World = () => {   
     const [landGrid, setLandGrid] = useState([]);
     const [stateTime, setStateTime] = useState(time);

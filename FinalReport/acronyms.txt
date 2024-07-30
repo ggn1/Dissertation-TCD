@@ -11,13 +11,23 @@ ComMod = Community Modelling
 [D]
 DEM = Discrete Event Model
 DES = Discrete Event Simulation
+Dev = Development.
+DOM = Document Object Model
 
 [F]
+FR = Functional Requirement
 FTOE = Flow Theory of Optimal Experience
+
+[J]
+JSX = JavaScript XML
+
+[N]
+NFR = Non Functional Requirement
 
 [O]
 OO = Object Oriented
 OOS = Object Oriented Simulation
+OOP = Object Oriented Programming
 
 [P]
 PLT = Piagetian Learning Theory 
@@ -29,4 +39,7 @@ RPG = Role Playing Game
 [S]
 SD = System Dynamics
 SRL = Self Regulated Learning
+SSR = Server Side Rendering
+SSG = Static Site Generation
+SW = Software
 
