@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Model/Environment.md",
+                "file": "Model/Tree.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "bc135e17a536bc6e",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Model/Environment.md",
+                "file": "Model/Tree.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Model/Environment.md",
+                "file": "Model/Tree.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Model/Environment.md"
+                "file": "Model/Tree.md"
               }
             }
           }
@@ -149,26 +148,26 @@
   },
   "active": "07b8a1ae81edc9b8",
   "lastOpenFiles": [
-    "Model/Simulation.md",
+    "Model/Management Actions.md",
+    "Model/Land.md",
     "Model/Forest Recreation.md",
-    "[.md",
-    "Model/Non Timber Forest Products.md",
+    "Model/Environment.md",
+    "Model/CO2 Scale.md",
+    "Model/Carbon Cycle.md",
+    "Model/Biodiversity.md",
     "Model/Tree.md",
+    "[.md",
+    "Facts.md",
+    "Model/Simulation.md",
+    "Model/Non Timber Forest Products.md",
     "World Rules.md",
     "Assumptions.md",
     "Model/Timber.md",
-    "Facts.md",
     "Model/Money.md",
     "Model/Rotation Period.md",
     "Model/Target.md",
-    "Model/Management Actions.md",
     "Model/Planner.md",
-    "Model/Biodiversity.md",
     "Conversion Of Scale.md",
-    "Model/Land.md",
-    "Model/Carbon Cycle.md",
-    "Model/CO2 Scale.md",
-    "Model/Environment.md",
     "CO2 Concentration.md",
     "Biodiversity Age Mix.md",
     "images/tree_age_comp_dead.png",

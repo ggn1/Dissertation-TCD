@@ -4,6 +4,7 @@ ACRONYMS
 [A]
 ABM = Agent Based Model
 ABS = Agent Based Simulation
+App = Application
 
 [C]
 ComMod = Community Modelling
@@ -14,15 +15,30 @@ DES = Discrete Event Simulation
 Dev = Development.
 DOM = Document Object Model
 
+[E]
+EduTech = Education Technology
+ES = Ecosystem Service
+
 [F]
 FR = Functional Requirement
 FTOE = Flow Theory of Optimal Experience
+
+[G]
+GUI = Graphical User Interface
+
+[H]
+HS = Hybrid Simulation
+HWP = Harvested Wood Product		
+
+[I]
+IPCC = Intergovernmental Panel on Climate Change
 
 [J]
 JSX = JavaScript XML
 
 [N]
 NFR = Non Functional Requirement
+NGO = Non Governmental Organization
 
 [O]
 OO = Object Oriented
@@ -30,6 +46,7 @@ OOS = Object Oriented Simulation
 OOP = Object Oriented Programming
 
 [P]
+PES = Payment for Ecosystem Service
 PLT = Piagetian Learning Theory 
 PPM = Parts Per Million
 
@@ -38,8 +55,15 @@ RPG = Role Playing Game
 
 [S]
 SD = System Dynamics
+SFM = Sustainable Forest Management
 SRL = Self Regulated Learning
 SSR = Server Side Rendering
 SSG = Static Site Generation
 SW = Software
 
+[T]
+TY = Transition Year
+
+[U]
+UI = User Interface
+UX = User Experience

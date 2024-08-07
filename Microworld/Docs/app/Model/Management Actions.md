@@ -4,7 +4,6 @@ Creating a new management action involves selecting the following.
 * The no. of trees that are to be affected.
 * The year in which this action is to be executed.
 * Whether this action is to repeated every rotation or not.
-
 There are 2 types of management actions as follows.
 1. **FELL :** Felling a tree sparks the following events.
 	* 3000 coins is the max amount it will cost to fell a tree [(Grasshopper Services)](https://www.grasshopperservices.ie/tree-removal-cost/) for the biggest tree. This amount will be multiplied by percent of full growth the tree has reached at the time of chopping. Thus, felling cost = (height of the tree / max height) $\times 3000$.

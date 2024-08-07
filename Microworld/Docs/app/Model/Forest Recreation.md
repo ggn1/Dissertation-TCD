@@ -1,5 +1,4 @@
 Forests may be opened up to the public for recreational use which can include forest trails, picnicking spots and other activities like camping. This can fetch money.
-
 ## Availability
 
 As of 2022, there are 808,848 ha = 8088480000 $m^2$ of forest in Ireland. It is expected that these forests receive around  29105759 visits per annum [(Department of Agriculture, Food And the Marine, 2022)](https://www.teagasc.ie/media/website/crops/forestry/advice/Forest-Statistics-Ireland-2022.pdf).
