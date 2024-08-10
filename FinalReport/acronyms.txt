@@ -5,15 +5,17 @@ ACRONYMS
 ABM = Agent Based Model
 ABS = Agent Based Simulation
 App = Application
+Approx. = Approximately
 
 [C]
-ComMod = Community Modelling
+ComMod = Companion Modelling
 
 [D]
 DEM = Discrete Event Model
 DES = Discrete Event Simulation
 Dev = Development.
 DOM = Document Object Model
+DRY = Don't Repeat Yourself
 
 [E]
 EduTech = Education Technology
@@ -27,6 +29,7 @@ FTOE = Flow Theory of Optimal Experience
 GUI = Graphical User Interface
 
 [H]
+HCI = Human Computer Interaction
 HS = Hybrid Simulation
 HWP = Harvested Wood Product		
 
