@@ -1,0 +1,27 @@
+Class Interactions
+==================
+EmissionsFossilFuels UI component uses getFossilFuelEmission(), setFossilFuelEmission(…) from Environment class.
+Planner page uses getFossilFuelEmission() from Environment class.
+Simulation class uses takeTimeStep(...), setFossilFuelEmission(…), getAirCO2ppm() from Environment class.
+Tree class uses getAirCO2ppm(), updateCarbon() from Environment class.
+World page uses getAirCO2ppm(), getFossilFuelEmission(), setFossilFuelEmission(…) from Environment class.
+Timber class that extends the IncomeStream class uses updateCarbon(…) from Environment class.
+NTFP class that extends the IncomeStream class uses getDeadWoodPc(…), getBiodiversityPc(…) from Land class.
+Recreation class that extends the IncomeStream class uses getBiodiversityPc(…) from Land class.
+Land class uses updateCarbon(…), getAirCO2ppm() from Environment class.
+Environment class uses takeTimeStep() from Land class.
+Simulation class uses getBiodiversityPc(…), getDeadWoodPc(...), getFreeSpaces(…), getTree(...), setTimeStepOrder(…), setInitSowPositions(…), fellTree(…), plantTree(…) from Land class.
+Planner page uses getTimeStepOrder(), getInitSowPositions() from Land class.
+Tree class uses isLandFree(...) from Land class.
+World page uses getActiveLandContent(...) from Land class.
+Simulation class uses updateActionStatus(...), getTargets(), setTargets(...), getIncDep(...), checkTargetMet(...) from Planner class.
+Planner page uses getTargets(), getPlan(), deleteAction(), addAction(...), setIncDep(...) from Planner class.
+World page uses getTargets(), setTargets(...) from Planner class.
+Targets UI component uses getTargets(), setTargets(...) from Planner class.
+ActionManager UI component uses getPlan(), addAction(), deleteAction(), setIncDep(...) from Planner class.
+Land class uses updateStress(...), updateHeight(...), getOlder() from Tree class.
+Planner class uses updateResourceSalesTargets() from Simulation class.
+World page uses goto(...), promptTargetMetCheck(), getResourceSalesTargets(), getRunData() from Simulation class.
+Targets UI component uses promptTargetMetCheck() from Simulation class.
+IncomeSource class uses updateExpenses(...), updateFunds(...), getFunds(...) from Simulation class.
+Planner page uses loadState(...) from Simulation class.
