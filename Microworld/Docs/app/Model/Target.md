@@ -1,4 +1,0 @@
-This microworld allows for 2 types of targets to be set.
-1. **CO2 Level**: If the CO2 level exceeds this set target at any point in the simulation, then this means that the current plan fails to meet this target. The year in which this target failed to be met for the first time will be indicated beside the corresponding text field.
-2. **Income**: If the current plan failed to generate enough income to exceed or equal this set income value, then that means this target has not been met. The year in which this target failed to be met for the first time will be indicated beside the corresponding text field.
-Any time that a target is successfully met, the corresponding text field attains a green border. It's border turns red in case of failure to meet target.

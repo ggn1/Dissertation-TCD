@@ -1,0 +1,194 @@
+{
+  "main": {
+    "id": "d9e616a88cefcb88",
+    "type": "split",
+    "children": [
+      {
+        "id": "d370e256684920a0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fbf4812fd82db8bb",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Range Conversion.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "75e9f6cbd3e67056",
+    "type": "split",
+    "children": [
+      {
+        "id": "f491b2ad985e9251",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f3c7c25ed091f6ca",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "8f376a59ded8378c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "c58af30cae0fc425",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "bc135e17a536bc6e",
+    "type": "split",
+    "children": [
+      {
+        "id": "f019782e79dcabf6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "516903aab21721b3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Range Conversion.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "330a5901faef6b93",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Range Conversion.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "eb9d013cedbb1315",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "6d529bfe74c2b81f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Range Conversion.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "fbf4812fd82db8bb",
+  "lastOpenFiles": [
+    "Facts.md",
+    "Range Conversion.md",
+    "Model/CO2 Scale.md",
+    "C From CO2.md",
+    "images/co2_tolerance.png",
+    "Model/Carbon Cycle.md",
+    "Model/Biodiversity.md",
+    "images/tree_age_prop.png",
+    "images/tree_age_map.png",
+    "images/tree_age_comp_seed_sap.png",
+    "images/tree_age_comp_dead.png",
+    "images/tree_age_comp_mature.png",
+    "images/photosynthetic_efficiency_scale.png",
+    "images/co2_scale.png",
+    "images/co2_levels.png",
+    "images/carbon_cycle.jpg",
+    "Assumptions.md",
+    "Model/Tree.md",
+    "Model/Timber.md",
+    "Model/Target.md",
+    "Model/Simulation.md",
+    "Model/Rotation Period.md",
+    "Model/Planner.md",
+    "Model/Non Timber Forest Products.md",
+    "Model/Money.md",
+    "Model/Management Actions.md",
+    "Model/Land.md",
+    "Model/Forest Recreation.md",
+    "Model/Environment.md",
+    "World Rules.md",
+    "Problems.md",
+    "2024-08-13.md",
+    "Partial Pressure of CO2.md",
+    "CO2 Concentration.md",
+    "Challenges.md",
+    "images/co2_scale.emf",
+    "Model",
+    "Timber",
+    "World Rules.pdf",
+    "images",
+    "Application",
+    "Writing"
+  ]
+}
