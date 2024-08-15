@@ -11,6 +11,7 @@ Approx. = Approximately
 ComMod = Companion Modelling
 
 [D]
+DBH = Diameter at Breast Height
 DEM = Discrete Event Model
 DES = Discrete Event Simulation
 Dev = Development.
